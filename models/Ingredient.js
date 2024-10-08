@@ -6,9 +6,6 @@ const ingredientSchema = new Schema({
 		type: String,
 		required: true,
 	},
-	category: {
-		type: String, // e.g., Spice, Protein, Vegetable etc.
-	},
 });
 
 const Ingredient = models.Ingredient || model('Ingredient', ingredientSchema);

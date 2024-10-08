@@ -12,17 +12,16 @@ async function seedDatabase() {
 		await mongoose.connect(uri);
 		// Step 1: Insert Ingredients
 		const ingredients = await Ingredient.insertMany([
-			{ name: 'Spaghetti', category: 'Pasta' },
-			{ name: 'Mince Beef', category: 'Beef' },
-			{ name: 'Chopped Tomatoes', category: 'Store' },
-			{ name: 'Beef Stock', category: 'Stock' },
-			{ name: 'Chopped Onion', category: 'Vegetable' },
-			{ name: 'Tomato Puree', category: 'Vegetable' },
-			{ name: 'Chicken Breast', category: 'Chicken' },
-			{ name: 'Curry Paste', category: 'Spice' },
-			{ name: 'Coconut Milk', category: 'Liquid' },
+			{ name: 'Spaghetti' },
+			{ name: 'Mince Beef' },
+			{ name: 'Chopped Tomatoes' },
+			{ name: 'Beef Stock' },
+			{ name: 'Chopped Onion' },
+			{ name: 'Tomato Puree' },
+			{ name: 'Chicken Breast' },
+			{ name: 'Curry Paste' },
+			{ name: 'Coconut Milk' },
 		]);
-
 		// Map the ingredients to make referencing easier
 		const ingredientMap = {};
 		ingredients.forEach((ingredient) => {
@@ -49,11 +48,7 @@ async function seedDatabase() {
 				name: 'Spaghetti Bolognese',
 				ingredients: [
 					{ ingredient: ingredientMap['Spaghetti'], quantity: 200, unit: 'g' },
-					{
-						ingredient: ingredientMap['Mince Beef'],
-						quantity: 250,
-						unit: 'g',
-					},
+					{ ingredient: ingredientMap['Mince Beef'], quantity: 250, unit: 'g' },
 					{
 						ingredient: ingredientMap['Chopped Tomatoes'],
 						quantity: 900,
@@ -79,9 +74,9 @@ async function seedDatabase() {
 				prepTime: 15,
 				cookTime: 60,
 				serves: 4,
-				category: categoryMap['Beef'],
+				category: categoryMap['Beef'], // Only the main ingredient defines the category
 				image:
-					'https://images.unsplash.com/photo-1551892374-ecf8754cf8b0?q=80&w=2728&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+					'https://images.unsplash.com/photo-1551892374-ecf8754cf8b0?q=80&w=2728&auto=format&fit=crop',
 			},
 			{
 				name: 'Chicken Curry',
@@ -106,9 +101,9 @@ async function seedDatabase() {
 				prepTime: 10,
 				cookTime: 25,
 				serves: 3,
-				category: categoryMap['Chicken'],
+				category: categoryMap['Chicken'], // Chicken defines the category
 				image:
-					'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?q=80&w=2800&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+					'https://images.unsplash.com/photo-1505253758473-96b7015fcd40?q=80&w=2800&auto=format&fit=crop',
 			},
 		];
 

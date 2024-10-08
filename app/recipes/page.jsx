@@ -2,6 +2,7 @@ import connectDB from '../../config/database';
 import Recipe from '../../models/Recipe';
 import Category from '../../models/Category';
 import RecipeCard from '../../components/RecipeCard';
+import Ingredient from '@/models/Ingredient';
 import { Box, Container } from '@mui/material';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 
@@ -15,15 +16,15 @@ export default async function RecipesPage({ searchParams }) {
 
     if (categoryName) {
         // Fetch the category by name
-        const category = await Category.findOne({ name: categoryName });
+        const category = await Category.findOne({ name: { $regex: new RegExp(categoryName, 'i') } });
+        // Case insensitive match for category name
         if (category) {
             console.log("Category found: ", category);
-        } else {
-            console.log("Category not found");
-        }
-        if (category) {
+
             // Fetch all recipes associated with this category
             recipes = await Recipe.find({ category: category._id }).populate('ingredients.ingredient').lean();
+        } else {
+            console.log("Category not found");
         }
     }
     console.log("Recipes fetched: ", recipes);

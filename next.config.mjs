@@ -11,6 +11,12 @@ const nextConfig = {
 			},
 		],
 	},
+	compilerOptions: {
+		baseUrl: '.',
+		paths: {
+			'@/config/*': ['config/*'],
+		},
+	},
 };
 
 export default nextConfig;
