@@ -64,27 +64,6 @@ To run this project locally, you’ll need:
     ```
     http://localhost:3000
     ```
-
-### Folder Structure
-src
-|– app
-|   |– recipes
-|       |– page.jsx            # Recipe page that lists all recipes
-|– components
-|   |– Appbar.jsx              # AppBar with navigation and search functionality
-|   |– DrawerComponent.jsx     # Drawer with category filters
-|   |– RecipeCard.jsx          # Component to display a single recipe
-|– hooks
-|   |– useFilter.js            # Custom hook for handling category filtering
-|– models
-|   |– Recipe.js               # Mongoose model for Recipe
-|   |– Ingredient.js           # Mongoose model for Ingredient
-|   |– Category.js             # Mongoose model for Category
-|– config
-|   |– database.js             # MongoDB connection setup
-|– utils
-|   |– convertToObject.js      # Utility to convert MongoDB objects for client-side use
-
 ## Deployment
 
 To deploy this application, consider using:
