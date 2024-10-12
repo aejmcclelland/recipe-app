@@ -2,7 +2,7 @@ import connectDB from '../../../config/database';
 import Recipe from '../../../models/Recipe';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import RecipeCard from '@/components/RecipeCard';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Container } from '@mui/material';
 
 export default async function RecipeDetailPage({ params }) {
     await connectDB();
@@ -17,29 +17,31 @@ export default async function RecipeDetailPage({ params }) {
     const serializedRecipe = convertToSerializeableObject(recipe);
 
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                minHeight: '100vh', // Ensures it takes up full viewport height
-                padding: 2,
-            }}
-        >
-            <Typography variant="h4" component="h1" gutterBottom>
-                Recipe Details
-            </Typography>
+        <Container maxWidth="lg">
+            {/* Title for the page */}
+            <Box
+                sx={{
+                    textAlign: 'center',
+                    marginTop: 4,
+                    marginBottom: 4,
+                }}
+            >
+                <Typography variant="h3" component="h1" gutterBottom>
+                    {recipe.name} Details
+                </Typography>
+            </Box>
+
+            {/* Recipe Card with centered layout */}
             <Box
                 sx={{
                     display: 'flex',
                     justifyContent: 'center',
+                    alignItems: 'center',
                     width: '100%',
-                    maxWidth: 600, // Control the maximum width of the card
                 }}
             >
-                <RecipeCard recipe={serializedRecipe} /> {/* Using RecipeCard */}
+                <RecipeCard recipe={serializedRecipe} /> {/* Using updated RecipeCard */}
             </Box>
-        </Box>
+        </Container>
     );
 }

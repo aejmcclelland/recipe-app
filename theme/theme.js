@@ -5,34 +5,40 @@ import { alpha } from '@mui/material/styles';
 const theme = createTheme({
 	breakpoints: {
 		values: {
-			mobile: 0, // Custom breakpoint for mobile
-			tablet: 640, // Custom breakpoint for tablet
-			laptop: 1024, // Custom breakpoint for laptop
-			desktop: 1200, // Custom breakpoint for desktop
+			mobile: 0,
+			tablet: 640,
+			laptop: 1024,
+			desktop: 1200,
 		},
 	},
 	palette: {
 		primary: {
-			main: '#FFB6B9', // Friendly soft pink color
+			main: '#FFB6B9',
 		},
 		secondary: {
-			main: '#FEE9B2', // Complementary light yellow
+			main: '#FEE9B2',
 		},
 		background: {
-			default: '#ffffff', // Set default background to white
+			default: '#ffffff',
 		},
 	},
 	typography: {
-		fontFamily: 'Archivo Black, Arial, sans-serif', // Default font for body text
-		h6: {
-			fontSize: '2rem',
+		fontFamily: 'Archivo, Arial, sans-serif',
+		h1: {
+			fontSize: '2.5rem',
 			fontWeight: 700,
 		},
-		h6: {
-			fontFamily: 'Shadows Into Light',
+		h2: {
 			fontSize: '2rem',
-			fontWeight: 400,
-			display: 'inline', // Display inline to combine "Rebekah" and "Recipes" seamlessly
+			fontWeight: 600,
+		},
+		h3: {
+			fontSize: '1.75rem',
+			fontWeight: 500,
+		},
+		h4: {
+			fontSize: '1.5rem',
+			fontWeight: 500,
 		},
 		body1: {
 			fontSize: '1rem',

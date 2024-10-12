@@ -19,7 +19,7 @@ export default function RootLayout({ children }) {
 					rel='stylesheet'
 				/>
 			</head>
-			<body className='antialiased'>
+			<body>
 				<ThemeProvider theme={theme}>
 					<CssBaseline /> {/* Ensures consistent baseline styling */}
 					<Appbar /> {/* AppBar component */}
