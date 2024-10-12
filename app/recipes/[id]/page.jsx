@@ -4,6 +4,7 @@ import Ingredient from '@/models/Ingredient';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import RecipeCard from '@/components/RecipeCard';
 import { Box, Typography, Container } from '@mui/material';
+import BackToHomeButton from '@/components/BackToHomeButton';
 
 export default async function RecipeDetailPage({ params }) {
 
@@ -12,7 +13,7 @@ export default async function RecipeDetailPage({ params }) {
     const PUBLIC_DOMAIN = process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
         : 'http://localhost:3000';
-        
+
     await connectDB();
 
     // Fetch the recipe by its unique ID from the URL
@@ -49,6 +50,9 @@ export default async function RecipeDetailPage({ params }) {
                 }}
             >
                 <RecipeCard recipe={serializedRecipe} /> {/* Using updated RecipeCard */}
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <BackToHomeButton />
             </Box>
         </Container>
     );

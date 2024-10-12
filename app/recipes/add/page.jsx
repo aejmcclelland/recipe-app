@@ -1,12 +1,17 @@
 import RecipeAddForm from '@/components/RecipeAddForm';
+import BackToHomeButton from '@/components/BackToHomeButton';
+import { Box, Container } from '@mui/material';
 
 const AddRecipePage = () => {
     return (
         <section>
-            <div className="container">
+            <Container>
                 <h1>Add a New Recipe</h1>
                 <RecipeAddForm />
-            </div>
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <BackToHomeButton />
+                </Box>
+            </Container>
         </section>
     );
 };
