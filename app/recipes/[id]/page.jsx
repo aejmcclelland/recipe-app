@@ -1,5 +1,6 @@
 import connectDB from '../../../config/database';
 import Recipe from '../../../models/Recipe';
+import Ingredient from '@/models/Ingredient';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import RecipeCard from '@/components/RecipeCard';
 import { Box, Typography, Container } from '@mui/material';

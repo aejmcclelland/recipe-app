@@ -14,6 +14,8 @@ import Drawer from '@mui/material/Drawer';
 import DrawerComponent from '../components/Drawer';
 import Link from 'next/link';
 import { useFilter } from '../hooks/useFilter';
+import Tooltip from '@mui/material/Tooltip';
+import AddCircleIcon from '@mui/icons-material/AddCircle'; // Add icon for "Add Recipe"
 
 const drawerWidth = 240;
 
@@ -90,6 +92,15 @@ export default function SearchAppBar({ onFilterChange }) {
                             sx={{ color: '#000000', width: '100%' }}
                         />
                     </Box>
+
+                    {/* Plus Icon with Tooltip to add a recipe */}
+                    <Tooltip title="Add a Recipe" placement="bottom">
+                        <IconButton color="inherit">
+                            <Link href="/recipes/add" passHref>
+                                <AddCircleIcon sx={{ fontSize: '2rem', ml: 2 }} />
+                            </Link>
+                        </IconButton>
+                    </Tooltip>
                 </Toolbar>
             </AppBar>
             <nav>

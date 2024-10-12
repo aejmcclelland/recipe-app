@@ -42,6 +42,8 @@ const recipeSchema = new Schema({
 	image: {
 		type: String,
 		required: true,
+		default:
+			'https://res.cloudinary.com/dqeszgo28/image/upload/v1728739432/300_bebabf.png',
 	},
 	category: {
 		type: Schema.Types.ObjectId, // References the Category schema

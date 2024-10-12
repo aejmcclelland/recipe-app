@@ -5,17 +5,11 @@ const nextConfig = {
 		remotePatterns: [
 			{
 				protocol: 'https',
-				hostname: 'images.unsplash.com',
-				port: '',
-				pathname: '/**', // This allows all paths under images.unsplash.com
+				hostname: 'res.cloudinary.com', // Cloudinary hostname
+				pathname: '/**',
 			},
 		],
-	},
-	compilerOptions: {
-		baseUrl: '.',
-		paths: {
-			'@/config/*': ['config/*'],
-		},
+        domains: ['res.cloudinary.com'],
 	},
 };
 
