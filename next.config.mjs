@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	reactStrictMode: true,
+	env: {
+		NEXTAUTH_URL: process.env.VERCEL_URL
+			? `https://${process.env.VERCEL_URL}`
+			: 'http://localhost:3000',
+	},
 	images: {
 		remotePatterns: [
 			{
@@ -9,7 +14,7 @@ const nextConfig = {
 				pathname: '/**',
 			},
 		],
-        domains: ['res.cloudinary.com'],
+		domains: ['res.cloudinary.com'],
 	},
 };
 

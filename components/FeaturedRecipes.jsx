@@ -5,7 +5,7 @@ import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 export default function FeaturedRecipes({ recipes }) {
     return (
         <div className={styles.container}>
-            <h1 className={styles.title}>Welcome to Rebekah's Recipes</h1>
+            <h1 className={styles.title}>Welcome to Rebekah&#39;s Recipes</h1>
             <p className={styles.description}>
                 Discover our favorite family recipes!
             </p>

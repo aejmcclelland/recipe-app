@@ -19,7 +19,7 @@ export default async function Home() {
 			{/* Page Title */}
 			<Box sx={{ textAlign: 'center', my: 4 }}>
 				<Typography variant="h2" align="center" gutterBottom>
-					Welcome to Rebekah's Recipes
+					Welcome to Rebekah&#39;s Recipes!
 				</Typography>
 				<Typography variant="body1" align="center" gutterBottom>
 					We are working hard to bring you the best recipes. Please be patient as we add more recipes to our collection.

@@ -61,7 +61,7 @@ export default function SearchAppBar({ onFilterChange }) {
                                     mr: isMobile ? 0 : 0.5,
                                 }}
                             >
-                                Rebekah's
+                                Rebekah&#39;s
                             </Typography>
                             <Typography
                                 variant="h6"

@@ -6,6 +6,13 @@ import RecipeCard from '@/components/RecipeCard';
 import { Box, Typography, Container } from '@mui/material';
 
 export default async function RecipeDetailPage({ params }) {
+
+    // NOTE: check if running in production on vercel and get
+    // the public URL at build time for the ShareButtons, or fall back to localhost in development.
+    const PUBLIC_DOMAIN = process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : 'http://localhost:3000';
+        
     await connectDB();
 
     // Fetch the recipe by its unique ID from the URL

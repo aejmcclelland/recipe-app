@@ -5,7 +5,7 @@ import Appbar from '../components/Appbar';
 import '../assets/globals.css';
 
 export const metadata = {
-	title: "Rebekah's Recipes",
+	title: ' Welcome to Rebekah&#39;s Recipes!',
 	description: 'A collection of family recipes for easy access.',
 };
 

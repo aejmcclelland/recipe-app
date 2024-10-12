@@ -7,7 +7,7 @@ export default function DrawerComponent({ handleDrawerToggle, onFilterChange }) 
     return (
         <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
             <Typography variant="h6" sx={{ my: 2 }}>
-                Rebekah's Recipes
+                Rebekah&#39;s Recipes!
             </Typography>
             <Divider />
             <CategoryFilter onFilterChange={onFilterChange} />
