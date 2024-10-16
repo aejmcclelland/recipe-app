@@ -2,7 +2,8 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from '../theme/theme';
 import Appbar from '../components/Appbar';
-import '../assets/globals.css';
+import '../assets/globals.css'; // Import
+import { archivo, shadowsIntoLight } from '@/app/fonts/fonts';
 
 export const metadata = {
 	title: ' Welcome to Rebekah&#39;s Recipes!',
@@ -11,15 +12,14 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
 	return (
-		<html lang='en'>
+		<html lang='en' className={archivo.className}>
 			<head>
-				{/* Link to Google Fonts */}
-				<link
-					href='https://fonts.googleapis.com/css2?family=Archivo+Black&family=Shadows+Into+Light&display=swap"'
-					rel='stylesheet'
-				/>
+				<meta charSet='UTF-8' />
+				<meta name='viewport' content='width=device-width, initial-scale=1.0' />
+				<meta name='description' content={metadata.description} />
+				<title>{metadata.title}</title>
 			</head>
-			<body>
+			<body className={archivo.className}>
 				<ThemeProvider theme={theme}>
 					<CssBaseline /> {/* Ensures consistent baseline styling */}
 					<Appbar /> {/* AppBar component */}

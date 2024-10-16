@@ -10,6 +10,8 @@ console.log('MongoDB URI:', process.env.MONGODB_URI);
 async function seedDatabase() {
 	try {
 		await mongoose.connect(uri);
+		console.log('Connected to MongoDB');
+
 		// Step 1: Insert Ingredients
 		const ingredients = await Ingredient.insertMany([
 			{ name: 'Spaghetti' },

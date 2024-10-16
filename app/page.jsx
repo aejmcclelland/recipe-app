@@ -5,6 +5,7 @@ import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import { Container, Typography, Box } from '@mui/material';
 import Grid from '@mui/material/Grid2'; // For Material UI Grid2 system
+import SearchBar from '@/components/SearchBar'; // Import the SearchBar component
 
 export default async function Home() {
 	await connectDB();
@@ -16,6 +17,7 @@ export default async function Home() {
 
 	return (
 		<Container maxWidth="lg">
+			<SearchBar />
 			{/* Page Title */}
 			<Box sx={{ textAlign: 'center', my: 4 }}>
 				<Typography variant="h2" align="center" gutterBottom>
@@ -30,12 +32,12 @@ export default async function Home() {
 			<Grid container spacing={4} justifyContent="center">
 				{recipesWithIds && recipesWithIds.length > 0 ? (
 					recipesWithIds.map((recipe) => (
-						<Grid xs={12} sm={6} md={4} key={recipe._id}>
+						<Grid item xs={12} sm={6} md={4} key={recipe._id}>
 							<RecipeOverviewCard recipe={recipe} />
 						</Grid>
 					))
 				) : (
-					<Grid xs={12}>
+					<Grid item xs={12}>
 						<Typography variant="body1" align="center">
 							No recipes found.
 						</Typography>

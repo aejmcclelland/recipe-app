@@ -6,10 +6,10 @@ import { Box, Container } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import BackToHomeButton from '@/components/BacktoHomeButton';
+import SearchBar from '@/components/SearchBar'; // Import the SearchBar component
 // Fetch the data from MongoDB using Mongoose
 export default async function RecipesPage({ searchParams }) {
     await connectDB();
-    console.log("searchParams: ", searchParams);
 
     // Get the category from searchParams passed from the URL
     const categoryName = searchParams?.category || ''; // Default to empty if not present
@@ -28,13 +28,12 @@ export default async function RecipesPage({ searchParams }) {
         }
     }
 
-    console.log("Recipes fetched: ", recipes);
-
     // Convert the document to a plain JS object so it can be passed to client components
     const recipesWithIds = convertToSerializeableObject(recipes);
 
     return (
         <Container>
+            <SearchBar />
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <h1>{categoryName ? `${categoryName} Recipes` : 'All Recipes'}</h1>
                 <Grid container spacing={4} justifyContent="center">

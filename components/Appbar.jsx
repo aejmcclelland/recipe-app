@@ -16,7 +16,7 @@ import Link from 'next/link';
 import { useFilter } from '../hooks/useFilter';
 import Tooltip from '@mui/material/Tooltip';
 import AddCircleIcon from '@mui/icons-material/AddCircle'; // Add icon for "Add Recipe"
-
+import { shadowsIntoLight } from '@/app/fonts/fonts';
 const drawerWidth = 240;
 
 export default function SearchAppBar({ onFilterChange }) {
@@ -56,7 +56,6 @@ export default function SearchAppBar({ onFilterChange }) {
                             <Typography
                                 variant="h6"
                                 sx={{
-                                    fontFamily: 'Archivo, sans-serif',
                                     fontSize: isMobile ? '1.2rem' : '1.5rem',
                                     mr: isMobile ? 0 : 0.5,
                                 }}
@@ -66,7 +65,7 @@ export default function SearchAppBar({ onFilterChange }) {
                             <Typography
                                 variant="h6"
                                 sx={{
-                                    fontFamily: 'Shadows Into Light',
+                                    fontFamily: shadowsIntoLight.style.fontFamily, // Apply Shadows Into Light font
                                     fontSize: isMobile ? '1.2rem' : '1.5rem',
                                 }}
                             >
@@ -74,26 +73,9 @@ export default function SearchAppBar({ onFilterChange }) {
                             </Typography>
                         </Box>
                     </Link>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                            borderRadius: 1,
-                            width: isMobile ? '200px' : '250px',
-                            padding: '0 8px',
-                            ml: 'auto',
-                        }}
-                    >
-                        <SearchIcon sx={{ fontSize: '1.5rem', color: '#000000' }} />
-                        <InputBase
-                            placeholder="Search…"
-                            inputProps={{ 'aria-label': 'search' }}
-                            sx={{ color: '#000000', width: '100%' }}
-                        />
-                    </Box>
 
                     {/* Plus Icon with Tooltip to add a recipe */}
+                    <Box sx={{ ml: 'auto' }}> 
                     <Tooltip title="Add a Recipe" placement="bottom">
                         <IconButton color="inherit">
                             <Link href="/recipes/add" passHref>
@@ -101,6 +83,7 @@ export default function SearchAppBar({ onFilterChange }) {
                             </Link>
                         </IconButton>
                     </Tooltip>
+                    </Box>
                 </Toolbar>
             </AppBar>
             <nav>

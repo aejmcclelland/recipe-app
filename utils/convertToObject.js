@@ -25,16 +25,20 @@ export function convertToSerializeableObject(data) {
 		return data.map((item) => convertToSerializeableObject(item));
 	} else if (typeof data === 'object' && data !== null) {
 		// Recursively convert the object
+		const plainObject = {};
 		for (const key of Object.keys(data)) {
 			if (data[key] && typeof data[key] === 'object') {
-				if (data[key].toJSON && data[key].toString) {
-					data[key] = data[key].toString(); // Convert ObjectId to string
+				// Handle Mongoose documents or ObjectId
+				if (typeof data[key].toJSON === 'function') {
+					plainObject[key] = data[key].toJSON(); // Convert Mongoose objects to plain JS
 				} else {
-					data[key] = convertToSerializeableObject(data[key]); // Recurse for nested objects
+					plainObject[key] = convertToSerializeableObject(data[key]); // Recurse for nested objects
 				}
+			} else {
+				plainObject[key] = data[key]; // Directly assign primitive values
 			}
 		}
-		return data;
+		return plainObject;
 	}
 	return data; // Return primitive types as-is
 }

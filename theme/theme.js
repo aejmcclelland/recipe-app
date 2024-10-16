@@ -1,6 +1,19 @@
 'use client';
 import { createTheme } from '@mui/material/styles';
 import { alpha } from '@mui/material/styles';
+import { Archivo, Shadows_Into_Light } from 'next/font/google';
+
+const archivo = Archivo({
+	weight: ['100', '400', '700'],
+	subsets: ['latin'],
+	display: 'swap',
+});
+
+const shadowsIntoLight = Shadows_Into_Light({
+	weight: '400',
+	subsets: ['latin'],
+	display: 'swap',
+});
 
 const theme = createTheme({
 	breakpoints: {
@@ -23,7 +36,12 @@ const theme = createTheme({
 		},
 	},
 	typography: {
-		fontFamily: 'Archivo, Arial, sans-serif',
+		typography: {
+			fontFamily: archivo.style.fontFamily, // Default font for most content
+			h6: {
+				fontFamily: shadowsIntoLight.style.fontFamily, // Special font for h6 headers
+			},
+		},
 		h1: {
 			fontSize: '2.5rem',
 			fontWeight: 700,
@@ -39,6 +57,11 @@ const theme = createTheme({
 		h4: {
 			fontSize: '1.5rem',
 			fontWeight: 500,
+		},
+		h6: {
+			fontfamily: shadowsIntoLight.style.fontFamily,
+			fontSize: '1.25rem',
+			fontWeight: 400,
 		},
 		body1: {
 			fontSize: '1rem',

@@ -8,7 +8,11 @@ export default function RecipeCard({ recipe }) {
     if (!recipe) {
         return <Typography variant="h6">No Recipe Found</Typography>;
     }
+    // Log the entire recipe object to check its structure
+    console.log('Full Recipe Object:', recipe);
 
+    // Log ingredients array specifically
+    console.log('Recipe ingredients:', JSON.stringify(recipe.ingredients, null, 2));
     return (
         <Card
             sx={{
@@ -21,23 +25,23 @@ export default function RecipeCard({ recipe }) {
                 <Grid container spacing={2}>
                     {/* Left Grid: Image and Ingredients */}
                     <Grid xs={12} md={6}>
-                        {/* Recipe Image (Reduced size by 25%) */}
+                        {/* Recipe Image */}
                         <Box mb={2}>
                             <Image
-                                src={recipe.image}
-                                alt={recipe.name}
-                                width={300}  // Reduced width
-                                height={187} // Adjusted height proportionally
+                                src={recipe.image || 'https://res.cloudinary.com/dqeszgo28/image/upload/v1728739432/300_bebabf.png'} // Provide a default image URL
+                                alt={recipe.name || 'Recipe Image'}
+                                width={300}
+                                height={187}
                                 className="w-full h-auto"
                                 style={{ objectFit: 'cover' }}
                             />
                         </Box>
 
-                        {/* Ingredients (Added padding to the left for better alignment) */}
+                        {/* Ingredients */}
                         <Box mt={2} sx={{ paddingLeft: 2 }}>
                             <Typography variant="h6">Ingredients:</Typography>
                             <ul>
-                                {recipe.ingredients && recipe.ingredients.length > 0 ? (
+                                {Array.isArray(recipe.ingredients) && recipe.ingredients.length > 0 ? (
                                     recipe.ingredients.map((ing, index) => (
                                         <li key={index}>
                                             {`${ing.ingredient?.name || 'Unknown Ingredient'}: ${ing.quantity || 'N/A'} ${ing.unit || ''}`}

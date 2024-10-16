@@ -3,8 +3,9 @@ import Recipe from '../../../models/Recipe';
 import Ingredient from '@/models/Ingredient';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import RecipeCard from '@/components/RecipeCard';
-import { Box, Typography, Container } from '@mui/material';
+import { Box, Typography, Container, Button } from '@mui/material';
 import BackToHomeButton from '@/components/BacktoHomeButton';
+import Link from 'next/link';
 
 export default async function RecipeDetailPage({ params }) {
 
@@ -15,9 +16,14 @@ export default async function RecipeDetailPage({ params }) {
         : 'http://localhost:3000';
 
     await connectDB();
+    // Extract the recipe ID from the URL parameters
+    const { id: recipeId } = params;
 
     // Fetch the recipe by its unique ID from the URL
-    const recipe = await Recipe.findById(params.id).populate('ingredients.ingredient').lean();
+    // When fetching the recipe
+    const recipe = await Recipe.findById(recipeId)
+        .populate({ path: 'ingredients.ingredient', model: Ingredient })
+        .lean();
 
     if (!recipe) {
         return <p>Recipe not found</p>; // Handle recipe not found scenario
@@ -51,6 +57,11 @@ export default async function RecipeDetailPage({ params }) {
             >
                 <RecipeCard recipe={serializedRecipe} /> {/* Using updated RecipeCard */}
             </Box>
+            <Link href={`/recipes/${recipe._id}/edit`}>
+                <Button variant="contained" color="primary" sx={{ mt: 2 }}>
+                    Edit Recipe
+                </Button>
+            </Link>
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 <BackToHomeButton />
             </Box>

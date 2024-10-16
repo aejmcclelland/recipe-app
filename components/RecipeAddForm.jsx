@@ -1,11 +1,14 @@
 'use client';
 import { useState } from 'react';
 import { TextField, Button, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid2'; // For Material UI Grid2 system
+import addRecipe from '@/app/actions/addRecipe';
+import { useRouter } from 'next/navigation';
 
 const RecipeAddForm = () => {
+    const router = useRouter();
     const [ingredients, setIngredients] = useState([]);
-    const [imageFile, setImageFile] = useState(null); // State for the image file
+    const [imageFile, setImageFile] = useState(null);
 
     const handleAddIngredient = () => {
         setIngredients([...ingredients, { ingredient: '', quantity: '', unit: '' }]);
@@ -19,87 +22,174 @@ const RecipeAddForm = () => {
     };
 
     const handleFileChange = (e) => {
-        setImageFile(e.target.files[0]);  // Capture the selected file
+        setImageFile(e.target.files[0]);
     };
 
     const handleSubmit = async (event) => {
-        event.preventDefault();
+        event.preventDefault(); // Prevent default form submission
 
-        const formData = new FormData(event.target); // Collect form data
-        formData.append('ingredients', JSON.stringify(ingredients)); // Add ingredients array as JSON
+        const formData = new FormData(event.target);
+
+        // Append ingredients as JSON to formData
+        formData.append('ingredients', JSON.stringify(ingredients));
+
+        // Append imageFile if it exists
         if (imageFile) {
-            formData.append('imageFile', imageFile); // Append the image file to the formData
+            formData.append('imageFile', imageFile);
         }
 
-        const response = await fetch('/recipes/add', {
-            method: 'POST',
-            body: formData,
-        });
+        try {
+            // Call the server action function directly
+            const recipeId = await addRecipe(formData); // Capture the returned recipeId
 
-        if (response.ok) {
-            console.log('Recipe added successfully');
-        } else {
-            console.error('Failed to add recipe');
+            if (recipeId) {
+                // Redirect user to the newly created recipe page
+                router.push(`/recipes/${recipeId}`);
+            } else {
+                console.error('Recipe creation failed.');
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
         }
     };
-
     return (
         <form onSubmit={handleSubmit} encType="multipart/form-data">
+            <Typography variant="h4" align="center" gutterBottom>
+                Add Recipe
+            </Typography>
             <Grid container spacing={3}>
                 <Grid item xs={12}>
-                    <TextField label="Recipe Name" name="name" fullWidth required />
+                    <TextField
+                        label="Recipe Name"
+                        name="name"
+                        variant="outlined"
+                        fullWidth
+                        required
+                    />
                 </Grid>
-                <Grid item xs={12}>
-                    <TextField label="Prep Time (minutes)" name="prepTime" type="number" fullWidth required />
+
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        label="Prep Time (minutes)"
+                        name="prepTime"
+                        type="number"
+                        variant="outlined"
+                        fullWidth
+                        required
+                    />
                 </Grid>
-                <Grid item xs={12}>
-                    <TextField label="Cook Time (minutes)" name="cookTime" type="number" fullWidth required />
+
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        label="Cook Time (minutes)"
+                        name="cookTime"
+                        type="number"
+                        variant="outlined"
+                        fullWidth
+                        required
+                    />
                 </Grid>
-                <Grid item xs={12}>
-                    <TextField label="Serves" name="serves" type="number" fullWidth required />
+
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        label="Serves"
+                        name="serves"
+                        type="number"
+                        variant="outlined"
+                        fullWidth
+                        required
+                    />
                 </Grid>
-                <Grid item xs={12}>
-                    <TextField label="Category" name="category" fullWidth required />
+
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        label="Category"
+                        name="category"
+                        variant="outlined"
+                        fullWidth
+                        required
+                    />
                 </Grid>
+
                 <Grid item xs={12}>
-                    <Typography variant="body1">Upload an image</Typography>
-                    <input type="file" onChange={handleFileChange} accept="image/*" />
+                    <TextField
+                        label="Method"
+                        name="method"
+                        variant="outlined"
+                        fullWidth
+                        multiline
+                        rows={4}
+                        required
+                    />
                 </Grid>
+
                 <Grid item xs={12}>
-                    <TextField label="Method" name="method" fullWidth multiline rows={4} required />
+                    <Typography variant="body1">Upload an image (optional)</Typography>
+                    <input type="file" name="imageFile" accept="image/*" onChange={handleFileChange}
+                        style={{ marginTop: '8px' }}
+                    />
                 </Grid>
 
                 {/* Ingredients Fields */}
                 {ingredients.map((ingredient, index) => (
-                    <Grid item xs={12} key={index}>
-                        <TextField
-                            label="Ingredient"
-                            value={ingredient.ingredient}
-                            onChange={(e) => handleIngredientChange(index, 'ingredient', e.target.value)}
-                            fullWidth
-                            required
-                        />
-                        <TextField
-                            label="Quantity"
-                            value={ingredient.quantity}
-                            onChange={(e) => handleIngredientChange(index, 'quantity', e.target.value)}
-                            fullWidth
-                            required
-                        />
-                        <TextField
-                            label="Unit"
-                            value={ingredient.unit}
-                            onChange={(e) => handleIngredientChange(index, 'unit', e.target.value)}
-                            fullWidth
-                            required
-                        />
+                    <Grid container spacing={2} key={index}>
+                        <Grid item xs={4}>
+                            <TextField
+                                label="Ingredient"
+                                value={ingredient.ingredient}
+                                onChange={(e) =>
+                                    handleIngredientChange(index, 'ingredient', e.target.value)
+                                }
+                                fullWidth
+                                variant="outlined"
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={4}>
+                            <TextField
+                                label="Quantity"
+                                value={ingredient.quantity}
+                                onChange={(e) =>
+                                    handleIngredientChange(index, 'quantity', e.target.value)
+                                }
+                                fullWidth
+                                variant="outlined"
+                                required
+                            />
+                        </Grid>
+                        <Grid item xs={4}>
+                            <TextField
+                                label="Unit"
+                                value={ingredient.unit}
+                                onChange={(e) =>
+                                    handleIngredientChange(index, 'unit', e.target.value)
+                                }
+                                fullWidth
+                                variant="outlined"
+                                required
+                            />
+                        </Grid>
                     </Grid>
                 ))}
+
                 <Grid item xs={12}>
-                    <Button onClick={handleAddIngredient}>Add Ingredient</Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleAddIngredient}
+                        fullWidth
+                    >
+                        Add Ingredient
+                    </Button>
                 </Grid>
+
                 <Grid item xs={12}>
-                    <Button variant="contained" type="submit" fullWidth>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        type="submit"
+                        fullWidth
+                    >
                         Add Recipe
                     </Button>
                 </Grid>
