@@ -1,5 +1,6 @@
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { Box, Container } from '@mui/material';
 import theme from '../theme/theme';
 import Appbar from '../components/Appbar';
 import '../assets/globals.css'; // Import
@@ -23,9 +24,18 @@ export default function RootLayout({ children }) {
 			<body className={archivo.className}>
 				<ThemeProvider theme={theme}>
 					<CssBaseline /> {/* Ensures consistent baseline styling */}
-					<Appbar /> {/* AppBar component */}
-					{children} {/* Main content */}
-					<Footer /> {/* Footer component */}
+					<Box
+						sx={{
+							display: 'flex',
+							flexDirection: 'column',
+							minHeight: '100vh', // Full height of the viewport
+						}}>
+						<Appbar /> {/* AppBar component */}
+						<Container sx={{ flex: 1, py: 3 }}>
+							{children} {/* Main content will stretch */}
+						</Container>
+						<Footer /> {/* Footer component */}
+					</Box>
 				</ThemeProvider>
 			</body>
 		</html>

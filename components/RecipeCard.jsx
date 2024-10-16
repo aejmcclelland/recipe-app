@@ -18,7 +18,7 @@ export default function RecipeCard({ recipe }) {
             sx={{
                 maxWidth: '100%',
                 marginBottom: 2,
-                boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.4)', // Increased and softened shadow
+                boxShadow: '4px 4px 20px 0px rgba(0, 0, 0, 0.2)', // Increased and softened shadow
             }}
         >
             <CardContent>
