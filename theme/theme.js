@@ -26,7 +26,7 @@ const theme = createTheme({
 	},
 	palette: {
 		primary: {
-			main: '#ed32f2f',
+			main: '#d32f2f',
 		},
 		secondary: {
 			main: '#FEE9B2',
@@ -101,6 +101,11 @@ const theme = createTheme({
 				root: {
 					fontSize: '1rem',
 					textTransform: 'none',
+					backgroundColor: '#d32f2f', // Make buttons the same color as AppBar
+					color: '#ffffff', // White text for buttons
+					'&:hover': {
+						backgroundColor: alpha('#d32f2f', 0.85), // Slightly darker on hover
+					},
 				},
 			},
 		},
