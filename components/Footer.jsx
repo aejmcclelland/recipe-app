@@ -36,7 +36,7 @@ const Footer = () => {
                 <Box sx={{ mb: { xs: 2, md: 0 }, display: 'flex', justifyContent: { xs: 'center', md: 'flex-start' } }}>
                     <Link href="/recipes" underline="none" color="#ffffff" sx={{ mx: 2 }}>
                         <Typography variant="body1" color="#ffffff">
-                            Rebekah's Recipes
+                            Rebekah&#39;s Recipes
                         </Typography>
                     </Link>
                 </Box>
@@ -44,7 +44,7 @@ const Footer = () => {
                 {/* Copyright Section */}
                 <Box>
                     <Typography variant="body2" color="text.secondary" align="center">
-                        &copy; {currentYear} Rebekah's Recipes. All rights reserved.
+                        &copy; {currentYear} Rebekah&#39;s Recipes. All rights reserved.
                     </Typography>
                 </Box>
             </Container>
