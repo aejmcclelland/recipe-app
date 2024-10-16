@@ -35,7 +35,9 @@ const Footer = () => {
                 {/* Links Section */}
                 <Box sx={{ mb: { xs: 2, md: 0 }, display: 'flex', justifyContent: { xs: 'center', md: 'flex-start' } }}>
                     <Link href="/recipes" underline="none" color="#ffffff" sx={{ mx: 2 }}>
-                        Rebekah's Recipes
+                        <Typography variant="body1" color="#ffffff">
+                            Rebekah's Recipes
+                        </Typography>
                     </Link>
                 </Box>
 
