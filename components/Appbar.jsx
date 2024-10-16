@@ -7,9 +7,8 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import InputBase from '@mui/material/InputBase';
+import RestaurantOutlinedIcon from '@mui/icons-material/RestaurantOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
 import Drawer from '@mui/material/Drawer';
 import DrawerComponent from '../components/Drawer';
 import Link from 'next/link';
@@ -53,6 +52,7 @@ export default function SearchAppBar({ onFilterChange }) {
                                 textAlign: isMobile ? 'center' : 'left',
                             }}
                         >
+                            <RestaurantOutlinedIcon sx={{ fontSize: '2rem', mr: 1 }} />
                             <Typography
                                 variant="h6"
                                 sx={{
@@ -75,14 +75,14 @@ export default function SearchAppBar({ onFilterChange }) {
                     </Link>
 
                     {/* Plus Icon with Tooltip to add a recipe */}
-                    <Box sx={{ ml: 'auto' }}> 
-                    <Tooltip title="Add a Recipe" placement="bottom">
-                        <IconButton color="inherit">
-                            <Link href="/recipes/add" passHref>
-                                <AddCircleIcon sx={{ fontSize: '2rem', ml: 2 }} />
-                            </Link>
-                        </IconButton>
-                    </Tooltip>
+                    <Box sx={{ ml: 'auto' }}>
+                        <Tooltip title="Add a Recipe" placement="bottom">
+                            <IconButton color="inherit">
+                                <Link href="/recipes/add" passHref>
+                                    <AddCircleIcon sx={{ fontSize: '2rem', ml: 2 }} />
+                                </Link>
+                            </IconButton>
+                        </Tooltip>
                     </Box>
                 </Toolbar>
             </AppBar>

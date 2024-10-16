@@ -4,6 +4,7 @@ import theme from '../theme/theme';
 import Appbar from '../components/Appbar';
 import '../assets/globals.css'; // Import
 import { archivo, shadowsIntoLight } from '@/app/fonts/fonts';
+import Footer from '@/components/Footer';
 
 export const metadata = {
 	title: ' Welcome to Rebekah&#39;s Recipes!',
@@ -24,6 +25,7 @@ export default function RootLayout({ children }) {
 					<CssBaseline /> {/* Ensures consistent baseline styling */}
 					<Appbar /> {/* AppBar component */}
 					{children} {/* Main content */}
+					<Footer /> {/* Footer component */}
 				</ThemeProvider>
 			</body>
 		</html>
