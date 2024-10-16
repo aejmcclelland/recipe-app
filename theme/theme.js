@@ -26,7 +26,7 @@ const theme = createTheme({
 	},
 	palette: {
 		primary: {
-			main: '#FFB6B9',
+			main: '#ed32f2f',
 		},
 		secondary: {
 			main: '#FEE9B2',
@@ -76,7 +76,7 @@ const theme = createTheme({
 		MuiAppBar: {
 			styleOverrides: {
 				root: {
-					backgroundColor: '#FFB6B9',
+					backgroundColor: '#d32f2f',
 				},
 			},
 		},
