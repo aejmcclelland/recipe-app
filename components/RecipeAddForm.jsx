@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { TextField, Button, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2'; // For Material UI Grid2 system
 import addRecipe from '@/app/actions/addRecipe';
+import { fractionToDecimal } from '@/utils/fractionToDecimal';
 import { useRouter } from 'next/navigation';
 
 const RecipeAddForm = () => {
@@ -30,8 +31,19 @@ const RecipeAddForm = () => {
 
         const formData = new FormData(event.target);
 
+        // Process ingredients, converting any fraction quantities to decimals
+        const processedIngredients = ingredients.map((ingredient) => {
+            const quantity = ingredient.quantity.includes('/')
+                ? fractionToDecimal(ingredient.quantity)
+                : ingredient.quantity;
+            return {
+                ...ingredient,
+                quantity, // Use the converted quantity if it was a fraction
+            };
+        });
+
         // Append ingredients as JSON to formData
-        formData.append('ingredients', JSON.stringify(ingredients));
+        formData.append('ingredients', JSON.stringify(processedIngredients));
 
         // Append imageFile if it exists
         if (imageFile) {
@@ -152,6 +164,10 @@ const RecipeAddForm = () => {
                                 onChange={(e) =>
                                     handleIngredientChange(index, 'quantity', e.target.value)
                                 }
+                                type="number"
+                                slotProps={{
+                                    input: { step: "any" } // Updated
+                                }}
                                 fullWidth
                                 variant="outlined"
                                 required

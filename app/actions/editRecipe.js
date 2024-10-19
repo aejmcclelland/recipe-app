@@ -30,7 +30,9 @@ async function updateRecipe(recipeId, formData) {
 			'https://res.cloudinary.com/dqeszgo28/image/upload/v1728739432/300_bebabf.png';
 	}
 
-	const ingredientsArray = JSON.parse(formData.get('ingredients'));
+	// Handle ingredients (make sure to parse JSON properly)
+	const ingredientsData = formData.get('ingredients');
+	const ingredientsArray = ingredientsData ? JSON.parse(ingredientsData) : [];
 	const ingredients = ingredientsArray.map((ingredientObj) => ({
 		ingredient: ingredientObj.ingredient,
 		quantity: ingredientObj.quantity,
