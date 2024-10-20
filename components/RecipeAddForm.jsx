@@ -66,9 +66,6 @@ const RecipeAddForm = () => {
     };
     return (
         <form onSubmit={handleSubmit} encType="multipart/form-data">
-            <Typography variant="h4" align="center" gutterBottom>
-                Add Recipe
-            </Typography>
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <TextField

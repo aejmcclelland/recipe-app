@@ -11,7 +11,11 @@ const RecipeEditForm = ({ recipe, categories = [] }) => {
     const [selectedCategory, setSelectedCategory] = useState(recipe.category);
     const [imageFile, setImageFile] = useState(null);
     const [deleteImage, setDeleteImage] = useState(false);
+    const [prepTime, setPrepTime] = useState(recipe.prepTime || ''); // Track prepTime
+    const [cookTime, setCookTime] = useState(recipe.cookTime || ''); // Track cookTime
+    const [serves, setServes] = useState(recipe.serves || ''); // Track serves
     const [ingredients, setIngredients] = useState(recipe.ingredients || []); // Initialize with recipe ingredients
+    const [method, setMethod] = useState(recipe.method || ''); // Track method
 
     const handleCategoryChange = (event) => {
         setSelectedCategory(event.target.value);
@@ -24,8 +28,10 @@ const RecipeEditForm = ({ recipe, categories = [] }) => {
     const handleDeleteImageChange = (event) => {
         setDeleteImage(event.target.checked);
     };
+    const handleMethodChange = (event) => {
+        setMethod(event.target.value);
+    };
 
-    // Handle ingredient change
     const handleIngredientChange = (index, field, value) => {
         const updatedIngredients = ingredients.map((ingredient, i) =>
             i === index ? { ...ingredient, [field]: value } : ingredient
@@ -141,9 +147,6 @@ const RecipeEditForm = ({ recipe, categories = [] }) => {
                                     value={ingredient.quantity}
                                     onChange={(e) => handleIngredientChange(index, 'quantity', e.target.value)}
                                     type="number"
-                                    slotProps={{
-                                        input: { step: "any" } // Updated
-                                    }}
                                     fullWidth
                                     variant="outlined"
                                     required
@@ -171,6 +174,55 @@ const RecipeEditForm = ({ recipe, categories = [] }) => {
                     </Button>
                 </Grid>
 
+                {/* Prep Time, Cook Time, and Serves Section */}
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        label="Prep Time (minutes)"
+                        name="prepTime"
+                        type="number"
+                        value={prepTime}
+                        onChange={(e) => setPrepTime(e.target.value)}
+                        fullWidth
+                        required
+                    />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        label="Cook Time (minutes)"
+                        name="cookTime"
+                        type="number"
+                        value={cookTime}
+                        onChange={(e) => setCookTime(e.target.value)}
+                        fullWidth
+                        required
+                    />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        label="Serves"
+                        name="serves"
+                        type="number"
+                        value={serves}
+                        onChange={(e) => setServes(e.target.value)}
+                        fullWidth
+                        required
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                        label="Method"
+                        name="method"
+                        value={method}
+                        onChange={(e) => setMethod(e.target.value)}
+                        multiline
+                        rows={4}
+                        fullWidth
+                        variant="outlined"
+                        required
+                    />
+                </Grid>
                 <Grid item xs={12}>
                     <Button
                         type="submit"

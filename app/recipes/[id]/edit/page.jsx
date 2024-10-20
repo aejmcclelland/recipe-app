@@ -38,7 +38,7 @@ const RecipeEditPage = async ({ params }) => {
                 <Box mt={2}>
                     <RecipeEditForm recipe={recipe} categories={serializedCategories} />
                 </Box>
-                <Box mt={4} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                {/* <Box mt={4} sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Button
                         variant="contained"
                         color="primary"
@@ -47,7 +47,7 @@ const RecipeEditPage = async ({ params }) => {
                         Edit Recipe
                     </Button>
                     <RecipeDeleteForm recipe={recipe} categories={serializedCategories} />
-                </Box>
+                </Box> */}
             </Paper>
         </Container>
     );
