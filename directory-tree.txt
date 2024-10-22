@@ -1,0 +1,63 @@
+.
+├── app
+│   ├── actions
+│   │   ├── addRecipe.js
+│   │   ├── deleteRecipe.js
+│   │   └── editRecipe.js
+│   ├── api
+│   │   └── auth
+│   │       └── [...nextauth]
+│   │           └── route.js
+│   ├── fonts
+│   │   └── fonts.js
+│   ├── layout.js
+│   ├── page.jsx
+│   ├── page.module.css
+│   └── recipes
+│       ├── [id]
+│       │   ├── edit
+│       │   │   └── page.jsx
+│       │   └── page.jsx
+│       ├── add
+│       │   └── page.jsx
+│       └── page.jsx
+├── assets
+│   ├── globals.css
+│   └── images
+│       └── logo.jpg
+├── components
+│   ├── Appbar.jsx
+│   ├── AuthProvider.jsx
+│   ├── BackToHomeButton.jsx
+│   ├── CategoryFilter.jsx
+│   ├── Drawer.jsx
+│   ├── FeaturedRecipes.jsx
+│   ├── Footer.jsx
+│   ├── RecipeAddForm.jsx
+│   ├── RecipeCard.jsx
+│   ├── RecipeDeleteForm.jsx
+│   ├── RecipeEditForm.jsx
+│   ├── RecipeOverviewCard.jsx
+│   ├── SearchBar.jsx
+│   └── SubmitButton.jsx
+├── config
+│   ├── cloudinary.js
+│   └── database.js
+├── directory-tree.txt
+├── hooks
+│   └── useFilter.js
+├── middleware
+│   └── converter.js
+├── models
+│   ├── Category.js
+│   ├── Ingredient.js
+│   └── Recipe.js
+├── package-lock.json
+├── theme
+│   └── theme.js
+└── utils
+    ├── authOptions.js
+    ├── convertToObject.js
+    └── fractionToDecimal.js
+
+20 directories, 41 files

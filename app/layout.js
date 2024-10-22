@@ -1,4 +1,5 @@
 import { ThemeProvider } from '@mui/material/styles';
+import AuthProvider from '@/components/AuthProvider';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Box, Container } from '@mui/material';
 import theme from '../theme/theme';
@@ -14,30 +15,35 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
 	return (
-		<html lang='en' className={archivo.className}>
-			<head>
-				<meta charSet='UTF-8' />
-				<meta name='viewport' content='width=device-width, initial-scale=1.0' />
-				<meta name='description' content={metadata.description} />
-				<title>{metadata.title}</title>
-			</head>
-			<body className={archivo.className}>
-				<ThemeProvider theme={theme}>
-					<CssBaseline /> {/* Ensures consistent baseline styling */}
-					<Box
-						sx={{
-							display: 'flex',
-							flexDirection: 'column',
-							minHeight: '100vh', // Full height of the viewport
-						}}>
-						<Appbar /> {/* AppBar component */}
-						<Container sx={{ flex: 1, py: 3 }}>
-							{children} {/* Main content will stretch */}
-						</Container>
-						<Footer /> {/* Footer component */}
-					</Box>
-				</ThemeProvider>
-			</body>
-		</html>
+		<AuthProvider>
+			<html lang='en' className={archivo.className}>
+				<head>
+					<meta charSet='UTF-8' />
+					<meta
+						name='viewport'
+						content='width=device-width, initial-scale=1.0'
+					/>
+					<meta name='description' content={metadata.description} />
+					<title>{metadata.title}</title>
+				</head>
+				<body className={archivo.className}>
+					<ThemeProvider theme={theme}>
+						<CssBaseline /> {/* Ensures consistent baseline styling */}
+						<Box
+							sx={{
+								display: 'flex',
+								flexDirection: 'column',
+								minHeight: '100vh', // Full height of the viewport
+							}}>
+							<Appbar /> {/* AppBar component */}
+							<Container sx={{ flex: 1, py: 3 }}>
+								{children} {/* Main content will stretch */}
+							</Container>
+							<Footer /> {/* Footer component */}
+						</Box>
+					</ThemeProvider>
+				</body>
+			</html>
+		</AuthProvider>
 	);
 }
