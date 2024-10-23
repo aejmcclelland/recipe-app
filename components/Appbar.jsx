@@ -2,6 +2,10 @@
 import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useMediaQuery } from '@mui/material';
+import { signIn, signOut, useSession, getProviders } from 'next-auth/react';
+import Avatar from '@mui/material/Avatar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -12,18 +16,36 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Drawer from '@mui/material/Drawer';
 import DrawerComponent from '../components/Drawer';
 import Link from 'next/link';
-import { useFilter } from '../hooks/useFilter';
 import Tooltip from '@mui/material/Tooltip';
-import AddCircleIcon from '@mui/icons-material/AddCircle'; // Add icon for "Add Recipe"
+import AddCircleIcon from '@mui/icons-material/AddCircle'; 
+import { useFilter } from '../hooks/useFilter';
 import { shadowsIntoLight } from '@/app/fonts/fonts';
 const drawerWidth = 240;
 
 export default function SearchAppBar({ onFilterChange }) {
+    const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const { data: session } = useSession();
+    const [providers, setProviders] = React.useState(null); // Store providers here
     const { handleFilterChange } = useFilter();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('tablet'));
     const [mobileOpen, setMobileOpen] = React.useState(false);
 
+    // Fetch providers
+    React.useEffect(() => {
+        const setAuthProviders = async () => {
+            const res = await getProviders();
+            setProviders(res);
+        };
+        setAuthProviders();
+    }, []);
+
+    const handleOpenUserMenu = (event) => {
+        setAnchorElUser(event.currentTarget);
+    };
+    const handleCloseUserMenu = () => {
+        setAnchorElUser(null);
+    };
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
@@ -75,17 +97,60 @@ export default function SearchAppBar({ onFilterChange }) {
                     </Link>
 
                     {/* Plus Icon with Tooltip to add a recipe */}
-                    <Box sx={{ ml: 'auto' }}>
-                        <Tooltip title="Add a Recipe" placement="bottom">
-                            <IconButton color="inherit">
-                                <Link href="/recipes/add" passHref>
-                                    <AddCircleIcon sx={{ fontSize: '2rem', ml: 2 }} />
-                                </Link>
-                            </IconButton>
-                        </Tooltip>
+                    {session && (
+                        <Box sx={{ ml: 'auto' }}>
+                            <Tooltip title="Add a Recipe" placement="bottom">
+                                <IconButton color="inherit">
+                                    <Link href="/recipes/add" passHref>
+                                        <AddCircleIcon sx={{ fontSize: '2rem', ml: 2 }} />
+                                    </Link>
+                                </IconButton>
+                            </Tooltip>
+                        </Box>
+                    )}
+
+                    {/* Show sign-in or user options based on session */}
+                    <Box sx={{ flexGrow: 0 }}>
+                        {session ? (
+                            <>
+                                <Tooltip title="Open settings">
+                                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                                        <Avatar alt={session.user.name} src={session.user.image} />
+                                    </IconButton>
+                                </Tooltip>
+                                <Menu
+                                    sx={{ mt: '45px' }}
+                                    id="menu-appbar"
+                                    anchorEl={anchorElUser}
+                                    anchorOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'right',
+                                    }}
+                                    keepMounted
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'right',
+                                    }}
+                                    open={Boolean(anchorElUser)}
+                                    onClose={handleCloseUserMenu}
+                                >
+                                    <MenuItem onClick={() => signOut()}>
+                                        <Typography textAlign="center">Logout</Typography>
+                                    </MenuItem>
+                                </Menu>
+                            </>
+                        ) : (
+                            providers &&
+                            Object.values(providers).map((provider) => (
+                                <MenuItem key={provider.name} onClick={() => signIn(provider.id)}>
+                                    <Typography textAlign="center">Login with {provider.name}</Typography>
+                                </MenuItem>
+                            ))
+                        )}
                     </Box>
                 </Toolbar>
             </AppBar>
+
             <nav>
                 <Drawer
                     variant="temporary"
