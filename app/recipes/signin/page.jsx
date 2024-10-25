@@ -5,6 +5,7 @@ import { Button, Typography, Box, TextField, Paper } from '@mui/material';
 
 export default function SignInPage() {
     const [providers, setProviders] = useState(null);
+    const [loginError, setLoginError] = useState(null);
 
     useEffect(() => {
         const loadProviders = async () => {
@@ -19,28 +20,40 @@ export default function SignInPage() {
             <Paper sx={{ padding: 4, width: '100%', maxWidth: 400 }}>
                 <Typography variant="h4" gutterBottom textAlign="center">Sign In</Typography>
 
+                {loginError && (
+                    <Typography color="error" sx={{ textAlign: 'center', mb: 2 }}>
+                        {loginError}
+                    </Typography>
+                )}
+
                 {providers && (
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-                        {/* Google Sign-In Button */}
                         {providers.google && (
                             <Button
                                 variant="contained"
                                 color="primary"
+                                fullWidth
                                 onClick={() => signIn(providers.google.id)}
+                                sx={{ mt: 2 }}
                             >
                                 Sign in with Google
                             </Button>
                         )}
 
-                        {/* Email/Password Sign-In Form */}
                         {providers.credentials && (
                             <form
                                 onSubmit={(e) => {
                                     e.preventDefault();
-                                    // Call signIn function with 'credentials' provider id
                                     const email = e.target.email.value;
                                     const password = e.target.password.value;
-                                    signIn('credentials', { redirect: false, email, password });
+                                    signIn('credentials', { redirect: false, email, password })
+                                        .then((res) => {
+                                            if (res?.ok) {
+                                                window.location.href = '/';
+                                            } else {
+                                                setLoginError("Invalid email or password. Please try again.");
+                                            }
+                                        });
                                 }}
                             >
                                 <TextField
@@ -50,6 +63,7 @@ export default function SignInPage() {
                                     fullWidth
                                     required
                                     margin="normal"
+                                    aria-label="Email"
                                 />
                                 <TextField
                                     label="Password"
@@ -58,6 +72,7 @@ export default function SignInPage() {
                                     fullWidth
                                     required
                                     margin="normal"
+                                    aria-label="Password"
                                 />
                                 <Button
                                     variant="contained"
