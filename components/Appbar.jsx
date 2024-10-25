@@ -89,7 +89,7 @@ export default function SearchAppBar({ onFilterChange }) {
                         ) : (
                             <>
                                 {/* Redirect to Sign-In page */}
-                                <MenuItem onClick={() => signIn()}>
+                                <MenuItem onClick={() => (window.location.href = '/recipes/signin')}>
                                     <Typography textAlign="center">Sign In</Typography>
                                 </MenuItem>
                                 {/* Redirect to Sign-Up page */}
