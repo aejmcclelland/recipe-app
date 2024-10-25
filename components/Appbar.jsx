@@ -94,7 +94,7 @@ export default function SearchAppBar({ onFilterChange }) {
                                     <Typography textAlign="center">Sign In</Typography>
                                 </MenuItem>
                                 {/* Redirect to Sign-Up page */}
-                                <MenuItem onClick={() => window.location.href = '/recipes/signup'}>
+                                <MenuItem onClick={() => window.location.href = '/recipes/register'}>
                                     <Typography textAlign="center">Register</Typography>
                                 </MenuItem>
                             </>

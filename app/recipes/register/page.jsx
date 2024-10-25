@@ -1,17 +1,18 @@
 // app/recipes/register/page.jsx
-import { Box, Typography, Paper } from '@mui/material';
+
+import { Box, Typography, Paper, Container } from '@mui/material';
 
 export default function RegisterPage() {
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper sx={{ padding: 4, width: '100%', maxWidth: 400 }}>
-                <Typography variant="h4" gutterBottom textAlign="center">
+        <Container maxWidth="sm" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 8 }}>
+            <Paper sx={{ padding: 4, width: '100%', textAlign: 'center' }}>
+                <Typography variant="h4" gutterBottom>
                     Register
                 </Typography>
-                <Typography variant="body1" textAlign="center" color="textSecondary">
+                <Typography variant="body1" color="textSecondary">
                     Registration form coming soon. Please check back later.
                 </Typography>
             </Paper>
-        </Box>
+        </Container>
     );
 }
