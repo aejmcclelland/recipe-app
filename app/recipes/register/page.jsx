@@ -1,6 +1,4 @@
 // app/recipes/register/page.jsx
-
-'use client';
 import { Box, Typography, Paper } from '@mui/material';
 
 export default function RegisterPage() {

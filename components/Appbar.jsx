@@ -36,10 +36,11 @@ export default function SearchAppBar({ onFilterChange }) {
                         <Box
                             sx={{
                                 display: 'flex',
-                                flexDirection: isMobile ? 'column' : 'row',
+                                //flexDirection: isMobile ? 'column' : 'row',
                                 alignItems: 'center',
                                 textAlign: isMobile ? 'center' : 'left',
                                 flexGrow: 1,
+                                justifyContent: 'center',
                             }}
                         >
                             <RestaurantOutlinedIcon sx={{ fontSize: '2rem', mr: 1 }} />
