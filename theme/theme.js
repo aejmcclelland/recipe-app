@@ -1,6 +1,5 @@
 'use client';
-import { createTheme } from '@mui/material/styles';
-import { alpha } from '@mui/material/styles';
+import { createTheme, alpha } from '@mui/material/styles';
 import { Archivo, Shadows_Into_Light } from 'next/font/google';
 
 const archivo = Archivo({
@@ -15,6 +14,35 @@ const shadowsIntoLight = Shadows_Into_Light({
 	display: 'swap',
 });
 
+// Define extended color palettes for sign-in page styling
+const blue = {
+	50: '#F0F7FF',
+	100: '#C2E0FF',
+	200: '#99CCF3',
+	300: '#66B2FF',
+	400: '#3399FF',
+	main: '#007FFF',
+	500: '#007FFF',
+	600: '#0072E5',
+	700: '#0059B2',
+	800: '#004C99',
+	900: '#003A75',
+};
+
+const grey = {
+	50: '#F3F6F9',
+	100: '#E7EBF0',
+	200: '#E0E3E7',
+	300: '#CDD2D7',
+	400: '#B2BAC2',
+	500: '#A0AAB4',
+	600: '#6F7E8C',
+	700: '#3E5060',
+	800: '#2D3843',
+	900: '#1A2027',
+};
+
+// Updated theme with merged settings
 const theme = createTheme({
 	breakpoints: {
 		values: {
@@ -26,29 +54,35 @@ const theme = createTheme({
 	},
 	palette: {
 		primary: {
-			main: '#d32f2f',
+			main: '#d32f2f', // Red primary as per existing theme
 		},
 		secondary: {
-			main: '#FEE9B2',
+			main: '#FEE9B2', // Light secondary
 		},
 		background: {
-			default: '#ffffff',
+			default: '#ffffff', // White background
 		},
+		common: {
+			black: '#1D1D1D',
+		},
+		text: {
+			primary: grey[900],
+			secondary: grey[700],
+		},
+		blue, // Adding blue palette for extended use cases
+		grey, // Adding grey palette for extended use cases
 	},
 	typography: {
-		typography: {
-			fontFamily: archivo.style.fontFamily, // Default font for most content
-			h6: {
-				fontFamily: shadowsIntoLight.style.fontFamily, // Special font for h6 headers
-			},
-		},
+		fontFamily: archivo.style.fontFamily, // Primary font family
 		h1: {
 			fontSize: '2.5rem',
 			fontWeight: 700,
+			color: blue[900],
 		},
 		h2: {
 			fontSize: '2rem',
 			fontWeight: 600,
+			color: blue[700],
 		},
 		h3: {
 			fontSize: '1.75rem',
@@ -59,7 +93,7 @@ const theme = createTheme({
 			fontWeight: 500,
 		},
 		h6: {
-			fontfamily: shadowsIntoLight.style.fontFamily,
+			fontFamily: shadowsIntoLight.style.fontFamily,
 			fontSize: '1.25rem',
 			fontWeight: 400,
 		},
@@ -70,6 +104,7 @@ const theme = createTheme({
 		button: {
 			fontSize: '1rem',
 			textTransform: 'none',
+			fontWeight: 700,
 		},
 	},
 	components: {
@@ -101,10 +136,10 @@ const theme = createTheme({
 				root: {
 					fontSize: '1rem',
 					textTransform: 'none',
-					backgroundColor: '#d32f2f', // Make buttons the same color as AppBar
-					color: '#ffffff', // White text for buttons
+					backgroundColor: '#d32f2f', // Primary button color
+					color: '#ffffff',
 					'&:hover': {
-						backgroundColor: alpha('#d32f2f', 0.85), // Slightly darker on hover
+						backgroundColor: alpha('#d32f2f', 0.85), // Darker on hover
 					},
 				},
 			},
@@ -116,10 +151,13 @@ const theme = createTheme({
 				},
 			},
 		},
-		MuiListItem: {
+		MuiAvatar: {
 			styleOverrides: {
 				root: {
-					paddingLeft: '16px',
+					width: 40,
+					height: 40,
+					fontSize: '1.25rem',
+					backgroundColor: blue[500], // Default avatar background
 				},
 			},
 		},
