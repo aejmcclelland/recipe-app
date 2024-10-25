@@ -9,6 +9,7 @@ export const authOptions = {
 			clientId: process.env.GOOGLE_CLIENT_ID,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 		}),
+
 		CredentialsProvider.default({
 			name: 'Credentials',
 			credentials: {
@@ -39,6 +40,7 @@ export const authOptions = {
 		},
 	},
 	pages: {
-		signIn: '/recipes/signin', // Directs to your custom sign-in page
+		signIn: '/recipes/signin',
+		callbackUrl: '/', // Directs to your custom sign-in page
 	},
 };

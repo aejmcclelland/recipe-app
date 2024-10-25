@@ -33,7 +33,7 @@ export default function SignInPage() {
                                 variant="contained"
                                 color="primary"
                                 fullWidth
-                                onClick={() => signIn(providers.google.id)}
+                                onClick={() => signIn(providers.google.id, { callbackUrl: '/' })}
                                 sx={{ mt: 2 }}
                             >
                                 Sign in with Google
@@ -46,7 +46,7 @@ export default function SignInPage() {
                                     e.preventDefault();
                                     const email = e.target.email.value;
                                     const password = e.target.password.value;
-                                    signIn('credentials', { redirect: false, email, password })
+                                    signIn('credentials', { redirect: false, email, password, callbackUrl: '/' })
                                         .then((res) => {
                                             if (res?.ok) {
                                                 window.location.href = '/';
