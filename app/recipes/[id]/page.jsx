@@ -20,7 +20,7 @@ export default async function RecipeDetailPage({ params }) {
     const { id: recipeId } = params;
 
     // Fetch the recipe by its unique ID from the URL
-    // When fetching the recipe
+
     const recipe = await Recipe.findById(recipeId)
         .populate({ path: 'ingredients.ingredient', model: Ingredient })
         .lean();
