@@ -1,5 +1,5 @@
 // app/recipes/signin/page.jsx
-import SignInForm from '@/components/signinform';
+import SignInForm from '@/components/SignInForm';
 import { Box, Container } from '@mui/material';
 
 export default function SignInPage() {
