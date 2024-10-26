@@ -1,5 +1,5 @@
 import RecipeAddForm from '@/components/RecipeAddForm';
-import BackToHomeButton from '@/components/BacktoHomeButton';
+import BackToHomeButton from '@/components/BackToHomeButton';
 import { Box, Container } from '@mui/material';
 
 const AddRecipePage = () => {

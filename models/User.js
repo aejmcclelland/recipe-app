@@ -4,12 +4,13 @@ import bcrypt from 'bcrypt';
 const userSchema = new mongoose.Schema({
 	email: { type: String, required: true, unique: true },
 	password: { type: String, required: true },
-	name: String, // Optional: store user's name or Google profile name
+	firstName: { type: String, required: true },
+	lastName: { type: String, required: true },
 	image: String, // Optional: store Google profile image URL or Cloudinary URL
 
 	bookmarks: [
 		{
-			type: Schema.Types.ObjectId,
+			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Recipe',
 		},
 	],
