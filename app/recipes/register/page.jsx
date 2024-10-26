@@ -26,14 +26,14 @@ const RegisterPage = () => {
                         boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
                         display: 'flex',
                         flexDirection: 'column',
-                        alignItems: 'center', // Center items inside Paper
-                        textAlign: 'center', // Align text inside
+                        alignItems: 'center',
+                        textAlign: 'center',
                     }}
                 >
                     <Typography
                         variant="h4"
                         sx={{
-                            mb: 1, // Reduced bottom margin
+                            mb: 1,
                             fontWeight: 600,
                             color: 'primary.main',
                             textTransform: 'uppercase',
