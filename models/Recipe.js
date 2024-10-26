@@ -50,6 +50,11 @@ const recipeSchema = new Schema({
 		ref: 'Category',
 		required: true,
 	},
+	owner: {
+		type: Schema.Types.ObjectId,
+		ref: 'User',
+		required: true,
+	},
 });
 
 const Recipe = models.Recipe || model('Recipe', recipeSchema);

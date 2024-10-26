@@ -5,9 +5,18 @@ import connectDB from '@/config/database';
 import cloudinary from '@/config/cloudinary';
 import Recipe from '@/models/Recipe';
 import Ingredient from '@/models/Ingredient';
+import { getSessionUser } from '@/utils/getSessionUser';
 
 async function addRecipe(formData) {
 	await connectDB();
+
+	// Get the user's session
+	const sessionUser = await getSessionUser();
+
+	if (!sessionUser || !sessionUser.userId) {
+		throw new Error('You must be logged in to add a recipe');
+	}
+	const { userId } = sessionUser;
 
 	const categoryName = formData.get('category');
 	const category = await Category.findOne({
@@ -23,10 +32,8 @@ async function addRecipe(formData) {
 	const imageFile = formData.get('imageFile');
 
 	if (imageFile && imageFile.size > 0) {
-		// Convert the file object into a buffer and upload to Cloudinary
 		const buffer = Buffer.from(await imageFile.arrayBuffer());
 
-		// Upload to Cloudinary
 		const result = await new Promise((resolve, reject) => {
 			const uploadStream = cloudinary.uploader.upload_stream(
 				{ folder: 'recipes' },
@@ -51,25 +58,20 @@ async function addRecipe(formData) {
 	// Convert ingredients array to store ObjectIDs
 	const ingredientPromises = ingredientsArray.map(async (ingredientObj) => {
 		const ingredientName = ingredientObj.ingredient.trim().toLowerCase();
-
-		// Find the ingredient without using lean() since we might need to create and save it
 		let ingredient = await Ingredient.findOne({ name: ingredientName });
 
 		if (!ingredient) {
-			// Create and save a new ingredient only if it doesn't exist
 			ingredient = new Ingredient({ name: ingredientName });
 			await ingredient.save();
 		}
 
-		// Return the formatted ingredient data for the recipe
 		return {
-			ingredient: ingredient._id, // Store the ObjectID reference to the ingredient
+			ingredient: ingredient._id,
 			quantity: ingredientObj.quantity,
 			unit: ingredientObj.unit,
 		};
 	});
 
-	// Wait for all ingredient lookups/creations to complete
 	const ingredients = await Promise.all(ingredientPromises);
 
 	const recipeData = {
@@ -81,14 +83,13 @@ async function addRecipe(formData) {
 		serves: formData.get('serves'),
 		image: imageUrl,
 		category: category._id,
+		user: userId,
 	};
 
 	try {
 		const newRecipe = new Recipe(recipeData);
 		await newRecipe.save();
-		console.log('Full Recipe Object:', newRecipe);
-		console.log('Recipe ingredients:', newRecipe.ingredients);
-		return newRecipe._id.toString();
+		return newRecipe._id.toString(); // Return the ID for redirection
 	} catch (error) {
 		console.error('Error saving recipe:', error);
 		throw new Error('Failed to save the recipe');

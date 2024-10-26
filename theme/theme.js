@@ -77,12 +77,10 @@ const theme = createTheme({
 		h1: {
 			fontSize: '2.5rem',
 			fontWeight: 700,
-			color: blue[900],
 		},
 		h2: {
 			fontSize: '2rem',
 			fontWeight: 600,
-			color: blue[700],
 		},
 		h3: {
 			fontSize: '1.75rem',

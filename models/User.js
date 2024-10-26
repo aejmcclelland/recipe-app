@@ -6,6 +6,13 @@ const userSchema = new mongoose.Schema({
 	password: { type: String, required: true },
 	name: String, // Optional: store user's name or Google profile name
 	image: String, // Optional: store Google profile image URL or Cloudinary URL
+
+	bookmarks: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: 'Recipe',
+		},
+	],
 });
 
 userSchema.pre('save', async function (next) {
