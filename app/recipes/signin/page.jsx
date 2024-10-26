@@ -2,7 +2,8 @@
 import SignInForm from '@/components/SignInForm';
 import { Box, Container } from '@mui/material';
 
-export default function SignInPage() {
+const SignInPage = () => {
+
     return (
         <section>
             <Container
@@ -22,3 +23,4 @@ export default function SignInPage() {
         </section>
     );
 }
+export default SignInPage;
