@@ -2,7 +2,7 @@
 'use client';
 import Link from 'next/link';
 import { Button } from '@mui/material';
-import HomeIcon from '@mui/icons-material/Home';
+import HomeIcon from '@mui/icons-material/Home/test';
 
 const BackToHomeButton = () => {
     return (
