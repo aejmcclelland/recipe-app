@@ -9,7 +9,6 @@ import { Container, Paper, Typography, Box } from '@mui/material';
 const RecipeEditPage = async ({ params }) => {
     await connectDB();
 
-
     const recipeDoc = await Recipe.findById(params.id)
         .populate('ingredients.ingredient')
         .lean();

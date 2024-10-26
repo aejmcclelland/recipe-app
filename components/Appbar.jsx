@@ -85,17 +85,24 @@ export default function SearchAppBar({ onFilterChange }) {
                         sx={{ mt: '45px' }}
                     >
                         {session ? (
-                            <MenuItem onClick={() => signOut()}>Logout</MenuItem>
-                        ) : [
-                            // Redirect to Sign-In page
-                            <MenuItem key="signin" onClick={() => (window.location.href = '/recipes/signin')}>
-                                <Typography textAlign="center">Sign In</Typography>
-                            </MenuItem>,
-                            // Redirect to Sign-Up page
-                            <MenuItem key="register" onClick={() => (window.location.href = '/recipes/register')}>
-                                <Typography textAlign="center">Register</Typography>
-                            </MenuItem>
-                        ]}
+                            <>
+                                <MenuItem onClick={handleCloseUserMenu}>
+                                    <Link href="/recipes/profile" passHref>
+                                        <Typography textAlign="center">Profile</Typography>
+                                    </Link>
+                                </MenuItem>
+                                <MenuItem onClick={() => signOut()}>Logout</MenuItem>
+                            </>
+                        ) : (
+                            [
+                                <MenuItem key="signin" onClick={() => (window.location.href = '/recipes/signin')}>
+                                    <Typography textAlign="center">Sign In</Typography>
+                                </MenuItem>,
+                                <MenuItem key="register" onClick={() => (window.location.href = '/recipes/register')}>
+                                    <Typography textAlign="center">Register</Typography>
+                                </MenuItem>
+                            ]
+                        )}
                     </Menu>
                 </Toolbar>
             </AppBar>
