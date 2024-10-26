@@ -9,7 +9,7 @@ import { Container, Paper, Typography, Box, Button } from '@mui/material';
 const RecipeEditPage = async ({ params }) => {
     await connectDB();
 
-    // Find the recipe in the DB and convert it to a plain JavaScript object
+
     const recipeDoc = await Recipe.findById(params.id)
         .populate('ingredients.ingredient')
         .lean();
