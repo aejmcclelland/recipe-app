@@ -1,5 +1,5 @@
 import RegisterForm from '@/components/RegisterUser';
-import BackToHomeButton from '@/components/BackToHomeButton';
+import BackToHomeButton from '@/components/BackTOHomeButton';
 import { Box, Container, Typography, Paper } from '@mui/material';
 
 const RegisterPage = () => {
