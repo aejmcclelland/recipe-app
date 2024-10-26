@@ -11,7 +11,7 @@ const RecipeEditPage = async ({ params }) => {
 
     // Find the recipe in the DB and convert it to a plain JavaScript object
     const recipeDoc = await Recipe.findById(params.id)
-        .populate('ingredients.ingredient') // Populate the ingredient names
+        .populate('ingredients.ingredient')
         .lean();
     const recipe = convertToSerializeableObject(recipeDoc);
 
