@@ -3,34 +3,25 @@
 import User from '@/models/User';
 import dbConnect from '@/config/database';
 
-export async function POST(req) {
+export default async function registerUser(formData) {
 	await dbConnect();
-	const { firstName, lastName, email, password } = await req.json();
+	const { firstName, lastName, email, password } = formData;
 
 	try {
 		const existingUser = await User.findOne({ email });
-		if (existingUser) {
-			return new Response(JSON.stringify({ error: 'User already exists' }), {
-				status: 400,
-			});
-		}
+		if (existingUser) throw new Error('User already exists');
 
 		const newUser = new User({
 			firstName,
 			lastName,
 			email,
-			password, // Will be hashed by the pre-save middleware
+			password,
 		});
 
 		await newUser.save();
-		return new Response(
-			JSON.stringify({ message: 'User registered successfully' }),
-			{ status: 201 }
-		);
+		return { message: 'User registered successfully' };
 	} catch (error) {
-		console.error(error);
-		return new Response(JSON.stringify({ error: 'Error registering user' }), {
-			status: 500,
-		});
+		console.error('Registration error:', error);
+		throw new Error('Error registering user');
 	}
 }
