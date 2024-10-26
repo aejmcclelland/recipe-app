@@ -4,7 +4,7 @@ import connectDB from '@/config/database';
 import Recipe from '@/models/Recipe';
 import Category from '@/models/Category'; // Import Category model
 import { convertToSerializeableObject } from '@/utils/convertToObject';
-import { Container, Paper, Typography, Box, Button } from '@mui/material';
+import { Container, Paper, Typography, Box } from '@mui/material';
 
 const RecipeEditPage = async ({ params }) => {
     await connectDB();
