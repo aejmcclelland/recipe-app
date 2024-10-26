@@ -38,16 +38,12 @@ const RecipeEditPage = async ({ params }) => {
                 <Box mt={2}>
                     <RecipeEditForm recipe={recipe} categories={serializedCategories} />
                 </Box>
-                {/* <Box mt={4} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        href={`/recipes/${recipe._id}/edit`}
-                    >
-                        Edit Recipe
-                    </Button>
-                    <RecipeDeleteForm recipe={recipe} categories={serializedCategories} />
-                </Box> */}
+                <Box mt={4}>
+                    <Typography variant="h5" component="h2" align="center" gutterBottom>
+                        Delete Recipe
+                    </Typography>
+                    <RecipeDeleteForm recipe={recipe} />
+                </Box>
             </Paper>
         </Container>
     );
