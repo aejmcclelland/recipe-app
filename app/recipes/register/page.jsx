@@ -21,7 +21,7 @@ const RegisterPage = () => {
                     sx={{
                         padding: 1,
                         width: '100%',
-                        maxWidth: 400, // Ensure max width for centering
+                        maxWidth: 400,
                         borderRadius: 2,
                         boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
                         display: 'flex',
