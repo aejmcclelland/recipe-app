@@ -6,7 +6,7 @@ import { Box, Container } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import BackToHomeButton from '@/components/BackToHomeButton';
-import SearchBar from '@/components/SearchBar'; // Import the SearchBar component
+import SearchBar from '@/components/SearchBar';
 // Fetch the data from MongoDB using Mongoose
 export default async function RecipesPage({ searchParams }) {
     await connectDB();
