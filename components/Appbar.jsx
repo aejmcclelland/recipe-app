@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useMediaQuery, Avatar, Menu, MenuItem, AppBar, Box, Toolbar, IconButton, Typography, Tooltip } from '@mui/material';
 import { RestaurantOutlined as RestaurantOutlinedIcon, Menu as MenuIcon, AddCircle as AddCircleIcon, AccountCircle as AccountCircleIcon } from '@mui/icons-material';
-import { signIn, signOut, useSession, getProviders } from 'next-auth/react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import Drawer from '@mui/material/Drawer';
 import DrawerComponent from '../components/Drawer';
@@ -36,7 +36,6 @@ export default function SearchAppBar({ onFilterChange }) {
                         <Box
                             sx={{
                                 display: 'flex',
-                                //flexDirection: isMobile ? 'column' : 'row',
                                 alignItems: 'center',
                                 textAlign: isMobile ? 'center' : 'left',
                                 flexGrow: 1,
@@ -87,18 +86,16 @@ export default function SearchAppBar({ onFilterChange }) {
                     >
                         {session ? (
                             <MenuItem onClick={() => signOut()}>Logout</MenuItem>
-                        ) : (
-                            <>
-                                {/* Redirect to Sign-In page */}
-                                <MenuItem onClick={() => (window.location.href = '/recipes/signin')}>
-                                    <Typography textAlign="center">Sign In</Typography>
-                                </MenuItem>
-                                {/* Redirect to Sign-Up page */}
-                                <MenuItem onClick={() => window.location.href = '/recipes/register'}>
-                                    <Typography textAlign="center">Register</Typography>
-                                </MenuItem>
-                            </>
-                        )}
+                        ) : [
+                            // Redirect to Sign-In page
+                            <MenuItem key="signin" onClick={() => (window.location.href = '/recipes/signin')}>
+                                <Typography textAlign="center">Sign In</Typography>
+                            </MenuItem>,
+                            // Redirect to Sign-Up page
+                            <MenuItem key="register" onClick={() => (window.location.href = '/recipes/register')}>
+                                <Typography textAlign="center">Register</Typography>
+                            </MenuItem>
+                        ]}
                     </Menu>
                 </Toolbar>
             </AppBar>
