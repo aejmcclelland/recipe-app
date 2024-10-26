@@ -4,7 +4,7 @@ import Ingredient from '@/models/Ingredient';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import RecipeCard from '@/components/RecipeCard';
 import { Box, Typography, Container, Button } from '@mui/material';
-import BackToHomeButton from '@/components/BackTOHomeButton';
+import BackToHomeButton from '@/components/BackToHomeButton';
 import Link from 'next/link';
 
 export default async function RecipeDetailPage({ params }) {
