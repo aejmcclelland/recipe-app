@@ -39,9 +39,7 @@ const RecipeEditPage = async ({ params }) => {
                     <RecipeEditForm recipe={recipe} categories={serializedCategories} />
                 </Box>
                 <Box mt={4}>
-                    <Typography variant="h5" component="h2" align="center" gutterBottom>
-                        Delete Recipe
-                    </Typography>
+
                     <RecipeDeleteForm recipe={recipe} />
                 </Box>
             </Paper>
