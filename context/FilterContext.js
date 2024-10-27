@@ -10,10 +10,9 @@ export function useFilter() {
 }
 
 export function FilterProvider({ children }) {
-	const [selectedCategory, setSelectedCategory] = useState('All');
+	const [selectedCategory, setSelectedCategory] = useState('All'); // Default to "All"
 
 	const onFilterChange = (category) => {
-		console.log('Category changed to:', category);
 		setSelectedCategory(category);
 	};
 

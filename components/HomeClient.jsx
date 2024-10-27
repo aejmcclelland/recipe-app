@@ -9,10 +9,11 @@ import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 export default function HomeClient({ recipes }) {
     const { selectedCategory } = useFilter();
 
-    // Filter recipes based on selectedCategory
+    // Filter recipes if a category is selected, otherwise show all
     const filteredRecipes = selectedCategory === 'All'
         ? recipes
         : recipes.filter(recipe => recipe.category?.name === selectedCategory);
+
 
 
     return (
