@@ -21,7 +21,6 @@ export default function SearchAppBar() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('tablet'));
     const [mobileOpen, setMobileOpen] = React.useState(false);
-    const { onFilterChange } = useFilter();
     const { selectedCategory } = useFilter();
 
 
