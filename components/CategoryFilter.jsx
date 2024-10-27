@@ -1,7 +1,9 @@
 'use client';
 import { Button, Box } from '@mui/material';
+import { useFilter } from '@/context/FilterContext';
 
-export default function CategoryFilter({ onFilterChange }) {
+export default function CategoryFilter() {
+    const { onFilterChange } = useFilter();
 
     return (
         <Box
@@ -15,6 +17,14 @@ export default function CategoryFilter({ onFilterChange }) {
                 width: '100%', // Ensures full width
             }}
         >
+            <Button
+
+                fullWidth
+                onClick={() => { console.log('All categories clicked'); onFilterChange('All') }}
+                sx={{ textTransform: 'none' }} // Optional: Remove button text capitalization
+            >
+                All
+            </Button>
             <Button
 
                 fullWidth
