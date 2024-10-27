@@ -7,5 +7,10 @@ export default withAuth({
 });
 
 export const config = {
-	matcher: ['/recipes/add', '/recipes/:id/edit', '/profile'],
+	matcher: [
+		'/recipes/add',
+		'/recipes/:id/edit',
+		'/recipes/profile',
+		'/recipes/:id',
+	],
 };

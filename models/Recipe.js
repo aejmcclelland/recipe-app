@@ -50,7 +50,7 @@ const recipeSchema = new Schema({
 		ref: 'Category',
 		required: true,
 	},
-	owner: {
+	user: {
 		type: Schema.Types.ObjectId,
 		ref: 'User',
 		required: true,

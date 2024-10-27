@@ -8,6 +8,7 @@ import Link from 'next/link';
 export default function SignInForm() {
     const [providers, setProviders] = useState(null);
     const [loginError, setLoginError] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const loadProviders = async () => {
@@ -36,10 +37,20 @@ export default function SignInForm() {
                             <Button
                                 variant="contained"
                                 color="primary"
-                                onClick={() => signIn(providers.google.id, { callbackUrl: '/' })}
+                                disabled={isLoading}
+                                onClick={async () => {
+                                    setIsLoading(true);
+                                    try {
+                                        await signIn(providers.google.id, { callbackUrl: '/' });
+                                    } catch (error) {
+                                        setLoginError("There was an issue with Google Sign-In. Please try again.");
+                                    } finally {
+                                        setIsLoading(false);
+                                    }
+                                }}
                                 sx={{ mt: 2, width: '100%', maxWidth: 300 }}
                             >
-                                Sign in with Google
+                                {isLoading ? "Signing in..." : "Sign in with Google"}
                             </Button>
                         )}
 

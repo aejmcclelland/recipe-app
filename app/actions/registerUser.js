@@ -3,6 +3,7 @@
 import User from '@/models/User';
 import dbConnect from '@/config/database';
 
+
 export default async function registerUser(formData) {
 	await dbConnect();
 	const { firstName, lastName, email, password } = formData;
@@ -15,7 +16,7 @@ export default async function registerUser(formData) {
 			firstName,
 			lastName,
 			email,
-			password,
+			...(password && { password }),
 		});
 
 		await newUser.save();

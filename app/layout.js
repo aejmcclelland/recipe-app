@@ -8,6 +8,8 @@ import '../assets/globals.css';
 import { FilterProvider } from '@/context/FilterContext';
 import { archivo, shadowsIntoLight } from '@/app/fonts/fonts';
 import Footer from '@/components/Footer';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const metadata = {
 	title: ' Welcome to Rebekah&#39;s Recipes!',
@@ -43,6 +45,7 @@ export default function RootLayout({ children }) {
 								</Container>
 								<Footer /> {/* Footer component */}
 							</Box>
+							<ToastContainer />
 						</ThemeProvider>
 					</FilterProvider>
 				</body>

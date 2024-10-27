@@ -5,6 +5,9 @@ import Grid from '@mui/material/Grid2';
 import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
+
+
 
 const RecipeEditForm = ({ recipe, categories = [] }) => {
     const router = useRouter();
@@ -28,9 +31,9 @@ const RecipeEditForm = ({ recipe, categories = [] }) => {
     const handleDeleteImageChange = (event) => {
         setDeleteImage(event.target.checked);
     };
-    const handleMethodChange = (event) => {
-        setMethod(event.target.value);
-    };
+    // const handleMethodChange = (event) => {
+    //     setMethod(event.target.value);
+    // };
 
     const handleIngredientChange = (index, field, value) => {
         const updatedIngredients = ingredients.map((ingredient, i) =>
@@ -42,6 +45,10 @@ const RecipeEditForm = ({ recipe, categories = [] }) => {
     const handleAddIngredient = () => {
         setIngredients([...ingredients, { ingredient: '', quantity: '', unit: '' }]);
     };
+
+    const notifySuccess = () => toast.success("Recipe updated successfully!");
+    const notifyError = () => toast.error("Error updating recipe!");
+
 
     const updateRecipeById = async (event) => {
         event.preventDefault();
@@ -58,9 +65,12 @@ const RecipeEditForm = ({ recipe, categories = [] }) => {
         formData.append('deleteImage', deleteImage);
 
         try {
-            await updateRecipe(recipe._id, formData);
-            router.push(`/recipes/${recipe._id}`); // Redirect to the updated recipe's page after a successful update
+            // Await the returned recipe ID to ensure the update completed
+            const recipeId = await updateRecipe(recipe._id, formData);
+            router.push(`/recipes/${recipeId}`);
+            notifySuccess();
         } catch (error) {
+            notifyError();
             console.error('Error updating recipe:', error);
         }
     };

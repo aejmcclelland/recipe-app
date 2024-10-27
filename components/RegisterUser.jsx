@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Box, TextField, Button, Paper, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 import registerUser from '@/app/actions/registerUser';
 
 const RegisterForm = () => {
@@ -23,11 +24,24 @@ const RegisterForm = () => {
         e.preventDefault();
 
         try {
-            await registerUser(formData);
-            router.push('/recipes/signin');
-        } catch (err) {
-            console.error('Registration error:', err);
-            setError(err.message || 'Failed to register user');
+            const response = await registerUser(formData);
+            toast.success(response.message || "User registered successfully!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        } catch (error) {
+            toast.error(error.message || "Error registering user.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
         }
     };
 

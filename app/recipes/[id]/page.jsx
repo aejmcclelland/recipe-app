@@ -6,8 +6,12 @@ import RecipeCard from '@/components/RecipeCard';
 import { Box, Typography, Container, Button } from '@mui/material';
 import BackToHomeButton from '@/components/BackToHomeButton';
 import Link from 'next/link';
+import { getSessionUser } from '@/utils/getSessionUser';
+import { redirect } from 'next/navigation';
+
 
 export default async function RecipeDetailPage({ params }) {
+    const sessionUser = await getSessionUser();
 
     // NOTE: check if running in production on vercel and get
     // the public URL at build time for the ShareButtons, or fall back to localhost in development.
@@ -57,11 +61,13 @@ export default async function RecipeDetailPage({ params }) {
             >
                 <RecipeCard recipe={serializedRecipe} /> {/* Using updated RecipeCard */}
             </Box>
-            <Link href={`/recipes/${recipe._id}/edit`}>
-                <Button variant="contained" color="primary" sx={{ mt: 2 }}>
-                    Edit Recipe
-                </Button>
-            </Link>
+            {sessionUser && (
+                <Link href={`/recipes/${recipe._id}/edit`}>
+                    <Button variant="contained" color="primary" sx={{ mt: 2 }}>
+                        Edit Recipe
+                    </Button>
+                </Link>
+            )}
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 <BackToHomeButton />
             </Box>

@@ -2,7 +2,8 @@ import RecipeEditForm from '@/components/RecipeEditForm';
 import RecipeDeleteForm from '@/components/RecipeDeleteForm';
 import connectDB from '@/config/database';
 import Recipe from '@/models/Recipe';
-import Category from '@/models/Category'; // Import Category model
+import Category from '@/models/Category';
+import Ingredient from '@/models/Ingredient';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import { Container, Paper, Typography, Box } from '@mui/material';
 
