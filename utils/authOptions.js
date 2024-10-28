@@ -94,22 +94,31 @@ export const authOptions = {
 		async signIn({ user, account, profile }) {
 			await dbConnect();
 
-			// Check if the user already exists in the database
-			let existingUser = await User.findOne({ email: profile.email });
+			const existingUser = await User.findOne({ email: profile.email });
 
-			// If the user doesn't exist, create a new one with 'google' as authProvider
-			if (!existingUser) {
-				existingUser = await User.create({
-					email: profile.email,
-					firstName: profile.given_name,
-					lastName: profile.family_name,
-					image: profile.picture,
-					authProvider: 'google', // Ensures Google users don’t need a password
-				});
+			if (existingUser) {
+				if (
+					existingUser.authProvider !== 'google' &&
+					account.provider === 'google'
+				) {
+					// Redirect to the sign-in page with an error message in the query parameters
+					return `/recipes/signin?error=account_exists`;
+				}
+
+				user.id = existingUser._id;
+				return true;
 			}
 
-			user.id = existingUser._id; // Attach MongoDB user ID to the session
-			return true; // Proceed with sign-in
+			const newUser = await User.create({
+				email: profile.email,
+				firstName: profile.given_name,
+				lastName: profile.family_name,
+				image: profile.picture,
+				authProvider: 'google',
+			});
+
+			user.id = newUser._id;
+			return true;
 		},
 		async session({ session, token }) {
 			session.user = token.user;

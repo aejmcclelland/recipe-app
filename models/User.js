@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
 		type: String,
 		required: function () {
 			// Require password only if the authProvider is 'local'
-			return this.authProvider === 'local';
+			return this.authProvider !== 'google';
 		},
 	},
 	firstName: { type: String, required: true },

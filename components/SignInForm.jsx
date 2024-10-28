@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { signIn, getProviders } from 'next-auth/react';
 import { Button, Typography, Box, TextField, Paper } from '@mui/material';
+import { toast } from 'react-toastify';
 import Link from 'next/link';
 
 export default function SignInForm() {
@@ -16,6 +17,10 @@ export default function SignInForm() {
             setProviders(authProviders);
         };
         loadProviders();
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('error') === 'account_exists') {
+            toast.error('An account with this email already exists. Please sign in with email and password.');
+        }
     }, []);
 
     return (
