@@ -94,22 +94,22 @@ export const authOptions = {
 		async signIn({ user, account, profile }) {
 			await dbConnect();
 
-			// Check if the user already exists in your database
+			// Check if the user already exists in the database
 			let existingUser = await User.findOne({ email: profile.email });
 
-			// If the user doesn't exist, create them
+			// If the user doesn't exist, create a new one with 'google' as authProvider
 			if (!existingUser) {
 				existingUser = await User.create({
 					email: profile.email,
 					firstName: profile.given_name,
 					lastName: profile.family_name,
 					image: profile.picture,
-					// You can set a default password or leave it undefined for Google users
+					authProvider: 'google', // Ensures Google users don’t need a password
 				});
 			}
 
-			user.id = existingUser._id; // Attach MongoDB user ID for session purposes
-			return true; // Allow sign-in
+			user.id = existingUser._id; // Attach MongoDB user ID to the session
+			return true; // Proceed with sign-in
 		},
 		async session({ session, token }) {
 			session.user = token.user;
