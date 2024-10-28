@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import connectDB from '../../config/database';
 import Recipe from '../../models/Recipe';
 import { Box, Container } from '@mui/material';
