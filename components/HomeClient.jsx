@@ -1,6 +1,7 @@
 // components/HomeClient.jsx
 'use client';
 import { useFilter } from '@/context/FilterContext';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Box, Container, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
@@ -8,12 +9,16 @@ import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 
 export default function HomeClient({ recipes }) {
     const { selectedCategory } = useFilter();
+    const [filteredRecipes, setFilteredRecipes] = useState(recipes);
 
     // Filter recipes if a category is selected, otherwise show all
-    const filteredRecipes = selectedCategory === 'All'
-        ? recipes
-        : recipes.filter(recipe => recipe.category?.name === selectedCategory);
-
+    useEffect(() => {
+        setFilteredRecipes(
+            selectedCategory === 'All'
+                ? recipes
+                : recipes.filter(recipe => recipe.category?.name === selectedCategory)
+        );
+    }, [selectedCategory, recipes]);
 
 
     return (
@@ -35,9 +40,11 @@ export default function HomeClient({ recipes }) {
                         </Grid>
                     ))
                 ) : (
-                    <Typography variant="body1" align="center">
-                        No recipes found for this category.
-                    </Typography>
+                    <Box sx={{ textAlign: 'center', mt: 4 }}>
+                        <Typography variant="body1" align="center">
+                            No recipes found for this category.
+                        </Typography>
+                    </Box>
                 )}
             </Grid>
         </Container>

@@ -5,6 +5,8 @@ import Grid from '@mui/material/Grid2'; // For Material UI Grid2 system
 import addRecipe from '@/app/actions/addRecipe';
 import { fractionToDecimal } from '@/utils/fractionToDecimal';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
+
 
 const RecipeAddForm = () => {
     const router = useRouter();
@@ -33,7 +35,7 @@ const RecipeAddForm = () => {
 
         // Process ingredients, converting any fraction quantities to decimals
         const processedIngredients = ingredients.map((ingredient) => {
-            const quantity = ingredient.quantity.includes('/')
+            const quantity = typeof ingredient.quantity === 'string' && ingredient.quantity.includes('/')
                 ? fractionToDecimal(ingredient.quantity)
                 : ingredient.quantity;
             return {
@@ -55,15 +57,17 @@ const RecipeAddForm = () => {
             const recipeId = await addRecipe(formData); // Capture the returned recipeId
 
             if (recipeId) {
+                toast.success("Recipe added successfully!");
                 // Redirect user to the newly created recipe page
                 router.push(`/recipes/${recipeId}`);
             } else {
-                console.error('Recipe creation failed.');
+                throw new Error('Recipe creation failed.');
             }
         } catch (error) {
             console.error('Error submitting form:', error);
+            toast.error("Error adding recipe. Please try again.");
         }
-    };
+    }
     return (
         <form onSubmit={handleSubmit} encType="multipart/form-data">
             <Grid container spacing={3}>
@@ -210,5 +214,6 @@ const RecipeAddForm = () => {
         </form>
     );
 };
+
 
 export default RecipeAddForm;

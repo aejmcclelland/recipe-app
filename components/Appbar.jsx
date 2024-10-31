@@ -30,12 +30,6 @@ export default function SearchAppBar() {
     const handleCloseUserMenu = () => setAnchorElUser(null);
     const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
-    // Function to update the URL with the selected category
-    // const handleCategoryChange = (category) => {
-    //     const params = new URLSearchParams(window.location.search);
-    //     params.set('category', category);
-    //     router.push(`${pathname}?${params.toString()}`);
-    // };
 
     return (
         <Box sx={{ flexGrow: 1 }}>
