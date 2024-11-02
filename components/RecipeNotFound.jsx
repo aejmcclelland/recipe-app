@@ -10,8 +10,12 @@ export default function RecipeNotFoundRedirect() {
 
     useEffect(() => {
         toast.error('Recipe not found');
-        router.push('/'); // Redirect to home after showing the toast
-    }, []);
+        const timer = setTimeout(() => {
+            router.push('/');
+        }, 2000); // Redirect after 2 seconds
+
+        return () => clearTimeout(timer);
+    }, [router]);
 
     return null; // This component doesn’t render anything on the page itself
 }

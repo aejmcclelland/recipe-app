@@ -1,9 +1,8 @@
-// app/recipes/signin/page.jsx
 import SignInForm from '@/components/SignInForm';
 import { Box, Container } from '@mui/material';
+import { Suspense } from 'react';
 
 const SignInPage = () => {
-
     return (
         <section>
             <Container
@@ -17,10 +16,13 @@ const SignInPage = () => {
                 }}
             >
                 <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-                    <SignInForm />
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <SignInForm />
+                    </Suspense>
                 </Box>
             </Container>
         </section>
     );
-}
+};
+
 export default SignInPage;

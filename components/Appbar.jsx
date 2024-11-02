@@ -11,6 +11,7 @@ import DrawerComponent from '../components/Drawer';
 import { shadowsIntoLight } from '@/app/fonts/fonts';
 import { useFilter } from '@/context/FilterContext';
 
+
 const drawerWidth = 240;
 
 export default function SearchAppBar() {
@@ -29,7 +30,6 @@ export default function SearchAppBar() {
     const handleOpenUserMenu = (event) => setAnchorElUser(event.currentTarget);
     const handleCloseUserMenu = () => setAnchorElUser(null);
     const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
-
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -74,25 +74,42 @@ export default function SearchAppBar() {
                         </Tooltip>
                     </Box>
 
-                    <Menu anchorEl={anchorElUser} open={Boolean(anchorElUser)} onClose={handleCloseUserMenu} sx={{ mt: '45px' }}>
+                    <Menu
+                        anchorEl={anchorElUser}
+                        open={Boolean(anchorElUser)}
+                        onClose={handleCloseUserMenu}
+                        sx={{ mt: '45px' }}
+                    >
                         {session ? (
                             <>
-                                <MenuItem onClick={handleCloseUserMenu}>
-                                    <Link href="/recipes/profile" passHref>
-                                        <Typography textAlign="center">Profile</Typography>
-                                    </Link>
+                                {/* Navigate to Profile */}
+                                <MenuItem onClick={() => {
+                                    handleCloseUserMenu();
+                                    window.location.href = '/recipes/profile';
+                                }}>
+                                    <Typography textAlign="center">Profile</Typography>
                                 </MenuItem>
-                                <MenuItem onClick={() => signOut()}>Logout</MenuItem>
+
+                                {/* Logout */}
+                                <MenuItem onClick={() => {
+                                    handleCloseUserMenu();
+                                    signOut();
+                                }}>
+                                    <Typography textAlign="center">Logout</Typography>
+                                </MenuItem>
                             </>
                         ) : (
-                            [
-                                <MenuItem key="signin" onClick={() => (window.location.href = '/recipes/signin')}>
+                            <>
+                                {/* Sign In */}
+                                <MenuItem onClick={() => (window.location.href = '/recipes/signin')}>
                                     <Typography textAlign="center">Sign In</Typography>
-                                </MenuItem>,
-                                <MenuItem key="register" onClick={() => (window.location.href = '/recipes/register')}>
+                                </MenuItem>
+
+                                {/* Register */}
+                                <MenuItem onClick={() => (window.location.href = '/recipes/register')}>
                                     <Typography textAlign="center">Register</Typography>
                                 </MenuItem>
-                            ]
+                            </>
                         )}
                     </Menu>
                 </Toolbar>

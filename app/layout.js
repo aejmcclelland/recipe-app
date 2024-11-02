@@ -30,6 +30,7 @@ export default function RootLayout({ children }) {
 					<title>{metadata.title}</title>
 				</head>
 				<body className={archivo.className}>
+					<ToastContainer autoClose={3000} position='top-right' />
 					<FilterProvider>
 						<ThemeProvider theme={theme}>
 							<CssBaseline /> {/* Ensures consistent baseline styling */}
@@ -45,7 +46,6 @@ export default function RootLayout({ children }) {
 								</Container>
 								<Footer /> {/* Footer component */}
 							</Box>
-							<ToastContainer />
 						</ThemeProvider>
 					</FilterProvider>
 				</body>
