@@ -33,6 +33,7 @@ const RegisterForm = () => {
                 pauseOnHover: true,
                 draggable: true,
             });
+            router.push('/');
         } catch (error) {
             toast.error(error.message || "Error registering user.", {
                 position: "top-right",
