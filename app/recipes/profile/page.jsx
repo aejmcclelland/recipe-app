@@ -5,6 +5,7 @@ import { getSessionUser } from '@/utils/getSessionUser';
 import connectDB from '@/config/database';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import Recipe from '@/models/Recipe';
+import User from '@/models/User';
 import { redirect } from 'next/navigation';
 
 const ProfilePage = async () => {
@@ -19,15 +20,21 @@ const ProfilePage = async () => {
         return null;
     }
 
-    const { userId, userName } = sessionUser;
+    const { userId } = sessionUser;
 
-    // Fetch recipes for the logged-in user
-    const recipesDocs = await Recipe.find({ user: userId }).lean();
+
+    const user = await User.findById(userId).lean();
+    const userName = user ? `${user.firstName}! ` : 'Guest';
+
+    // Fetch recipes for the logged-in user, including user details
+    const recipesDocs = await Recipe.find({ user: userId })
+        .populate('user', 'firstName') // Populates the user field with specific details
+        .lean();
     const recipes = convertToSerializeableObject(recipesDocs);
 
     return (
         <Container maxWidth="lg">
-            <h1>Welcome, {userName}</h1>
+            <h2>Welcome, {userName}</h2>
             <ProfileRecipes recipes={recipes} />
         </Container>
     );
