@@ -57,15 +57,13 @@ export const authOptions = {
 			authorization: {
 				params: {
 					scope: 'openid email profile',
-					prompt: 'select_account',
+					prompt: 'select_account', // Prompts Google for account selection each time
 				},
 			},
 			profile(profile) {
-				// Customize the profile format if using Google
 				return {
 					id: profile.sub,
 					email: profile.email,
-					name: `${profile.given_name} ${profile.family_name}`,
 					firstName: profile.given_name,
 					lastName: profile.family_name,
 					image: profile.picture,
@@ -81,13 +79,13 @@ export const authOptions = {
 			async authorize(credentials) {
 				await dbConnect();
 				const user = await User.findOne({ email: credentials.email });
+
+				// If user exists and password matches, allow sign-in
 				if (user && (await user.comparePassword(credentials.password))) {
-					return {
-						id: user._id.toString(),
-						email: user.email,
-						name: `${user.firstName} ${user.lastName}`,
-					};
+					return { id: user._id, email: user.email, name: user.name };
 				}
+
+				// If user doesn't exist, return null to indicate failed login
 				return null;
 			},
 		}),
@@ -99,47 +97,39 @@ export const authOptions = {
 		async signIn({ user, account, profile }) {
 			await dbConnect();
 
-			// Check if the user already exists in the database
-			const existingUser = await User.findOne({ email: user.email });
+			const existingUser = await User.findOne({ email: profile.email });
+
 			if (existingUser) {
-				if (existingUser.authProvider !== account.provider) {
-					// Redirect if the user tries to sign in with a different provider than their registered one
-					return `/recipes/signin?error=account_exists`;
-				}
+				// For Google sign-in, if user exists, log in without error
 				user.id = existingUser._id;
+				return true;
+			} else if (account.provider === 'google') {
+				// For new Google users, create and allow sign-in
+				const newUser = await User.create({
+					email: profile.email,
+					firstName: profile.given_name,
+					lastName: profile.family_name,
+					image: profile.picture,
+					authProvider: 'google',
+				});
+				user.id = newUser._id;
 				return true;
 			}
 
-			// Create a new user if one does not exist
-			const newUser = await User.create({
-				email: user.email,
-				firstName:
-					account.provider === 'google'
-						? profile.given_name
-						: user.firstName || 'Guest',
-				lastName:
-					account.provider === 'google'
-						? profile.family_name
-						: user.lastName || '',
-				image: account.provider === 'google' ? profile.picture : '',
-				authProvider: account.provider,
-			});
-			user.id = newUser._id;
-			return true;
+			return false; // Block any other unexpected cases
 		},
 		async session({ session, token }) {
 			session.user = token.user;
 			return session;
 		},
 		async jwt({ token, user }) {
-			if (user) {
-				token.user = user;
-			}
+			if (user) token.user = user;
 			return token;
 		},
 	},
 	pages: {
 		signIn: '/recipes/signin',
-		callbackUrl: '/',
+		error: '/recipes/register?error=account_exists', // Redirects to register page if an error occurs
+		callbackUrl: '/', // Homepage after successful sign-in
 	},
 };
