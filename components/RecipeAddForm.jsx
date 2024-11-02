@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { TextField, Button, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2'; // For Material UI Grid2 system
+import Grid from '@mui/material/Grid'; // For Material UI Grid2 system
 import addRecipe from '@/app/actions/addRecipe';
 import { fractionToDecimal } from '@/utils/fractionToDecimal';
 import { useRouter } from 'next/navigation';
@@ -70,8 +70,8 @@ const RecipeAddForm = () => {
     }
     return (
         <form onSubmit={handleSubmit} encType="multipart/form-data">
-            <Grid container spacing={3}>
-                <Grid item xs={12}>
+            <Grid container spacing={+3}>
+                <Grid item xs={+12}>
                     <TextField
                         label="Recipe Name"
                         name="name"
@@ -81,7 +81,7 @@ const RecipeAddForm = () => {
                     />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={+12} sm={+6}>
                     <TextField
                         label="Prep Time (minutes)"
                         name="prepTime"
@@ -92,7 +92,7 @@ const RecipeAddForm = () => {
                     />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={+12} sm={+6}>
                     <TextField
                         label="Cook Time (minutes)"
                         name="cookTime"
@@ -103,7 +103,7 @@ const RecipeAddForm = () => {
                     />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={+12} sm={+6}>
                     <TextField
                         label="Serves"
                         name="serves"

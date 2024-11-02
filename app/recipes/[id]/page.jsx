@@ -18,7 +18,7 @@ export default async function RecipeDetailPage({ params }) {
     // Fetch the recipe by its unique ID, populating the owner field
     const recipe = await Recipe.findById(recipeId)
         .populate({ path: 'ingredients.ingredient', model: Ingredient })
-        .populate('owner') // Ensure the owner's ID is available for comparison
+        .populate('user') // Ensure the owner's ID is available for comparison
         .lean();
 
     // Check if recipe is found, if not render RecipeNotFound
@@ -41,7 +41,7 @@ export default async function RecipeDetailPage({ params }) {
             </Box>
 
             {/* Conditionally show the Edit button only if the logged-in user owns the recipe */}
-            {sessionUser && recipe.owner && sessionUser.userId === recipe.owner._id.toString() && (
+            {sessionUser && recipe.user && sessionUser.userId === recipe.user._id.toString() && (
                 <Link href={`/recipes/${recipe._id}/edit`}>
                     <Button variant="contained" color="primary" sx={{ mt: 2 }}>
                         Edit Recipe

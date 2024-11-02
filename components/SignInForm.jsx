@@ -1,12 +1,13 @@
-// components/SignInForm.jsx
 'use client';
 import { useState, useEffect } from 'react';
 import { signIn, getProviders } from 'next-auth/react';
 import { Button, Typography, Box, TextField, Paper } from '@mui/material';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 export default function SignInForm() {
+    const searchParams = useSearchParams();
     const [providers, setProviders] = useState(null);
     const [loginError, setLoginError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -17,11 +18,12 @@ export default function SignInForm() {
             setProviders(authProviders);
         };
         loadProviders();
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('error') === 'account_exists') {
+
+        // Check if there is an 'error' query parameter
+        if (searchParams.get('error') === 'account_exists') {
             toast.error('An account with this email already exists. Please sign in with email and password.');
         }
-    }, []);
+    }, [searchParams]);
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 4 }}>

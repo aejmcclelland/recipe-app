@@ -44,11 +44,10 @@
 // 		callbackUrl: '/', // Directs to your custom sign-in page
 // 	},
 // };
-
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import User from '@/models/User';
-import dbConnect from '@/config/database'; // Ensure DB connection setup
+import dbConnect from '@/config/database';
 
 export const authOptions = {
 	providers: [
@@ -57,7 +56,8 @@ export const authOptions = {
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 			authorization: {
 				params: {
-					scope: 'openid email profile', // This will include the user's email and profile data
+					scope: 'openid email profile',
+					prompt: 'select_account', // This ensures Google prompts for account selection each time
 				},
 			},
 			profile(profile) {
@@ -66,11 +66,10 @@ export const authOptions = {
 					email: profile.email,
 					firstName: profile.given_name,
 					lastName: profile.family_name,
-					image: profile.picture, // Optional profile image from Google
+					image: profile.picture,
 				};
 			},
 		}),
-
 		CredentialsProvider.default({
 			name: 'Credentials',
 			credentials: {
@@ -83,7 +82,7 @@ export const authOptions = {
 				if (user && (await user.comparePassword(credentials.password))) {
 					return { id: user._id, email: user.email, name: user.name };
 				}
-				return null; // Return null if login failed
+				return null;
 			},
 		}),
 	],
@@ -97,14 +96,9 @@ export const authOptions = {
 			const existingUser = await User.findOne({ email: profile.email });
 
 			if (existingUser) {
-				if (
-					existingUser.authProvider !== 'google' &&
-					account.provider === 'google'
-				) {
-					// Redirect to the sign-in page with an error message in the query parameters
+				if (existingUser.authProvider !== account.provider) {
 					return `/recipes/signin?error=account_exists`;
 				}
-
 				user.id = existingUser._id;
 				return true;
 			}
@@ -114,9 +108,8 @@ export const authOptions = {
 				firstName: profile.given_name,
 				lastName: profile.family_name,
 				image: profile.picture,
-				authProvider: 'google',
+				authProvider: account.provider,
 			});
-
 			user.id = newUser._id;
 			return true;
 		},
@@ -131,6 +124,6 @@ export const authOptions = {
 	},
 	pages: {
 		signIn: '/recipes/signin',
-		callbackUrl: '/', // Directs to your custom sign-in page
+		callbackUrl: '/',
 	},
 };

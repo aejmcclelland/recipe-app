@@ -1,7 +1,7 @@
 'use client';
 import { Button, TextField, Typography, Select, MenuItem, FormControl, InputLabel, Checkbox, FormControlLabel } from '@mui/material';
 import updateRecipe from '@/app/actions/editRecipe';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';

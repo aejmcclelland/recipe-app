@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button, Typography, Box } from '@mui/material';
 import deleteRecipe from '@/app/actions/deleteRecipe';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 
 function RecipeDeleteForm({ recipe }) {
     const [isDeleted, setIsDeleted] = useState(false);

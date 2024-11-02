@@ -10,9 +10,14 @@ import { Container, Paper, Typography, Box } from '@mui/material';
 const RecipeEditPage = async ({ params }) => {
     await connectDB();
 
-    const recipeDoc = await Recipe.findById(params.id)
+    // Await params to destructure `id`
+    const { id: recipeId } = await params;
+
+
+    const recipeDoc = await Recipe.findById(recipeId)
         .populate('ingredients.ingredient')
         .lean();
+
     const recipe = convertToSerializeableObject(recipeDoc);
 
     // Fetch all categories to pass to the form

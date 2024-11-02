@@ -1,7 +1,7 @@
 'use client';
 import * as React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import Image from 'next/image';
 
 export default function RecipeCard({ recipe }) {
@@ -55,7 +55,7 @@ export default function RecipeCard({ recipe }) {
                     </Grid>
 
                     {/* Right Grid: Recipe Method */}
-                    <Grid xs={12} md={6}>
+                    <Grid xs={+12} md={+6}>
                         {/* Recipe Name */}
                         <Typography variant="h5" gutterBottom>
                             {recipe.name}

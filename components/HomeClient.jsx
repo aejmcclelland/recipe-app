@@ -4,7 +4,7 @@ import { useFilter } from '@/context/FilterContext';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Box, Container, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 
 export default function HomeClient({ recipes }) {
@@ -23,14 +23,14 @@ export default function HomeClient({ recipes }) {
 
     return (
         <Container maxWidth="lg">
-            <Box sx={{ textAlign: 'center', my: 4 }}>
-                <Typography variant="h2" align="center" gutterBottom>
-                    Welcome to Rebekah&#39;s Recipes!
-                </Typography>
-                <Typography variant="body1" align="center" gutterBottom>
-                    We are working hard to bring you the best recipes. Please be patient as we add more recipes to our collection.
-                </Typography>
-            </Box>
+            {/* <Box sx={{ textAlign: 'center', my: 4 }}> */}
+            <Typography variant="h2" align="center" gutterBottom>
+                Welcome to Rebekah&#39;s Recipes!
+            </Typography>
+            <Typography variant="body1" align="center" gutterBottom>
+                We are working hard to bring you the best recipes. Please be patient as we add more recipes to our collection.
+            </Typography>
+            {/* </Box> */}
 
             <Grid container spacing={4} justifyContent="center">
                 {filteredRecipes.length > 0 ? (

@@ -9,7 +9,7 @@ import Link from 'next/link';
 export default function RecipeOverviewCard({ recipe }) {
     console.log('log:', recipe);
     return (
-        <Link href={`/recipes/${recipe._id}`} passHref>
+        <Link href={`/recipes/${recipe._id}`}>
             <Card sx={{ maxWidth: 400, marginBottom: 2, boxShadow: '2px 4px 20px 0px rgba(0, 0, 0, 0.2)', cursor: 'pointer' }}>
                 <Image
                     src={recipe.image}
