@@ -19,11 +19,43 @@ export default function SignInForm() {
         };
         loadProviders();
 
-        // Check if there is an 'error' query parameter
+        // Display error if 'account_exists' is in query parameters
         if (searchParams.get('error') === 'account_exists') {
             toast.error('An account with this email already exists. Please sign in with email and password.');
         }
     }, [searchParams]);
+
+    const handleGoogleSignIn = async () => {
+        setIsLoading(true);
+        try {
+            await signIn(providers.google.id, { callbackUrl: '/' });
+        } catch {
+            setLoginError("There was an issue with Google Sign-In. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleEmailSignIn = async (e) => {
+        e.preventDefault();
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+        setIsLoading(true);
+
+        const res = await signIn('credentials', {
+            redirect: false,
+            email,
+            password,
+            callbackUrl: '/',
+        });
+
+        setIsLoading(false);
+        if (res?.ok) {
+            window.location.href = res.url; // Redirect to homepage on success
+        } else {
+            setLoginError("Invalid email or password. Please try again.");
+        }
+    };
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 4 }}>
@@ -45,16 +77,7 @@ export default function SignInForm() {
                                 variant="contained"
                                 color="primary"
                                 disabled={isLoading}
-                                onClick={async () => {
-                                    setIsLoading(true);
-                                    try {
-                                        await signIn(providers.google.id, { callbackUrl: '/' });
-                                    } catch (error) {
-                                        setLoginError("There was an issue with Google Sign-In. Please try again.");
-                                    } finally {
-                                        setIsLoading(false);
-                                    }
-                                }}
+                                onClick={handleGoogleSignIn}
                                 sx={{ mt: 2, width: '100%', maxWidth: 300 }}
                             >
                                 {isLoading ? "Signing in..." : "Sign in with Google"}
@@ -64,19 +87,7 @@ export default function SignInForm() {
                         {providers.credentials && (
                             <Box
                                 component="form"
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    const email = e.target.email.value;
-                                    const password = e.target.password.value;
-                                    signIn('credentials', { redirect: false, email, password, callbackUrl: '/' })
-                                        .then((res) => {
-                                            if (res?.ok) {
-                                                window.location.href = '/';
-                                            } else {
-                                                setLoginError("Invalid email or password. Please try again.");
-                                            }
-                                        });
-                                }}
+                                onSubmit={handleEmailSignIn}
                                 sx={{ display: 'flex', flexDirection: 'column', width: '100%', maxWidth: 300, gap: 2 }}
                             >
                                 <TextField
@@ -101,8 +112,9 @@ export default function SignInForm() {
                                     type="submit"
                                     fullWidth
                                     sx={{ mt: 2 }}
+                                    disabled={isLoading}
                                 >
-                                    Sign in with Email
+                                    {isLoading ? "Signing in..." : "Sign in with Email"}
                                 </Button>
                             </Box>
                         )}

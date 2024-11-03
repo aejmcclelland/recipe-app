@@ -97,33 +97,45 @@ export const authOptions = {
 		async signIn({ user, account, profile }) {
 			await dbConnect();
 
-			const existingUser = await User.findOne({ email: profile.email });
-
-			if (existingUser) {
-				// For Google sign-in, if user exists, log in without error
-				user.id = existingUser._id;
-				return true;
-			} else if (account.provider === 'google') {
-				// For new Google users, create and allow sign-in
-				const newUser = await User.create({
-					email: profile.email,
-					firstName: profile.given_name,
-					lastName: profile.family_name,
-					image: profile.picture,
-					authProvider: 'google',
-				});
-				user.id = newUser._id;
-				return true;
+			if (account.provider === 'google') {
+				// Find existing user or create one
+				let existingUser = await User.findOne({ email: profile.email });
+				if (!existingUser) {
+					existingUser = await User.create({
+						email: profile.email,
+						firstName: profile.given_name,
+						lastName: profile.family_name,
+						image: profile.picture,
+						authProvider: 'google',
+					});
+				}
+				user.id = existingUser._id; // Link session to database user ID
+			} else if (account.provider === 'credentials') {
+				// For credential-based login, find the user and return ID
+				const existingUser = await User.findOne({ email: user.email });
+				if (existingUser) {
+					user.id = existingUser._id;
+				} else {
+					throw new Error('User not found, please register first.');
+				}
 			}
-
-			return false; // Block any other unexpected cases
+			return true;
 		},
 		async session({ session, token }) {
-			session.user = token.user;
+			if (token.user) {
+				session.user = token.user; // Persist user data in the session
+			}
 			return session;
 		},
 		async jwt({ token, user }) {
-			if (user) token.user = user;
+			if (user) {
+				token.user = {
+					id: user.id,
+					email: user.email,
+					name: user.name || `${user.firstName} ${user.lastName}`, // For Google or credential logins
+					image: user.image,
+				};
+			}
 			return token;
 		},
 	},
