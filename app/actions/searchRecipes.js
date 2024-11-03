@@ -1,8 +1,9 @@
+// app/actions/searchRecipes.js
 'use server';
 
 import connectDB from '@/config/database';
 import Recipe from '@/models/Recipe';
-import mongoose from 'mongoose';
+import Ingredient from '@/models/Ingredient';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 
 export async function searchRecipes({ searchQuery, ingredients, category }) {
@@ -10,33 +11,43 @@ export async function searchRecipes({ searchQuery, ingredients, category }) {
 
 	const filters = [];
 
-	// General search query that looks across multiple fields
+	// 1. Recipe name-based search
 	if (searchQuery) {
-		filters.push({
-			$or: [
-				{ name: { $regex: searchQuery, $options: 'i' } },
-				{ method: { $regex: searchQuery, $options: 'i' } },
-				{
-					'ingredients.ingredientName': { $regex: searchQuery, $options: 'i' },
-				},
-			],
-		});
+		filters.push({ name: { $regex: searchQuery, $options: 'i' } });
 	}
 
-	// If ingredients or category are specified individually
-	if (ingredients) {
-		filters.push({
-			'ingredients.ingredient': mongoose.Types.ObjectId(ingredients),
-		});
+	// 2. Ingredient-based search
+	if (ingredients || searchQuery) {
+		const ingredientSearch = ingredients || searchQuery;
+
+		// Find ingredient IDs that match the search term
+		const matchedIngredients = await Ingredient.find({
+			name: { $regex: ingredientSearch, $options: 'i' },
+		}).select('_id');
+
+		if (matchedIngredients.length > 0) {
+			filters.push({
+				'ingredients.ingredient': {
+					$in: matchedIngredients.map((ing) => ing._id),
+				},
+			});
+		}
 	}
+
+	// 3. Category-based search
 	if (category) {
-		filters.push({ category: mongoose.Types.ObjectId(category) });
+		filters.push({ category });
 	}
+
+	// Combine filters with $or to allow name or ingredient matching
+	const query = filters.length > 0 ? { $or: filters } : {};
 
 	try {
-		const recipes = await Recipe.find(
-			filters.length ? { $and: filters } : {}
-		).lean();
+		const recipes = await Recipe.find(query)
+			.populate('ingredients.ingredient') // Populate ingredient details for display
+			.lean();
+
+		console.log('Recipes found:', recipes);
 		return convertToSerializeableObject(recipes);
 	} catch (error) {
 		console.error('Error in searchRecipes:', error);
