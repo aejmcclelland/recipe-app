@@ -1,11 +1,9 @@
 'use client';
 
-import { Box, Container, Button, Stack, Typography, IconButton } from '@mui/material';
+import { Box, Container, Button, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Image from 'next/image';
 import Link from 'next/link';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useState } from 'react';
 import deleteRecipe from '@/app/actions/deleteRecipe';
 
@@ -47,23 +45,13 @@ function ProfileRecipes({ recipes }) {
                                     {recipe.name}
                                 </Typography>
                                 <Typography variant="body2" color="textSecondary">
-                                    Category: {recipe.category}
+                                    Category: {recipe.category?.name || 'No Category'}
                                 </Typography>
                                 <Typography variant="body2" color="textSecondary">
                                     Cook Time: {recipe.cookTime}
                                 </Typography>
-                                {/* Stack with Heart, Edit, and Delete buttons */}
+                                {/* Stack with  Edit, and Delete buttons */}
                                 <Stack direction="row" spacing={1} sx={{ mt: 2, justifyContent: 'center' }}>
-                                    <IconButton
-                                        onClick={() => handleLike(recipe._id)}
-                                        sx={{
-                                            color: likedRecipes[recipe._id] ? 'red' : 'lightgray',
-                                            border: '1px solid lightgray', // Light gray outline
-                                            borderRadius: '50%',
-                                        }}
-                                    >
-                                        {likedRecipes[recipe._id] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                                    </IconButton>
                                     <Link href={`/recipes/${recipe._id}/edit`} passHref>
                                         <Button
                                             variant="outlined"

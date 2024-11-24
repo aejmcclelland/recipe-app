@@ -4,7 +4,7 @@ import connectDB from '@/config/database';
 import User from '@/models/User';
 import { getSessionUser } from '@/utils/getSessionUser';
 
-async function removeBookmark(recipeId) {
+async function deleteBookmark(recipeId) {
 	await connectDB();
 
 	const sessionUser = await getSessionUser();
@@ -31,4 +31,4 @@ async function removeBookmark(recipeId) {
 	throw new Error('Recipe is not bookmarked');
 }
 
-export default removeBookmark;
+export default deleteBookmark;

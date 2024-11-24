@@ -1,4 +1,5 @@
 'use client';
+
 import { IconButton, Typography, Box } from '@mui/material';
 import BookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
@@ -10,15 +11,19 @@ export default function BookmarkRecipe({ recipeId, user }) {
     const [isBookmarked, setIsBookmarked] = useState(false);
     const router = useRouter();
 
-    // Initialize the bookmarked state
+    // Initialize bookmarked state based on user data
     useEffect(() => {
-        if (user?.user?.bookmarks?.some((bookmark) => bookmark.toString() === recipeId)) {
-            setIsBookmarked(true);
+        if (user && user.bookmarks) {
+            const bookmarked = user.bookmarks.some(
+                (bookmark) => bookmark.toString() === recipeId
+            );
+            setIsBookmarked(bookmarked);
         }
     }, [user, recipeId]);
 
     const handleBookmark = async () => {
-        if (!user || !user.user?.id) {
+        // Ensure user is logged in
+        if (!user || !user.id) {
             alert('Please log in or sign up to save recipes!');
             router.push('/recipes/signin');
             return;

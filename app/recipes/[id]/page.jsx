@@ -3,6 +3,7 @@ import Recipe from '../../../models/Recipe';
 import Ingredient from '@/models/Ingredient';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import RecipeCard from '@/components/RecipeCard';
+import BookmarkRecipe from '@/components/BookmarkRecipe';
 import { Box, Typography, Container, Button } from '@mui/material';
 import BackToHomeButton from '@/components/BackToHomeButton';
 import Link from 'next/link';
@@ -37,19 +38,26 @@ export default async function RecipeDetailPage({ params }) {
             </Box>
 
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-                <RecipeCard recipe={serializedRecipe} />
+                <RecipeCard recipe={serializedRecipe} user={sessionUser} />
+            </Box>
+
+            {/* Bookmark Button */}
+            <Box sx={{ textAlign: 'center', marginTop: 2 }}>
+                <BookmarkRecipe recipeId={recipeId} user={sessionUser?.user || null} />
             </Box>
 
             {/* Conditionally show the Edit button only if the logged-in user owns the recipe */}
-            {sessionUser && recipe.user && sessionUser.userId === recipe.user._id.toString() && (
-                <Link href={`/recipes/${recipe._id}/edit`}>
-                    <Button variant="contained" color="primary" sx={{ mt: 2 }}>
-                        Edit Recipe
-                    </Button>
-                </Link>
+            {sessionUser && recipe.user && sessionUser.user?.id === recipe.user._id.toString() && (
+                <Box sx={{ textAlign: 'center', marginTop: 2 }}>
+                    <Link href={`/recipes/${recipe._id}/edit`}>
+                        <Button variant="contained" color="primary">
+                            Edit Recipe
+                        </Button>
+                    </Link>
+                </Box>
             )}
 
-            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
                 <BackToHomeButton />
             </Box>
         </Container>
