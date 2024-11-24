@@ -9,7 +9,7 @@ import User from '@/models/User';
 import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 import RemoveBookmarkButton from '@/components/RemoveBookmarkButton';
 import { redirect } from 'next/navigation';
-
+import Category from '@/models/Category';
 const ProfilePage = async () => {
     await connectDB();
 
