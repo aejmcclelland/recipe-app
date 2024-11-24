@@ -1,0 +1,1 @@
+self.__NEXT_FONT_MANIFEST="{\"pages\":{},\"app\":{\"/Users/andrewmcclelland/Documents/rebekahs-recipes/app/layout\":[\"static/media/b4f46b1ccc361ec4-s.p.woff2\",\"static/media/cedc0d4e6b719cc0-s.p.woff2\",\"static/media/b4f46b1ccc361ec4-s.p.woff2\",\"static/media/cedc0d4e6b719cc0-s.p.woff2\"]},\"appUsingSizeAdjust\":true,\"pagesUsingSizeAdjust\":false}"
