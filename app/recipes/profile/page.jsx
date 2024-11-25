@@ -20,7 +20,6 @@ const ProfilePage = async () => {
         redirect('/');
         return null;
     }
-
     const userId = sessionUser.user.id;
 
     const userWithBookmarks = await User.findById(userId)

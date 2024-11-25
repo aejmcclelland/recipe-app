@@ -33,7 +33,7 @@ export default async function RecipeDetailPage({ params }) {
         <Container maxWidth="lg">
             <Box sx={{ textAlign: 'center', marginTop: 4, marginBottom: 4 }}>
                 <Typography variant="h3" component="h1" gutterBottom>
-                    {recipe.name} Details
+                    {recipe.name} Recipe
                 </Typography>
             </Box>
 

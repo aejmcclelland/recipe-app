@@ -1,7 +1,7 @@
 'use client';
 import * as React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/Grid2';
 import Image from 'next/image';
 
 export default function RecipeCard({ recipe }) {
@@ -22,9 +22,9 @@ export default function RecipeCard({ recipe }) {
             }}
         >
             <CardContent>
-                <Grid container spacing={2}>
-                    {/* Left Grid: Image and Ingredients */}
-                    <Grid xs={12} md={6}>
+                <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={2}>
+                    {/* Left Section: Image and Ingredients */}
+                    <Box flex={1}>
                         {/* Recipe Image */}
                         <Box mb={2}>
                             <Image
@@ -52,14 +52,10 @@ export default function RecipeCard({ recipe }) {
                                 )}
                             </ul>
                         </Box>
-                    </Grid>
+                    </Box>
 
-                    {/* Right Grid: Recipe Method */}
-                    <Grid xs={+12} md={+6}>
-                        {/* Recipe Name */}
-                        <Typography variant="h5" gutterBottom>
-                            {recipe.name}
-                        </Typography>
+                    {/* Right Section: Recipe Method */}
+                    <Box flex={1}>
                         <Typography variant="h6" gutterBottom>
                             Method:
                         </Typography>
@@ -67,7 +63,7 @@ export default function RecipeCard({ recipe }) {
                             {recipe.method || 'No method provided'}
                         </Typography>
 
-                        {/* Additional Information like PrepTime, CookTime, Serves */}
+                        {/* Additional Information */}
                         <Box mt={2}>
                             <Typography variant="body2" color="text.secondary">
                                 Prep Time: {recipe.prepTime ? `${recipe.prepTime} minutes` : 'N/A'}
@@ -79,8 +75,8 @@ export default function RecipeCard({ recipe }) {
                                 Serves: {recipe.serves || 'N/A'}
                             </Typography>
                         </Box>
-                    </Grid>
-                </Grid>
+                    </Box>
+                </Box>
             </CardContent>
         </Card>
     );
