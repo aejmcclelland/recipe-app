@@ -1,21 +1,29 @@
-// Description: Configuration for NextAuth.js authentication providers and callbacks.
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import User from '@/models/User';
 import dbConnect from '@/config/database';
+import { NextAuthOptions } from 'next-auth';
 
-export const authOptions = {
+interface GoogleProfile {
+	sub: string;
+	email: string;
+	given_name: string;
+	family_name: string;
+	picture: string;
+}
+
+export const authOptions: NextAuthOptions = {
 	providers: [
-		GoogleProvider.default({
-			clientId: process.env.GOOGLE_CLIENT_ID,
-			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+		GoogleProvider({
+			clientId: process.env.GOOGLE_CLIENT_ID as string,
+			clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
 			authorization: {
 				params: {
 					scope: 'openid email profile',
-					prompt: 'select_account', // Prompts Google for account selection each time
+					prompt: 'select_account',
 				},
 			},
-			profile(profile) {
+			profile(profile: GoogleProfile) {
 				return {
 					id: profile.sub,
 					email: profile.email,
@@ -25,7 +33,7 @@ export const authOptions = {
 				};
 			},
 		}),
-		CredentialsProvider.default({
+		CredentialsProvider({
 			name: 'Credentials',
 			credentials: {
 				email: { label: 'Email', type: 'text' },
@@ -33,14 +41,16 @@ export const authOptions = {
 			},
 			async authorize(credentials) {
 				await dbConnect();
-				const user = await User.findOne({ email: credentials.email });
+				const user = await User.findOne({ email: credentials?.email });
 
-				// If user exists and password matches, allow sign-in
-				if (user && (await user.comparePassword(credentials.password))) {
-					return { id: user._id, email: user.email, name: user.name };
+				if (user && (await user.comparePassword(credentials?.password))) {
+					return {
+						id: user._id.toString(),
+						email: user.email,
+						name: `${user.firstName} ${user.lastName}`,
+					};
 				}
 
-				// If user doesn't exist, return null to indicate failed login
 				return null;
 			},
 		}),
@@ -53,23 +63,21 @@ export const authOptions = {
 			await dbConnect();
 
 			if (account.provider === 'google') {
-				// Find existing user or create one
-				let existingUser = await User.findOne({ email: profile.email });
+				let existingUser = await User.findOne({ email: profile?.email });
 				if (!existingUser) {
 					existingUser = await User.create({
-						email: profile.email,
-						firstName: profile.given_name,
-						lastName: profile.family_name,
-						image: profile.picture,
+						email: (profile as GoogleProfile)?.email,
+						firstName: (profile as GoogleProfile)?.given_name,
+						lastName: (profile as GoogleProfile)?.family_name,
+						image: (profile as GoogleProfile)?.picture,
 						authProvider: 'google',
 					});
 				}
-				user.id = existingUser._id; // Link session to database user ID
+				user.id = existingUser._id.toString();
 			} else if (account.provider === 'credentials') {
-				// For credential-based login, find the user and return ID
 				const existingUser = await User.findOne({ email: user.email });
 				if (existingUser) {
-					user.id = existingUser._id;
+					user.id = existingUser._id.toString();
 				} else {
 					throw new Error('User not found, please register first.');
 				}
@@ -78,17 +86,18 @@ export const authOptions = {
 		},
 		async session({ session, token }) {
 			if (token.user) {
-				session.user = token.user; // Persist user data in the session
+				session.user = token.user;
 			}
 			return session;
 		},
 		async jwt({ token, user }) {
 			if (user) {
 				token.user = {
-					id: user.id,
+					id: user.id, // Ensure `id` is added here
 					email: user.email,
-					name: user.name || `${user.firstName} ${user.lastName}`, // For Google or credential logins
+					name: user.name,
 					image: user.image,
+					userId: user.id,
 				};
 			}
 			return token;
@@ -96,7 +105,6 @@ export const authOptions = {
 	},
 	pages: {
 		signIn: '/recipes/signin',
-		error: '/recipes/register?error=account_exists', // Redirects to register page if an error occurs
-		callbackUrl: '/', // Homepage after successful sign-in
+		error: '/recipes/register?error=account_exists',
 	},
 };

@@ -21,14 +21,20 @@
             {
                 "name": "next"
             }
-        ]
+        ],
+        "baseUrl": ".", // Important for `@/` alias
+        "paths": {
+            "@/*": [
+                "./*"
+            ] // Maps `@/` to the root directory
+        },
     },
     "include": [
         "next-env.d.ts",
         ".next/types/**/*.ts",
         "**/*.ts",
         "**/*.tsx"
-    ],
+, "utils/authOptions.ts"    ],
     "exclude": [
         "node_modules"
     ]

@@ -4,7 +4,7 @@ import { Card, CardContent, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import Image from 'next/image';
 import Link from 'next/link';
-import RemoveBookmarkButton from './RemoveBookmarkButton';
+import RemoveBookmarkButton from '../components/RemoveBookmarkButton';
 
 // Define the type for the recipe prop
 interface Recipe {
