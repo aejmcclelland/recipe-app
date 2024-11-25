@@ -1,15 +1,12 @@
 'use client';
 import * as React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
-import Grid from '@mui/material/Grid2';
 import Image from 'next/image';
 
 export default function RecipeCard({ recipe }) {
     if (!recipe) {
         return <Typography variant="h6">No Recipe Found</Typography>;
     }
-    // Log the entire recipe object to check its structure
-    console.log('Full Recipe Object:', recipe);
 
     // Log ingredients array specifically
     console.log('Recipe ingredients:', JSON.stringify(recipe.ingredients, null, 2));

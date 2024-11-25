@@ -91,7 +91,7 @@ const theme = createTheme({
 			fontWeight: 500,
 		},
 		h6: {
-			fontFamily: shadowsIntoLight.style.fontFamily,
+			// fontFamily: shadowsIntoLight.style.fontFamily,
 			fontSize: '1.25rem',
 			fontWeight: 400,
 		},
