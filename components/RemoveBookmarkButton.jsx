@@ -21,12 +21,11 @@ export default function RemoveBookmarkButton({ recipeId }) {
             onClick={handleRemoveBookmark}
             sx={{
                 color: 'red',
-                position: 'absolute',
-                top: 10,
-                right: 10,
+                fontSize: '2rem',
+                padding: '12px',
             }}
         >
-            <BookmarkRemoveTwoToneIcon />
+            <BookmarkRemoveTwoToneIcon sx={{ fontSize: '2rem' }} />
         </IconButton>
     );
 }
