@@ -5,11 +5,13 @@ import ProfileRecipes from '@/components/ProfileRecipes';
 import { getSessionUser } from '@/utils/getSessionUser';
 import connectDB from '@/config/database';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
+import Category from '@/models/Category';
 import Recipe from '@/models/Recipe';
 import User from '@/models/User';
 import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 import { redirect } from 'next/navigation';
-import Category from '@/models/Category';
+import mongoose from 'mongoose';
+
 
 // Define types for Recipe and UserWithBookmarks
 interface Recipe {
@@ -28,6 +30,9 @@ interface UserWithBookmarks {
 
 const ProfilePage = async (): Promise<JSX.Element | null> => {
     await connectDB();
+
+     // Debug: Check registered models
+    console.log('Registered Models:', Object.keys(mongoose.models));
 
     // Fetch session user
     const sessionUser = await getSessionUser();
