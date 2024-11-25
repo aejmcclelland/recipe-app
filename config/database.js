@@ -23,6 +23,7 @@ const connectDB = async () => {
 
 	connected = true;
 	console.log('MongoDB connected and models registered...');
+	console.log('Registered Models:', Object.keys(mongoose.models));
 };
 
 export default connectDB;
