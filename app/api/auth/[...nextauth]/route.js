@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import { authOptions } from '@/utils/authOptions';
+import { DefaultAdapter } from 'next-auth/adapters';
 
 const handler = NextAuth.default(authOptions);
 

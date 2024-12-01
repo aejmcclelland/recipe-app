@@ -7,7 +7,7 @@ import { getSessionUser } from '@/utils/getSessionUser';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 import { redirect } from 'next/navigation';
-import { serializeBookmarks } from '@/utils/serializeBookmarks';
+import { serializeBookmarks } from '@/utils/serializeBookmarks'
 import { Category } from '@/models/Category';
 
 const ProfilePage = async () => {

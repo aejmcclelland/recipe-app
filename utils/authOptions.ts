@@ -2,31 +2,24 @@ import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import User from '@/models/User';
 import dbConnect from '@/config/database';
-// import { NextAuthOptions } from 'next-auth';
-
-interface GoogleProfile {
-	sub: string;
-	email: string;
-	given_name: string;
-	family_name: string;
-	picture: string;
-}
 
 export const authOptions = {
 	providers: [
 		GoogleProvider({
-			clientId: process.env.GOOGLE_CLIENT_ID as string,
-			clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+			clientId: process.env.GOOGLE_CLIENT_ID!,
+			clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
 			authorization: {
 				params: {
 					scope: 'openid email profile',
 					prompt: 'select_account',
 				},
 			},
-			profile(profile: GoogleProfile) {
+			profile(profile) {
+				// Returning custom profile fields
 				return {
 					id: profile.sub,
 					email: profile.email,
+					name: profile.name,
 					firstName: profile.given_name,
 					lastName: profile.family_name,
 					image: profile.picture,
@@ -67,15 +60,14 @@ export const authOptions = {
 				let existingUser = await User.findOne({ email: profile?.email });
 				if (!existingUser) {
 					existingUser = await User.create({
-						email: (profile as GoogleProfile)?.email,
-						firstName: (profile as GoogleProfile)?.given_name,
-						lastName: (profile as GoogleProfile)?.family_name,
-						image: (profile as GoogleProfile)?.picture,
+						email: profile?.email,
+						firstName: profile?.given_name,
+						lastName: profile?.family_name,
+						image: profile?.picture,
 						authProvider: 'google',
 					});
 				}
 				user.id = existingUser._id.toString();
-				user.image = existingUser.image; // Ensure image is updated
 			}
 			return true;
 		},
@@ -85,15 +77,13 @@ export const authOptions = {
 					id: user.id,
 					email: user.email,
 					name: user.name,
-					image: user.image, // Add image to the token
+					image: user.image,
 				};
 			}
 			return token;
 		},
 		async session({ session, token }) {
-			if (token.user) {
-				session.user = token.user; // Pass the user object, including the image
-			}
+			session.user = token.user;
 			return session;
 		},
 	},

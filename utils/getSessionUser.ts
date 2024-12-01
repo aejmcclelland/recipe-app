@@ -21,7 +21,9 @@ export const getSessionUser = async (): Promise<SessionUser | null> => {
 	}
 
 	return {
-		user: session.user,
-		// userId: session.user.id, // Ensure `id` is included in `authOptions`
+		id: session.user.id,
+		email: session.user.email,
+		name: session.user.name,
+		image: session.user.image,
 	};
 };
