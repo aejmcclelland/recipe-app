@@ -1,4 +1,4 @@
-function serializeBookmarks(bookmarks) {
+export function serializeBookmarks(bookmarks) {
 	return bookmarks.map((bookmark) => ({
 		...bookmark,
 		_id: bookmark._id.toString(),
