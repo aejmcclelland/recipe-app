@@ -7,6 +7,7 @@ import { getSessionUser } from '@/utils/getSessionUser';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 import { redirect } from 'next/navigation';
+import { serializeBookmarks } from '@/utils/serializeBookmarks';
 import { Category } from '@/models/Category';
 
 const ProfilePage = async () => {
@@ -36,14 +37,7 @@ const ProfilePage = async () => {
     const userRecipes = convertToSerializeableObject(recipesDocs);
     const userBookmarks = convertToSerializeableObject(userWithBookmarks);
 
-    // Serialize bookmarks
-    const bookmarkedRecipes = userBookmarks?.bookmarks.map((bookmark) => ({
-        ...bookmark,
-        _id: bookmark._id.toString(),
-        category: bookmark.category
-            ? { ...bookmark.category, _id: bookmark.category._id.toString() }
-            : null,
-    })) || [];
+    const bookmarkedRecipes = serializeBookmarks(userBookmarks?.bookmarks || []);
 
     return (
         <Container maxWidth="lg">
