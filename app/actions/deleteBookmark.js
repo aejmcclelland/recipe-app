@@ -25,10 +25,13 @@ async function deleteBookmark(recipeId) {
 		user.bookmarks.pull(recipeId); // Remove the recipe from bookmarks
 		await user.save();
 		console.log(`Recipe ${recipeId} removed from bookmarks`);
-		return { success: true };
+		return {
+			success: true,
+			message: 'Recipe successfully removed from bookmarks',
+		};
 	}
 
-	throw new Error('Recipe is not bookmarked');
+	throw new Error('Recipe is not currently bookmarked, cannot remove.');
 }
 
 export default deleteBookmark;

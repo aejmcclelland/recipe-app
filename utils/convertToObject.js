@@ -21,24 +21,23 @@
  */
 export function convertToSerializeableObject(data) {
 	if (Array.isArray(data)) {
-		// Recursively convert each element if it's an array
 		return data.map((item) => convertToSerializeableObject(item));
 	} else if (typeof data === 'object' && data !== null) {
-		// Recursively convert the object
 		const plainObject = {};
 		for (const key of Object.keys(data)) {
 			if (data[key] && typeof data[key] === 'object') {
-				// Handle Mongoose documents or ObjectId
 				if (typeof data[key].toJSON === 'function') {
-					plainObject[key] = data[key].toJSON(); // Convert Mongoose objects to plain JS
+					plainObject[key] = data[key].toJSON();
 				} else {
-					plainObject[key] = convertToSerializeableObject(data[key]); // Recurse for nested objects
+					plainObject[key] = convertToSerializeableObject(data[key]);
 				}
+			} else if (key === '_id' || key.endsWith('_id')) {
+				plainObject[key] = data[key]?.toString(); // Convert IDs to strings
 			} else {
-				plainObject[key] = data[key]; // Directly assign primitive values
+				plainObject[key] = data[key];
 			}
 		}
 		return plainObject;
 	}
-	return data; // Return primitive types as-is
+	return data;
 }

@@ -1,28 +1,19 @@
 'use client';
 
-import { IconButton, Typography, Box } from '@mui/material';
-import BookmarksOutlinedIcon from '@mui/icons-material/BookmarksOutlined';
-import BookmarksIcon from '@mui/icons-material/Bookmarks';
+import { IconButton, Tooltip } from '@mui/material';
+import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
+import BookmarkRemoveIcon from '@mui/icons-material/BookmarkRemove';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import saveRecipe from '@/app/actions/saveRecipe';
+import addBookmark from '@/app/actions/addBookmark';
+import deleteBookmark from '@/app/actions/deleteBookmark';
 
-export default function BookmarkRecipe({ recipeId, user }) {
-    const [isBookmarked, setIsBookmarked] = useState(false);
+
+export default function BookmarkButton({ recipeId, user, initialBookmarked = false }) {
+    const [isBookmarked, setIsBookmarked] = useState(initialBookmarked);
     const router = useRouter();
 
-    // Initialize bookmarked state based on user data
-    useEffect(() => {
-        if (user && user.bookmarks) {
-            const bookmarked = user.bookmarks.some(
-                (bookmark) => bookmark.toString() === recipeId
-            );
-            setIsBookmarked(bookmarked);
-        }
-    }, [user, recipeId]);
-
-    const handleBookmark = async () => {
-        // Ensure user is logged in
+    const toggleBookmark = async () => {
         if (!user || !user.id) {
             alert('Please log in or sign up to save recipes!');
             router.push('/recipes/signin');
@@ -30,22 +21,22 @@ export default function BookmarkRecipe({ recipeId, user }) {
         }
 
         try {
-            const result = await saveRecipe(recipeId);
-            if (result?.isBookmarked !== undefined) {
-                setIsBookmarked(result.isBookmarked);
+            if (isBookmarked) {
+                await deleteBookmark(recipeId);
             } else {
-                throw new Error('Unexpected server response');
+                await addBookmark(recipeId);
             }
+            setIsBookmarked(!isBookmarked);
         } catch (error) {
-            console.error('Error saving recipe:', error.message);
-            alert('Failed to save the recipe. Please try again.');
+            console.error('Error toggling bookmark:', error.message);
+            alert('Failed to update bookmark. Please try again.');
         }
     };
 
     return (
-        <Box textAlign="center" mt={2}>
+        <Tooltip title={isBookmarked ? 'Remove Bookmark' : 'Add Bookmark'}>
             <IconButton
-                onClick={handleBookmark}
+                onClick={toggleBookmark}
                 sx={{
                     color: isBookmarked ? 'green' : 'gray',
                     border: '1px solid',
@@ -53,11 +44,8 @@ export default function BookmarkRecipe({ recipeId, user }) {
                     borderRadius: '50%',
                 }}
             >
-                {isBookmarked ? <BookmarksIcon /> : <BookmarksOutlinedIcon />}
+                {isBookmarked ? <BookmarkRemoveIcon /> : <BookmarkAddIcon />}
             </IconButton>
-            <Typography variant="body2">
-                {isBookmarked ? 'Saved' : 'Save this recipe'}
-            </Typography>
-        </Box>
+        </Tooltip>
     );
 }

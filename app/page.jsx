@@ -4,8 +4,10 @@ import Recipe from '../models/Recipe';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import Category from '@/models/Category';
 import HomeClient from '@/components/HomeClient';
-import SearchBar from '@/components/SearchBar'; // Import the SearchBar component
-
+import SearchBar from '@/components/SearchBar';
+import CategoryFilterSection from '@/components/CategoryFilterSection';
+import { Typography } from '@mui/material';
+import { getSessionUser } from '@/utils/getSessionUser';
 export default async function Home() {
 	await connectDB();
 
@@ -13,10 +15,18 @@ export default async function Home() {
 	const recipes = await Recipe.find().populate('category').lean();
 	const recipesWithIds = convertToSerializeableObject(recipes);
 
+	const sessionUser = await getSessionUser();
 
 	return (<>
+		<Typography variant="h2" align="center" gutterBottom>
+			Welcome to Rebekah&#39;s Recipes!
+		</Typography>
+		<Typography variant="body1" align="center" gutterBottom>
+			We are working hard to bring you the best recipes. Please be patient as we add more recipes to our collection.
+		</Typography>
 		<SearchBar />
-		<HomeClient recipes={recipesWithIds} />
+		<CategoryFilterSection />
+		<HomeClient recipes={recipesWithIds} user={sessionUser?.user} />
 	</>);
 
 

@@ -2,7 +2,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import User from '@/models/User';
 import dbConnect from '@/config/database';
-import { NextAuthOptions } from 'next-auth';
+// import { NextAuthOptions } from 'next-auth';
 
 interface GoogleProfile {
 	sub: string;
@@ -12,7 +12,7 @@ interface GoogleProfile {
 	picture: string;
 }
 
-export const authOptions: NextAuthOptions = {
+export const authOptions = {
 	providers: [
 		GoogleProvider({
 			clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -48,6 +48,7 @@ export const authOptions: NextAuthOptions = {
 						id: user._id.toString(),
 						email: user.email,
 						name: `${user.firstName} ${user.lastName}`,
+						image: user.image,
 					};
 				}
 
@@ -74,33 +75,26 @@ export const authOptions: NextAuthOptions = {
 					});
 				}
 				user.id = existingUser._id.toString();
-			} else if (account.provider === 'credentials') {
-				const existingUser = await User.findOne({ email: user.email });
-				if (existingUser) {
-					user.id = existingUser._id.toString();
-				} else {
-					throw new Error('User not found, please register first.');
-				}
+				user.image = existingUser.image; // Ensure image is updated
 			}
 			return true;
-		},
-		async session({ session, token }) {
-			if (token.user) {
-				session.user = token.user;
-			}
-			return session;
 		},
 		async jwt({ token, user }) {
 			if (user) {
 				token.user = {
-					id: user.id, // Ensure `id` is added here
+					id: user.id,
 					email: user.email,
 					name: user.name,
-					image: user.image,
-					userId: user.id,
+					image: user.image, // Add image to the token
 				};
 			}
 			return token;
+		},
+		async session({ session, token }) {
+			if (token.user) {
+				session.user = token.user; // Pass the user object, including the image
+			}
+			return session;
 		},
 	},
 	pages: {
