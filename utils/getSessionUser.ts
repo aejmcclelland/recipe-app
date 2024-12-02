@@ -1,29 +1,33 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/utils/authOptions';
-import { Session } from 'next-auth';
+import type { Session } from 'next-auth';
 
-// Define the structure of the returned session user
 interface SessionUser {
-	user: {
-		id?: string; // Add other properties as required (e.g., email, name, etc.)
-		name?: string;
-		email?: string;
-		image?: string;
-	};
-	userId?: string;
+	id: string;
+	name?: string;
+	email?: string;
+	image?: string;
 }
 
 export const getSessionUser = async (): Promise<SessionUser | null> => {
-	const session: Session | null = await getServerSession(authOptions);
+	try {
+		const session: Session | null = await getServerSession(authOptions);
 
-	if (!session || !session.user) {
+		 console.log('Retrieved session:', session);
+
+		if (!session || !session.user || !session.user.id) {
+			console.warn('Session user or ID missing:', session);
+			return null;
+		}
+
+		return {
+			id: session.user.id,
+			name: session.user.name,
+			email: session.user.email,
+			image: session.user.image,
+		};
+	} catch (error) {
+		console.error('Error fetching session:', error);
 		return null;
 	}
-
-	return {
-		id: session.user.id,
-		email: session.user.email,
-		name: session.user.name,
-		image: session.user.image,
-	};
 };

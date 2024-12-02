@@ -2,12 +2,14 @@ import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import User from '@/models/User';
 import dbConnect from '@/config/database';
+import type { AuthOptions } from 'next-auth/core/types'; // Import type explicitly
 
-export const authOptions = {
+
+export const authOptions: AuthOptions = {
 	providers: [
 		GoogleProvider({
-			clientId: process.env.GOOGLE_CLIENT_ID!,
-			clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+			clientId: process.env.GOOGLE_CLIENT_ID,
+			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 			authorization: {
 				params: {
 					scope: 'openid email profile',
@@ -15,13 +17,10 @@ export const authOptions = {
 				},
 			},
 			profile(profile) {
-				// Returning custom profile fields
 				return {
 					id: profile.sub,
 					email: profile.email,
-					name: profile.name,
-					firstName: profile.given_name,
-					lastName: profile.family_name,
+					name: `${profile.given_name} ${profile.family_name}`,
 					image: profile.picture,
 				};
 			},
@@ -53,28 +52,10 @@ export const authOptions = {
 		strategy: 'jwt',
 	},
 	callbacks: {
-		async signIn({ user, account, profile }) {
-			await dbConnect();
-
-			if (account.provider === 'google') {
-				let existingUser = await User.findOne({ email: profile?.email });
-				if (!existingUser) {
-					existingUser = await User.create({
-						email: profile?.email,
-						firstName: profile?.given_name,
-						lastName: profile?.family_name,
-						image: profile?.picture,
-						authProvider: 'google',
-					});
-				}
-				user.id = existingUser._id.toString();
-			}
-			return true;
-		},
 		async jwt({ token, user }) {
 			if (user) {
 				token.user = {
-					id: user.id,
+					id: user.id, // Include the id field
 					email: user.email,
 					name: user.name,
 					image: user.image,
@@ -83,7 +64,9 @@ export const authOptions = {
 			return token;
 		},
 		async session({ session, token }) {
-			session.user = token.user;
+			if (token.user) {
+				session.user = token.user; // Pass the user object, including the id
+			}
 			return session;
 		},
 	},
