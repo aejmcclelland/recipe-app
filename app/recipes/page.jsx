@@ -3,7 +3,6 @@ import connectDB from '../../config/database';
 import Recipe from '../../models/Recipe';
 import { Container } from '@mui/material';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
-import { Typography } from '@mui/material';
 import RecipeSearchForm from '@/components/RecipeSearchForm';
 import BackToHomeButton from '@/components/BackToHomeButton';
 import RecipesClient from '@/components/RecipesClient';

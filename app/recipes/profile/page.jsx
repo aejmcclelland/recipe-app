@@ -1,4 +1,7 @@
-'use server';
+// 'use server';
+export const dynamic = 'force-dynamic';
+
+
 import { Box, Container } from '@mui/material';
 import connectDB from '@/config/database';
 import Recipe from '@/models/Recipe';
@@ -6,7 +9,6 @@ import User from '@/models/User';
 import { getSessionUser } from '@/utils/getSessionUser';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import RecipeOverviewCard from '@/components/RecipeOverviewCard';
-import { redirect } from 'next/navigation';
 import { serializeBookmarks } from '@/utils/serializeBookmarks';
 
 const ProfilePage = async () => {
@@ -15,12 +17,15 @@ const ProfilePage = async () => {
         await connectDB();
 
         // Get the logged-in user's session
-        const sessionUser = await getSessionUser();
+
+        const sessionUser = await getSessionUser({ cache: 'no-store' });
 
         if (!sessionUser || !sessionUser.id) {
-            console.warn('User not logged in or session data missing');
-            redirect('/');
-            return null; // Prevent further rendering
+            return (
+                <Container maxWidth="lg">
+                    <h2>Please log in to access your profile.</h2>
+                </Container>
+            );
         }
 
         const userId = sessionUser.id;
