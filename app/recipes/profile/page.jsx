@@ -75,7 +75,7 @@ const ProfilePage = async () => {
                                 <Box key={recipe._id.toString()} sx={{ maxWidth: 400 }}>
                                     <RecipeOverviewCard
                                         recipe={recipe}
-                                        user={sessionUser?.user}
+                                        user={sessionUser}
                                         isBookmarked
                                     />
                                 </Box>
