@@ -12,21 +12,38 @@ import { getSessionUser } from '@/utils/getSessionUser';
 export const dynamic = 'force-dynamic';
 
 export default async function RecipesPage() {
-    await connectDB();
+    try {
+        await connectDB();
 
-    const recipes = await Recipe.find().populate('category').lean();
-    const recipesWithIds = convertToSerializeableObject(recipes);
+        const recipes = await Recipe.find().populate('category').lean();
+        const recipesWithIds = convertToSerializeableObject(recipes);
 
-    // Fetch user data
-    const sessionUser = await getSessionUser();
-    const user = sessionUser?.user || null;
+        console.log('Serialized recipes:', recipesWithIds);
 
-    return (
-        <Container>
-            <RecipeSearchForm />
-            <RecipesClient recipes={recipesWithIds} user={user} />
-            <BackToHomeButton />
-        </Container>
-    );
+        // Fetch user data
+        // Fetch user session data
+        const sessionUser = await getSessionUser();
+        if (!sessionUser) {
+            console.warn('No session user found');
+        }
+        const user = sessionUser?.user || null;
+
+        console.log('User passed to RecipeOverviewCard:', user);
+
+        return (
+            <Container>
+                <RecipeSearchForm />
+                <RecipesClient recipes={recipesWithIds} user={user} />
+                <BackToHomeButton />
+            </Container>
+        );
+    } catch (error) {
+        console.error('Error loading RecipesPage:', error.message);
+        return (
+            <Container>
+                <p>Something went wrong while loading the recipes. Please try again later.</p>
+            </Container>
+        );
+    }
 }
 

@@ -11,11 +11,15 @@ export default function HomeClient({ recipes, user }) {
     const [filteredRecipes, setFilteredRecipes] = useState([]);
 
     useEffect(() => {
+
+        console.log('User in HomeClient:', user);
+        console.log('Recipes in HomeClient:', recipes)
         const updatedRecipes = recipes.map((recipe) => ({
             ...recipe,
             _id: recipe._id.toString(), // Convert ObjectId to string
             isBookmarked: user?.bookmarks?.some((id) => id === recipe._id.toString()) || false,
         }));
+
 
         setFilteredRecipes(
             selectedCategory === 'All'

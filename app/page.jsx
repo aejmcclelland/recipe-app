@@ -8,6 +8,7 @@ import SearchBar from '@/components/SearchBar';
 import CategoryFilterSection from '@/components/CategoryFilterSection';
 import { Typography } from '@mui/material';
 import { getSessionUser } from '@/utils/getSessionUser';
+
 export default async function Home() {
 	await connectDB();
 
@@ -16,6 +17,9 @@ export default async function Home() {
 	const recipesWithIds = convertToSerializeableObject(recipes);
 
 	const sessionUser = await getSessionUser();
+
+	console.log('Session retrieved on Home page:', sessionUser);
+	console.log('Recipes retrieved:', recipesWithIds);
 
 	return (<>
 		<Typography variant="h2" align="center" gutterBottom>
@@ -26,7 +30,7 @@ export default async function Home() {
 		</Typography>
 		<SearchBar />
 		<CategoryFilterSection />
-		<HomeClient recipes={recipesWithIds} user={sessionUser?.user} />
+		<HomeClient recipes={recipesWithIds} user={{ id: sessionUser?.id, ...sessionUser }} />
 	</>);
 
 

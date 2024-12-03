@@ -3,32 +3,49 @@
 import connectDB from '@/config/database';
 import User from '@/models/User';
 import { getSessionUser } from '@/utils/getSessionUser';
+import mongoose from 'mongoose';
 
 async function addBookmark(recipeId) {
-	await connectDB();
+	try {
+		console.log('Recipe ID received in addBookmark:', recipeId);
 
-	const sessionUser = await getSessionUser();
-	if (!sessionUser || !sessionUser.user?.id) {
-		throw new Error('You must be logged in to add a bookmark');
+		const sessionUser = await getSessionUser();
+		console.log('Session user in addBookmark:', sessionUser);
+
+		if (!sessionUser || !sessionUser.id) {
+			console.error('Session user not found or missing ID');
+			throw new Error('You must be logged in to add a bookmark');
+		}
+
+		const user = await User.findById(sessionUser.id);
+		console.log('User found in addBookmark:', user);
+
+		if (!user) {
+			console.error('User not found in database');
+			throw new Error('User not found');
+		}
+
+		const isAlreadyBookmarked = user.bookmarks.includes(recipeId);
+		console.log(
+			`Is recipe ${recipeId} already bookmarked:`,
+			isAlreadyBookmarked
+		);
+
+		if (isAlreadyBookmarked) {
+			console.log(`Recipe ${recipeId} is already bookmarked`);
+			return { success: true, isBookmarked: true };
+		}
+
+		user.bookmarks.push(recipeId);
+		await user.save();
+		console.log(
+			`Recipe ${recipeId} added to bookmarks for user ${sessionUser.id}`
+		);
+		return { success: true, isBookmarked: true };
+	} catch (error) {
+		console.error('Error in addBookmark:', error.message);
+		throw error;
 	}
-
-	const user = await User.findById(sessionUser.user?.id);
-
-	if (!user) {
-		throw new Error('User not found');
-	}
-
-	const isAlreadyBookmarked = user.bookmarks.includes(recipeId);
-
-	if (isAlreadyBookmarked) {
-		console.log(`Recipe ${recipeId} is already bookmarked`);
-		return { success: true, isBookmarked: true }; // Gracefully return
-	}
-
-	user.bookmarks.push(recipeId); // Add the recipe to bookmarks
-	await user.save();
-	console.log(`Recipe ${recipeId} added to bookmarks`);
-	return { success: true, isBookmarked: true }; // Return success
 }
 
 export default addBookmark;

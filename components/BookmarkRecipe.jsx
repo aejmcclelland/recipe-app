@@ -6,30 +6,39 @@ import BookmarkRemoveIcon from '@mui/icons-material/BookmarkRemove';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import addBookmark from '@/app/actions/addBookmark';
-import deleteBookmark from '@/app/actions/deleteBookmark';
 
 
 export default function BookmarkButton({ recipeId, user, initialBookmarked = false }) {
     const [isBookmarked, setIsBookmarked] = useState(initialBookmarked);
     const router = useRouter();
 
+    useEffect(() => {
+        console.log('User in BookmarkButton:', user);
+    }, [user]);
+
     const toggleBookmark = async () => {
+        console.log('User in toggleBookmark:', user); // Confirm user here
+        console.log('Recipe ID in toggleBookmark:', recipeId); // Confirm recipeId
+
         if (!user || !user.id) {
+            console.error('User not logged in:', user);
             alert('Please log in or sign up to save recipes!');
             router.push('/recipes/signin');
             return;
         }
 
         try {
-            if (isBookmarked) {
-                await deleteBookmark(recipeId);
+            const result = await addBookmark(recipeId); // Or equivalent fetch API call
+            console.log('Result from addBookmark:', result);
+
+            if (result?.isBookmarked) {
+                setIsBookmarked(true);
             } else {
-                await addBookmark(recipeId);
+                setIsBookmarked(false);
             }
-            setIsBookmarked(!isBookmarked);
         } catch (error) {
             console.error('Error toggling bookmark:', error.message);
-            alert('Failed to update bookmark. Please try again.');
+            alert('Failed to toggle bookmark. Please try again.');
         }
     };
 
