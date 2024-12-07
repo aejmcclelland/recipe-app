@@ -13,7 +13,7 @@ import { shadowsIntoLight } from '@/app/fonts/fonts';
 const drawerWidth = 240;
 
 export default function SearchAppBar() {
-    const { data: session } = useSession(); // Access session and status
+    const { data: session, status } = useSession(); // Access session and status
     const pathname = usePathname();
     const isDetailPage = pathname.startsWith('/recipes/') && pathname.split('/').length === 3;
     const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -26,10 +26,10 @@ export default function SearchAppBar() {
     const handleCloseUserMenu = () => setAnchorElUser(null);
     const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
-    // if (status === 'loading') {
-    //     // Show a loading state while the session is being fetched
-    //     return <p>Loading...</p>;
-    // }
+    if (status === 'loading') {
+        // Show a loading state while the session is being fetched
+        return <p>Loading...</p>;
+    }
 
     return (
         <Box sx={{ flexGrow: 1 }}>

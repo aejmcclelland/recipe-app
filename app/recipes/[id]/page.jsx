@@ -9,6 +9,7 @@ import BackToHomeButton from '@/components/BackToHomeButton';
 import Link from 'next/link';
 import { getSessionUser } from '@/utils/getSessionUser';
 import RecipeNotFound from '@/components/RecipeNotFound';
+import mongoose from 'mongoose';
 
 export default async function RecipeDetailPage({ params }) {
     const sessionUser = await getSessionUser();
@@ -16,6 +17,11 @@ export default async function RecipeDetailPage({ params }) {
     await connectDB();
     const { id: recipeId } = await params;
 
+    // Validate the recipeId format
+    if (!mongoose.Types.ObjectId.isValid(recipeId)) {
+        console.error(`Invalid recipe ID: ${recipeId}`);
+        return <RecipeNotFound />;
+    }
     // Fetch the recipe by its unique ID, populating the owner field
     const recipe = await Recipe.findById(recipeId)
         .populate({ path: 'ingredients.ingredient', model: Ingredient })
