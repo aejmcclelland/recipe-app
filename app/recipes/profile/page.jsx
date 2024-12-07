@@ -1,7 +1,5 @@
 // 'use server';
 export const dynamic = 'force-dynamic';
-
-
 import { Box, Container } from '@mui/material';
 import connectDB from '@/config/database';
 import Recipe from '@/models/Recipe';
@@ -35,7 +33,8 @@ const ProfilePage = async () => {
             .populate({
                 path: 'bookmarks',
                 model: 'Recipe',
-                populate: { path: 'category', select: 'name' },
+
+                populate: { path: 'category', select: 'name', model: 'Category',   },
             })
             .lean();
 

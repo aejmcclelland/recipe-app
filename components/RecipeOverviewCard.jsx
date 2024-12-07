@@ -4,9 +4,11 @@ import { Card, CardContent, Typography, Box } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import Image from 'next/image';
 import Link from 'next/link';
-import BookmarkButton from '@/components/BookmarkRecipe';
+import BookmarkButton from '@/components/BookmarkButton';
 
 export default function RecipeOverviewCard({ recipe, user, isBookmarked }) {
+    if (!recipe) return null; // Handle edge case where recipe is undefined
+
     return (
         <Card
             sx={{
@@ -18,7 +20,7 @@ export default function RecipeOverviewCard({ recipe, user, isBookmarked }) {
             }}
         >
             {/* Ensure dynamic href resolves correctly */}
-            <Link href={`/recipes/${recipe._id.toString()}`} passHref>
+            <Link href={`/recipes/${recipe._id}`} passHref>
                 <Image
                     src={recipe.image}
                     alt={recipe.name}
@@ -32,8 +34,9 @@ export default function RecipeOverviewCard({ recipe, user, isBookmarked }) {
                     <Typography variant="h6" noWrap>
                         {recipe.name}
                     </Typography>
+                    {/* Pass the entire recipe object to BookmarkButton */}
                     <BookmarkButton
-                        recipeId={recipe._id.toString()}
+                        recipe={recipe}
                         user={user}
                         initialBookmarked={isBookmarked}
                     />

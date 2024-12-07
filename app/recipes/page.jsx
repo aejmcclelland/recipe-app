@@ -1,5 +1,5 @@
 
-import connectDB from '../../config/database';
+import connectDB from '@/config/database';
 import Recipe from '../../models/Recipe';
 import { Container } from '@mui/material';
 import { convertToSerializeableObject } from '@/utils/convertToObject';

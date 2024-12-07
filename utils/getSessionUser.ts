@@ -3,6 +3,7 @@ import { authOptions } from '@/utils/authOptions';
 import type { Session } from 'next-auth';
 
 interface SessionUser {
+	user: Session['user'];
 	id: string;
 	name?: string;
 	email?: string;
@@ -13,7 +14,7 @@ export const getSessionUser = async (): Promise<SessionUser | null> => {
 	try {
 		const session: Session | null = await getServerSession(authOptions);
 
-		 console.log('Retrieved session:', session);
+		console.log('Retrieved session:', session);
 
 		if (!session || !session.user || !session.user.id) {
 			console.warn('Session user or ID missing:', session);
@@ -21,6 +22,7 @@ export const getSessionUser = async (): Promise<SessionUser | null> => {
 		}
 
 		return {
+			user: session.user,
 			id: session.user.id,
 			name: session.user.name,
 			email: session.user.email,

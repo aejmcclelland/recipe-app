@@ -22,19 +22,19 @@
                 "name": "next"
             }
         ],
-        "baseUrl": ".", // Important for `@/` alias
+        "baseUrl": ".",
         "paths": {
             "@/*": [
                 "./*"
-            ] // Maps `@/` to the root directory
-        },
+            ]
+        }
     },
     "include": [
         "next-env.d.ts",
         ".next/types/**/*.ts",
         "**/*.ts",
         "**/*.tsx"
-, "utils/authOptions.ts", "app/recipes/page.jsx", "models/Category.js", "models/Recipe.js", "models/User.js", "components/RecipesClient.jsx", "app/recipes/profile/page.jsx", "components/RecipeOverviewCard.jsx"    ],
+    ],
     "exclude": [
         "node_modules"
     ]

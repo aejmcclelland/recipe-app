@@ -4,7 +4,6 @@ import User from '@/models/User';
 import dbConnect from '@/config/database';
 import type { AuthOptions } from 'next-auth/core/types'; // Import type explicitly
 
-
 export const authOptions: AuthOptions = {
 	providers: [
 		GoogleProvider({
@@ -55,7 +54,7 @@ export const authOptions: AuthOptions = {
 		async jwt({ token, user }) {
 			if (user) {
 				token.user = {
-					id: user.id, // Include the id field
+					id: user.id.toString(), // Include the id field
 					email: user.email,
 					name: user.name,
 					image: user.image,

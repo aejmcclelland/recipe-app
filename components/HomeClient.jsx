@@ -11,15 +11,14 @@ export default function HomeClient({ recipes, user }) {
     const [filteredRecipes, setFilteredRecipes] = useState([]);
 
     useEffect(() => {
-
         console.log('User in HomeClient:', user);
-        console.log('Recipes in HomeClient:', recipes)
+        console.log('Recipes in HomeClient:', recipes);
+        console.log('Recipe:', recipes);
         const updatedRecipes = recipes.map((recipe) => ({
             ...recipe,
             _id: recipe._id.toString(), // Convert ObjectId to string
             isBookmarked: user?.bookmarks?.some((id) => id === recipe._id.toString()) || false,
         }));
-
 
         setFilteredRecipes(
             selectedCategory === 'All'
@@ -27,12 +26,13 @@ export default function HomeClient({ recipes, user }) {
                 : updatedRecipes.filter((recipe) => recipe.category?.name === selectedCategory)
         );
     }, [selectedCategory, recipes, user]);
+
     return (
         <Container maxWidth="lg">
             <Grid container spacing={4} justifyContent="center">
                 {filteredRecipes.length > 0 ? (
                     filteredRecipes.map((recipe) => (
-                        <Grid xs={12} sm={6} md={4} key={recipe._id.toString()}>
+                        <Grid xs={12} sm={6} md={4} key={recipe._id}>
                             <RecipeOverviewCard
                                 recipe={recipe}
                                 user={user}
