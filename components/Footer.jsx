@@ -1,5 +1,5 @@
 import RestaurantOutlinedIcon from '@mui/icons-material/RestaurantOutlined';
-import { Box, Typography, Container, IconButton, Link } from '@mui/material';
+import { Box, Typography, Container, IconButton, Link, Grid } from '@mui/material';
 
 const Footer = () => {
     const currentYear = new Date().getFullYear();
@@ -9,57 +9,61 @@ const Footer = () => {
             component="footer"
             sx={{
                 backgroundColor: 'primary.main',
-                py: 1.1,
-                mt: 6,
+                py: 3,
                 borderTop: '1px solid #d32f2f',
+                color: '#ffffff',
             }}
         >
-            <Container
-                maxWidth="lg"
-                sx={{
-                    display: 'flex',
-                    flexDirection: { xs: 'column', md: 'row' },
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                }}
-            >
-                {/* Icon Section */}
-                <Box sx={{ mb: { xs: 2, md: 0 } }}>
-                    <IconButton edge="start" aria-label="restaurant-icon">
-                        <RestaurantOutlinedIcon
-                            sx={{ fontSize: '2rem', color: '#ffffff' }}
-                        />
-                    </IconButton>
-                </Box>
-
-                {/* Links Section */}
-                <Box sx={{ mb: { xs: 2, md: 0 }, display: 'flex', justifyContent: { xs: 'center', md: 'flex-start' } }}>
-                    <Link href="/" underline="none" color="#ffffff" sx={{ mx: 2 }}>
-                        <Typography variant="body1" color="#ffffff">
-                            Rebekah&#39;s Recipes
+            <Container maxWidth="lg">
+                <Grid
+                    container
+                    spacing={3}
+                    sx={{
+                        textAlign: { xs: 'center', sm: 'left' }, // Center on mobile, align left on desktop
+                    }}
+                >
+                    {/* Brand Section */}
+                    <Grid item xs={12} sm={4}>
+                        <Box display="flex" alignItems="center" justifyContent={{ xs: 'center', sm: 'flex-start' }}>
+                            <IconButton edge="start" aria-label="restaurant-icon">
+                                <RestaurantOutlinedIcon sx={{ fontSize: '2rem', color: '#ffffff' }} />
+                            </IconButton>
+                            <Typography variant="h6" ml={1}>
+                                Rebekah&#39;s Recipes
+                            </Typography>
+                        </Box>
+                        <Typography variant="body2" mt={1}>
+                            &copy; {currentYear} Rebekah&#39;s Recipes. All rights reserved.
                         </Typography>
-                    </Link>
-                </Box>
+                    </Grid>
 
-                {/* Copyright Section */}
-                <Box>
-                    <Typography variant="body2" color="text.secondary" align="center">
-                        &copy; {currentYear} Rebekah&#39;s Recipes. All rights reserved.
-                        <Link
-                            href="/recipes/privacy-policy"
-                            style={{ color: 'white', textDecoration: 'none', marginLeft: '5px' }}
-                        >
-                            Privacy Policy
-                        </Link>
-                        <Link
-                            href="/recipes/terms-of-service"
-                            style={{ color: 'white', textDecoration: 'none', marginLeft: '5px' }}
-                        >
-                            Terms of Service
-                        </Link>
-                    </Typography>
+                    {/* Legal Section */}
+                    <Grid item xs={12} sm={4}>
+                        <Typography variant="subtitle1" gutterBottom>
+                            Legal
+                        </Typography>
+                        <Box display="flex" flexDirection="column" alignItems={{ xs: 'center', sm: 'flex-start' }} gap={1}>
+                            <Link href="/recipes/privacy-policy" color="inherit" underline="hover">
+                                Privacy Policy
+                            </Link>
+                            <Link href="/recipes/terms-of-service" color="inherit" underline="hover">
+                                Terms of Service
+                            </Link>
+                        </Box>
+                    </Grid>
 
-                </Box>
+                    {/* Contact Section */}
+                    <Grid item xs={12} sm={4}>
+                        <Typography variant="subtitle1" gutterBottom>
+                            Contact Us
+                        </Typography>
+                        <Box display="flex" flexDirection="column" alignItems={{ xs: 'center', sm: 'flex-start' }} gap={1}>
+                            <Link href="mailto:contact@rebekahsrecipes.com" color="inherit" underline="hover">
+                                contact@rebekahsrecipes.com
+                            </Link>
+                        </Box>
+                    </Grid>
+                </Grid>
             </Container>
         </Box>
     );
