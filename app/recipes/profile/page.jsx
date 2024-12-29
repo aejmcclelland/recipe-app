@@ -8,17 +8,19 @@ import { getSessionUser } from '@/utils/getSessionUser';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 import { serializeBookmarks } from '@/utils/serializeBookmarks';
+import mongoose from 'mongoose';
 
 const ProfilePage = async () => {
     try {
         // Connect to the database
         await connectDB();
 
-        // Get the logged-in user's session
-
         const sessionUser = await getSessionUser({ cache: 'no-store' });
 
-        if (!sessionUser || !sessionUser.id) {
+        console.log('Session User in Profile Page:', sessionUser);
+
+        if (!sessionUser || !sessionUser.user?.id) {
+            console.warn('Session user is missing or invalid.');
             return (
                 <Container maxWidth="lg">
                     <h2>Please log in to access your profile.</h2>
@@ -26,22 +28,24 @@ const ProfilePage = async () => {
             );
         }
 
-        const userId = sessionUser.id;
+        const userId = sessionUser.user.id;
 
         // Fetch user's bookmarked recipes
         const userWithBookmarks = await User.findById(userId)
             .populate({
                 path: 'bookmarks',
                 model: 'Recipe',
-
-                populate: { path: 'category', select: 'name', model: 'Category',   },
+                populate: { path: 'category', select: 'name', model: 'Category', },
             })
             .lean();
 
         // Fetch user's own recipes
         const recipesDocs = await Recipe.find({ user: userId })
-            .populate('category', 'name')
+            .populate({ path: 'category', select: 'name' }) // Default inferred model (Category)
             .lean();
+
+        // Debugging user's recipes
+        console.log('User Recipes:', recipesDocs);
 
         // Serialize the recipes and bookmarks for client components
         const userRecipes = convertToSerializeableObject(recipesDocs);

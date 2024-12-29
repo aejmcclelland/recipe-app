@@ -3,14 +3,15 @@ import { authOptions } from '@/utils/authOptions';
 import type { Session } from 'next-auth';
 
 interface SessionUser {
-	user: Session['user'];
-	id: string;
-	name?: string;
-	email?: string;
-	image?: string;
+	user: {
+		id: string; // MongoDB _id
+		name?: string;
+		email?: string;
+		image?: string;
+	};
 }
 
-export const getSessionUser = async (): Promise<SessionUser | null> => {
+export const getSessionUser = async () => {
 	try {
 		const session: Session | null = await getServerSession(authOptions);
 
@@ -22,14 +23,15 @@ export const getSessionUser = async (): Promise<SessionUser | null> => {
 		}
 
 		return {
-			user: session.user,
-			id: session.user.id,
-			name: session.user.name,
-			email: session.user.email,
-			image: session.user.image,
+			user: {
+				id: session.user.id,
+				name: session.user.name,
+				email: session.user.email,
+				image: session.user.image,
+			},
 		};
 	} catch (error) {
-		console.error('Error fetching session:', error);
+		console.error('Error fetching session:', error.message);
 		return null;
 	}
 };

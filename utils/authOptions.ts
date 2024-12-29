@@ -6,7 +6,7 @@ import type { AuthOptions } from 'next-auth/core/types';
 
 // Extend the GoogleProfile interface
 interface CustomGoogleProfile extends GoogleProfile {
-	picture: string;
+	picture: string; // Ensure we can access the profile picture
 }
 
 export const authOptions: AuthOptions = {
@@ -20,9 +20,9 @@ export const authOptions: AuthOptions = {
 					prompt: 'select_account',
 				},
 			},
-			profile(profile) {
+			profile(profile: CustomGoogleProfile) {
 				return {
-					id: profile.sub,
+					id: profile.sub, // Google's unique identifier
 					email: profile.email,
 					name: profile.name, // Use the full name provided by Google
 					image: profile.picture, // Correctly typed `picture` property
@@ -53,25 +53,27 @@ export const authOptions: AuthOptions = {
 		}),
 	],
 	session: {
-		strategy: 'jwt', // Keep JWT for serverless scalability
+		strategy: 'jwt',
 	},
 	callbacks: {
 		async signIn({ user, account, profile }) {
 			if (account.provider === 'google' && profile) {
 				await dbConnect();
+
+				// Check if user exists in MongoDB
 				let existingUser = await User.findOne({ email: profile.email });
 
-				// Create the user in MongoDB if it doesn't exist
+				// Create a new user if not found
 				if (!existingUser) {
 					existingUser = await User.create({
 						email: profile.email,
-						name: profile.name, // Use the full name instead of `given_name`
-						image: (profile as CustomGoogleProfile).picture, // Use the Google profile picture
+						name: profile.name, // Full name from Google
+						image: (profile as CustomGoogleProfile).picture, // Google profile picture
 						authProvider: 'google',
 					});
 				}
 
-				// Assign the MongoDB _id as the user's id
+				// Map MongoDB _id to `user.id`
 				user.id = existingUser._id.toString();
 			}
 
@@ -79,7 +81,7 @@ export const authOptions: AuthOptions = {
 		},
 		async jwt({ token, user }) {
 			if (user) {
-				// Store only essential fields in the token
+				// Store essential fields in the token
 				token.user = {
 					id: user.id,
 					email: user.email,
@@ -91,7 +93,7 @@ export const authOptions: AuthOptions = {
 		},
 		async session({ session, token }) {
 			if (token.user) {
-				// Pass the user object with the MongoDB _id
+				// Attach user data from token to the session
 				session.user = token.user;
 			}
 			return session;

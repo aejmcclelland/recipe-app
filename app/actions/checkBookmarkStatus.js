@@ -15,11 +15,15 @@ async function checkBookmarkStatus(recipeId) {
 		}
 
 		const sessionUser = await getSessionUser();
+		console.log('Session user in checkBookmarkStatus:', sessionUser);
 
-		if (!sessionUser || !sessionUser.id) {
+		// Correctly access the user ID
+		const userId = sessionUser?.user?.id;
+
+		// Validate session user
+		if (!userId) {
 			throw new Error('You must be logged in to check bookmark status');
 		}
-		const userId = sessionUser.id;
 
 		// Ensure userId is valid
 		if (!mongoose.Types.ObjectId.isValid(userId)) {

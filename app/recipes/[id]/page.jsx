@@ -12,60 +12,74 @@ import RecipeNotFound from '@/components/RecipeNotFound';
 import mongoose from 'mongoose';
 
 export default async function RecipeDetailPage({ params }) {
+    // Destructure recipeId directly from params
+    const recipeParams = await params; // Await `params` if it's asynchronous
+    const recipeId = recipeParams?.id;
+    // Fetch session user
     const sessionUser = await getSessionUser();
 
+    // Connect to DB
     await connectDB();
-    const { id: recipeId } = await params;
 
-    // Validate the recipeId format
-    if (!mongoose.Types.ObjectId.isValid(recipeId)) {
+    // Validate and handle invalid recipeId
+    if (!recipeId || !mongoose.Types.ObjectId.isValid(recipeId)) {
         console.error(`Invalid recipe ID: ${recipeId}`);
         return <RecipeNotFound />;
     }
-    // Fetch the recipe by its unique ID, populating the owner field
-    const recipe = await Recipe.findById(recipeId)
-        .populate({ path: 'ingredients.ingredient', model: Ingredient })
-        .populate('user') // Ensure the owner's ID is available for comparison
-        .lean();
 
-    // Check if recipe is found, if not render RecipeNotFound
-    if (!recipe) {
-        return <RecipeNotFound />; // Renders the Client Component to handle toast and redirect
-    }
+    try {
+        // Fetch the recipe by ID, populate necessary fields
+        const recipe = await Recipe.findById(recipeId)
+            .populate({ path: 'ingredients.ingredient', model: Ingredient })
+            .populate('user') // Ensure the owner's info is available
+            .lean();
 
-    const serializedRecipe = convertToSerializeableObject(recipe);
+        if (!recipe) {
+            console.error(`Recipe not found with ID: ${recipeId}`);
+            return <RecipeNotFound />;
+        }
 
-    return (
-        <Container maxWidth="lg">
-            <Box sx={{ textAlign: 'center', marginTop: 4, marginBottom: 4 }}>
-                <Typography variant="h3" component="h1" gutterBottom>
-                    {recipe.name} Recipe
-                </Typography>
-            </Box>
+        // Serialize recipe data for client components
+        const serializedRecipe = convertToSerializeableObject(recipe);
 
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-                <RecipeCard recipe={serializedRecipe} user={sessionUser} />
-            </Box>
-
-            {/* Bookmark Button */}
-            <Box sx={{ textAlign: 'center', marginTop: 2 }}>
-                <BookmarkRecipe recipeId={recipeId} user={sessionUser?.user || null} />
-            </Box>
-
-            {/* Conditionally show the Edit button only if the logged-in user owns the recipe */}
-            {sessionUser && recipe.user && sessionUser.user?.id === recipe.user._id.toString() && (
-                <Box sx={{ textAlign: 'center', marginTop: 2 }}>
-                    <Link href={`/recipes/${recipe._id}/edit`}>
-                        <Button variant="contained" color="primary">
-                            Edit Recipe
-                        </Button>
-                    </Link>
+        return (
+            <Container maxWidth="lg">
+                {/* Recipe Name */}
+                <Box sx={{ textAlign: 'center', marginTop: 4, marginBottom: 4 }}>
+                    <Typography variant="h3" component="h1" gutterBottom>
+                        {serializedRecipe.name} Recipe
+                    </Typography>
                 </Box>
-            )}
 
-            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
-                <BackToHomeButton />
-            </Box>
-        </Container>
-    );
+                {/* Recipe Card */}
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+                    <RecipeCard recipe={serializedRecipe} user={sessionUser} />
+                </Box>
+
+                {/* Bookmark Button */}
+                <Box sx={{ textAlign: 'center', marginTop: 2 }}>
+                    <BookmarkRecipe recipeId={recipeId} user={sessionUser?.user || null} />
+                </Box>
+
+                {/* Edit Recipe Button (Only if the logged-in user owns the recipe) */}
+                {sessionUser?.user?.id === serializedRecipe.user?._id?.toString() && (
+                    <Box sx={{ textAlign: 'center', marginTop: 2 }}>
+                        <Link href={`/recipes/${serializedRecipe._id}/edit`}>
+                            <Button variant="contained" color="primary">
+                                Edit Recipe
+                            </Button>
+                        </Link>
+                    </Box>
+                )}
+
+                {/* Back to Home Button */}
+                <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
+                    <BackToHomeButton />
+                </Box>
+            </Container>
+        );
+    } catch (error) {
+        console.error('Error fetching recipe:', error.message);
+        return <RecipeNotFound />;
+    }
 }

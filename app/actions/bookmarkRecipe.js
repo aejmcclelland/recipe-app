@@ -11,7 +11,12 @@ async function bookmarkRecipe(recipeId, recipeName) {
 
 		// Get the logged-in user's session
 		const sessionUser = await getSessionUser();
-		if (!sessionUser || !sessionUser.id) {
+		console.log('Session user in bookmarkRecipe:', sessionUser);
+
+		// Correctly access the user ID from the session
+		const userId = sessionUser?.user?.id;
+
+		if (!userId) {
 			throw new Error('You must be logged in to bookmark a recipe');
 		}
 
@@ -20,13 +25,10 @@ async function bookmarkRecipe(recipeId, recipeName) {
 			throw new Error(`Invalid recipe ID: ${recipeId}`);
 		}
 
-		// Extract the user ID
-		const userId = sessionUser.id;
-
 		// Find the user in the database
-		const user = await User.findById(sessionUser.id);
+		const user = await User.findById(userId);
 		if (!user) {
-			throw new Error(`User not found with ID: ${sessionUser.id}`);
+			throw new Error(`User not found with ID: ${userId}`);
 		}
 
 		// Ensure user.bookmarks is an array
