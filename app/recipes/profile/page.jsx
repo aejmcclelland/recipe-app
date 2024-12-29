@@ -9,7 +9,7 @@ import { convertToSerializeableObject } from '@/utils/convertToObject';
 import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 import { serializeBookmarks } from '@/utils/serializeBookmarks';
 import BookmarkRecipeCard from '@/components/BookmarkRecipeCard';
-import Grid from '@mui/material/Grid2';
+import UserDetails from '@/components/UserDetails';
 
 const ProfilePage = async () => {
     try {
@@ -56,7 +56,8 @@ const ProfilePage = async () => {
         // Render the profile page
         return (
             <Container maxWidth="lg">
-                <h2>Welcome, {userWithBookmarks?.firstName || 'Guest'}!</h2>
+                {/* User Details */}
+                <UserDetails user={sessionUser.user} />
 
                 {/* User's Recipes */}
                 <Box mt={4}>

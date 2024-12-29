@@ -45,7 +45,14 @@ const Footer = () => {
                 <Box>
                     <Typography variant="body2" color="text.secondary" align="center">
                         &copy; {currentYear} Rebekah&#39;s Recipes. All rights reserved.
+                        <Link
+                            href="/recipes/privacy-policy"
+                            style={{ color: 'white', textDecoration: 'none', marginLeft: '5px' }}
+                        >
+                            Privacy Policy
+                        </Link>
                     </Typography>
+
                 </Box>
             </Container>
         </Box>
