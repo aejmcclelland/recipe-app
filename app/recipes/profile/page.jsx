@@ -1,6 +1,6 @@
 // 'use server';
 export const dynamic = 'force-dynamic';
-import { Box, Container } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import connectDB from '@/config/database';
 import Recipe from '@/models/Recipe';
 import User from '@/models/User';
@@ -8,7 +8,8 @@ import { getSessionUser } from '@/utils/getSessionUser';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 import { serializeBookmarks } from '@/utils/serializeBookmarks';
-import mongoose from 'mongoose';
+import BookmarkRecipeCard from '@/components/BookmarkRecipeCard';
+import Grid from '@mui/material/Grid2';
 
 const ProfilePage = async () => {
     try {
@@ -72,19 +73,22 @@ const ProfilePage = async () => {
                 {/* Bookmarked Recipes */}
                 <Box mt={4}>
                     <h3>Bookmarked Recipes</h3>
-                    <Box display="flex" flexWrap="wrap" gap={2} justifyContent="center">
+                    <Box
+                        display="grid"
+                        gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} // Single column for small screens, two columns for medium+
+                        gap={4} // Larger gap between grid items
+                    >
                         {bookmarkedRecipes.length > 0 ? (
                             bookmarkedRecipes.map((recipe) => (
-                                <Box key={recipe._id.toString()} sx={{ maxWidth: 400 }}>
-                                    <RecipeOverviewCard
-                                        recipe={recipe}
-                                        user={sessionUser}
-                                        isBookmarked
-                                    />
-                                </Box>
+                                <BookmarkRecipeCard
+                                    key={recipe._id.toString()}
+                                    recipe={recipe}
+                                    user={sessionUser?.user}
+                                    isBookmarked
+                                />
                             ))
                         ) : (
-                            <p>You haven&apos;t saved any recipes yet.</p>
+                            <Typography>You haven&apos;t saved any recipes yet.</Typography>
                         )}
                     </Box>
                 </Box>

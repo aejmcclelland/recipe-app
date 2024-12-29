@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { TextField, Button, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid'; // For Material UI Grid2 system
+import Grid from '@mui/material/Grid2'; // For Material UI Grid2 system
 import addRecipe from '@/app/actions/addRecipe';
 import { fractionToDecimal } from '@/utils/fractionToDecimal';
 import { useRouter } from 'next/navigation';
