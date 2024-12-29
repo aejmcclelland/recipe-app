@@ -51,6 +51,12 @@ const Footer = () => {
                         >
                             Privacy Policy
                         </Link>
+                        <Link
+                            href="/recipes/terms-of-service"
+                            style={{ color: 'white', textDecoration: 'none', marginLeft: '5px' }}
+                        >
+                            Terms of Service
+                        </Link>
                     </Typography>
 
                 </Box>
