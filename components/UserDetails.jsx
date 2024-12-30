@@ -3,7 +3,9 @@
 import { Box, Typography } from '@mui/material';
 
 export default function UserDetails({ user }) {
+
     if (!user) return null; // Handle edge case where user data is missing
+
 
     return (
         <Box
@@ -13,11 +15,11 @@ export default function UserDetails({ user }) {
                 alignItems: 'center',
                 mb: 4, // Add some margin below
                 p: 3, // Padding for spacing
-                border: '1px solid #ddd', // Add subtle border
-                borderRadius: 2, // Rounded corners
-                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // Subtle shadow
-                maxWidth: 400, // Restrict max width
-                mx: 'auto', // Center the component horizontally
+                border: '1px solid #ddd',
+                borderRadius: 2,
+                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                maxWidth: { xs: '100%', sm: 400 },
+                mx: 'auto',
             }}
         >
             {/* User Image */}
@@ -26,6 +28,10 @@ export default function UserDetails({ user }) {
                     component="img"
                     src={user.image}
                     alt={user.name || 'User Avatar'}
+                    onError={(e) => {
+                        e.target.onerror = null; // Prevent infinite loop
+                        e.target.src = '/images/default-profile.png'; // Fallback image
+                    }}
                     sx={{
                         width: 100,
                         height: 100,
@@ -38,10 +44,10 @@ export default function UserDetails({ user }) {
             )}
             {/* User Details */}
             <Typography variant="h5" gutterBottom>
-                Welcome, {user.name || 'Guest'}!
+                Welcome, {user?.name || 'Guest'}!
             </Typography>
             <Typography variant="body1" color="textSecondary">
-                Email: {user.email || 'N/A'}
+                Email: {user?.email || 'N/A'}
             </Typography>
         </Box>
     );

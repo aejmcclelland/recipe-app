@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
 		},
 		firstName: { type: String, required: true },
 		lastName: { type: String, required: true },
-		image: { type: String, default: 'default-profile.png' },
+		image: { type: String, default: '/images/default-profile.png' },
 		authProvider: {
 			type: String,
 			required: true,
