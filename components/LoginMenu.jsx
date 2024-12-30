@@ -16,13 +16,15 @@ export default function LoginMenu() {
 
     const getAvatarSrc = () => {
         if (session?.user?.image && session.user.image !== 'default-profile.png') {
-            return session.user.image; // Custom user image
+            // Append timestamp to bust cache when the image changes
+            return `${session.user.image}?t=${Date.now()}`;
         }
         if (session?.user?.image === 'default-profile.png') {
             return '/images/default-profile.png'; // Default user image from public folder
         }
         return null; // No image, show default Material-UI Avatar icon
     };
+
 
     return (
         <>
