@@ -17,13 +17,11 @@ const connectDB = async () => {
 	await mongoose.connect(process.env.MONGODB_URI);
 
 	// Register models explicitly to ensure they are loaded
-	mongoose.model('Category', Category.schema);
-	mongoose.model('Recipe', Recipe.schema);
-	mongoose.model('User', User.schema);
+	// mongoose.model('Category', Category.schema);
+	// mongoose.model('Recipe', Recipe.schema);
+	// mongoose.model('User', User.schema);
 
 	connected = true;
-	console.log('MongoDB connected and models registered...');
-	console.log('Registered Models:', Object.keys(mongoose.models));
 };
 
 export default connectDB;
