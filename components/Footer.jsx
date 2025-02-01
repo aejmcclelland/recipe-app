@@ -1,5 +1,6 @@
 import RestaurantOutlinedIcon from '@mui/icons-material/RestaurantOutlined';
-import { Box, Typography, Container, IconButton, Link, Grid } from '@mui/material';
+import { Box, Typography, Container, IconButton, Link } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 
 const Footer = () => {
     const currentYear = new Date().getFullYear();
