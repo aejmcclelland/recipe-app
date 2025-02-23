@@ -16,11 +16,6 @@ const connectDB = async () => {
 	// Connect to MongoDB using connection string from .env
 	await mongoose.connect(process.env.MONGODB_URI);
 
-	// Register models explicitly to ensure they are loaded
-	// mongoose.model('Category', Category.schema);
-	// mongoose.model('Recipe', Recipe.schema);
-	// mongoose.model('User', User.schema);
-
 	connected = true;
 };
 

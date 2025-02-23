@@ -5,8 +5,8 @@ import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
 import BookmarkRemoveIcon from '@mui/icons-material/BookmarkRemove';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import addBookmark from '@/app/actions/addBookmark';
-import deleteBookmark from '@/app/actions/deleteBookmark';
+import addBookmark from '../app/actions/addBookmark';
+import deleteBookmark from '../app/actions/deleteBookmark';
 
 
 export default function BookmarkButton({ recipeId, user, initialBookmarked = false }) {

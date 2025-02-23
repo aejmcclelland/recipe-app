@@ -1,20 +1,34 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 import bcrypt from 'bcrypt';
 
-const userSchema = new mongoose.Schema(
+// Define TypeScript interface for the User model
+export interface IUser extends Document {
+	email: string;
+	password?: string;
+	firstName: string;
+	lastName: string;
+	image?: string;
+	authProvider: 'local' | 'google';
+	bookmarks: mongoose.Types.ObjectId[];
+	comparePassword(candidatePassword: string): Promise<boolean>;
+}
+
+// Define Mongoose Schema
+const userSchema = new Schema<IUser>(
 	{
 		email: {
 			type: String,
 			required: true,
 			unique: true,
 			validate: {
-				validator: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
-				message: (props) => `${props.value} is not a valid email address!`,
+				validator: (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+				message: (props: { value: string }) =>
+					`${props.value} is not a valid email address!`,
 			},
 		},
 		password: {
 			type: String,
-			required: function () {
+			required: function (this: IUser) {
 				return this.authProvider !== 'google';
 			},
 		},
@@ -35,7 +49,7 @@ const userSchema = new mongoose.Schema(
 			},
 		],
 	},
-	{ timestamps: true } // Add timestamps
+	{ timestamps: true }
 );
 
 // Virtual field for full name
@@ -44,7 +58,7 @@ userSchema.virtual('fullName').get(function () {
 });
 
 // Password hashing middleware
-userSchema.pre('save', async function (next) {
+userSchema.pre<IUser>('save', async function (next) {
 	if (this.authProvider === 'local' && this.isModified('password')) {
 		try {
 			const salt = await bcrypt.genSalt(10);
@@ -57,12 +71,17 @@ userSchema.pre('save', async function (next) {
 });
 
 // Compare password method
-userSchema.methods.comparePassword = async function (candidatePassword) {
+userSchema.methods.comparePassword = async function (
+	candidatePassword: string
+) {
 	return (
 		this.authProvider === 'local' &&
-		(await bcrypt.compare(candidatePassword, this.password))
+		(await bcrypt.compare(candidatePassword, this.password!))
 	);
 };
 
-// Export the model
-export default mongoose.models.User || mongoose.model('User', userSchema);
+// Create or use existing model
+const User: Model<IUser> =
+	mongoose.models.User || mongoose.model<IUser>('User', userSchema);
+
+export default User;

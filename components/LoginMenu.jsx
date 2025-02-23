@@ -16,15 +16,13 @@ export default function LoginMenu() {
 
     const getAvatarSrc = () => {
         if (session?.user?.image && session.user.image !== 'default-profile.png') {
-            // Append timestamp to bust cache when the image changes
             return `${session.user.image}?t=${Date.now()}`;
         }
         if (session?.user?.image === 'default-profile.png') {
-            return '/images/default-profile.png'; // Default user image from public folder
+            return '/images/default-profile.png';
         }
-        return null; // No image, show default Material-UI Avatar icon
+        return null;
     };
-
 
     return (
         <>
@@ -35,8 +33,8 @@ export default function LoginMenu() {
                             src={getAvatarSrc()}
                             alt={session?.user?.name || 'Default Avatar'}
                             onError={(e) => {
-                                e.target.onerror = null; // Prevent infinite loop
-                                e.target.src = '/images/default-profile.png'; // Fallback to default image
+                                e.target.onerror = null;
+                                e.target.src = '/images/default-profile.png';
                             }}
                         />
                     ) : (
@@ -44,51 +42,54 @@ export default function LoginMenu() {
                     )}
                 </IconButton>
             </Tooltip>
+
             <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleCloseMenu}
                 sx={{ mt: '45px' }}
             >
-                {session ? (
-                    <>
+                {session
+                    ? [
                         <MenuItem
+                            key="profile"
                             onClick={() => {
                                 handleCloseMenu();
                                 router.push('/recipes/profile');
                             }}
                         >
                             <Typography textAlign="center">Profile</Typography>
-                        </MenuItem>
+                        </MenuItem>,
                         <MenuItem
+                            key="logout"
                             onClick={() => {
                                 handleCloseMenu();
                                 signOut();
                             }}
                         >
                             <Typography textAlign="center">Logout</Typography>
-                        </MenuItem>
-                    </>
-                ) : (
-                    <>
+                        </MenuItem>,
+                    ]
+                    : [
                         <MenuItem
+                            key="signin"
                             onClick={() => {
                                 handleCloseMenu();
                                 router.push('/recipes/signin');
                             }}
                         >
                             <Typography textAlign="center">Sign In</Typography>
-                        </MenuItem>
+                        </MenuItem>,
                         <MenuItem
+                            key="register"
                             onClick={() => {
                                 handleCloseMenu();
                                 router.push('/recipes/register');
                             }}
                         >
                             <Typography textAlign="center">Register</Typography>
-                        </MenuItem>
-                    </>
-                )}
+                        </MenuItem>,
+                    ]}
             </Menu>
         </>
     );
