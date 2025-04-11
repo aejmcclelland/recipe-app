@@ -14,12 +14,12 @@ async function bookmarkRecipe(recipeId, recipeName) {
 		console.log('🔍 Full Session User in bookmarkRecipe:', sessionUser);
 
 		// Ensure sessionUser is valid
-		if (!sessionUser || !sessionUser.user?.id) {
+		if (!sessionUser || !sessionUser.userId) {
 			console.error('Error: You must be logged in to bookmark a recipe');
 			throw new Error('You must be logged in to bookmark a recipe');
 		}
 
-		const userId = sessionUser.user?.id; // ✅ Fix: Directly use `userId`
+		const userId = sessionUser.userId; // ✅ Fix: Directly use `userId`
 
 		// Validate recipeId
 		if (!recipeId || typeof recipeId !== 'string') {
