@@ -18,7 +18,7 @@ async function checkBookmarkStatus(recipeId) {
 		console.log('Session user in checkBookmarkStatus:', sessionUser);
 
 		// Correctly access the user ID
-		const userId = sessionUser?.user?.id;
+		const userId = sessionUser?.userId;
 
 		// Validate session user
 		if (!userId) {

@@ -13,10 +13,13 @@ async function addRecipe(formData) {
 	// Get the user's session
 	const sessionUser = await getSessionUser();
 
+	console.log('👤 Session User:', sessionUser);
+
 	if (!sessionUser || !sessionUser.userId) {
 		throw new Error('You must be logged in to add a recipe');
 	}
-	const { userId } = sessionUser;
+
+	const userId = sessionUser.userId; // ✅ Ensure correct user ID is used
 
 	const categoryName = formData.get('category');
 	const category = await Category.findOne({
@@ -39,7 +42,7 @@ async function addRecipe(formData) {
 				{ folder: 'recipes' },
 				(error, result) => {
 					if (error) {
-						console.error('Cloudinary upload error:', error);
+						console.error('❌ Cloudinary upload error:', error);
 						reject(new Error('Image upload failed'));
 					}
 					resolve(result);
@@ -83,7 +86,7 @@ async function addRecipe(formData) {
 		serves: formData.get('serves'),
 		image: imageUrl,
 		category: category._id,
-		user: userId,
+		user: userId, // ✅ Ensure MongoDB user ID is assigned correctly
 	};
 
 	try {
@@ -91,9 +94,8 @@ async function addRecipe(formData) {
 		await newRecipe.save();
 		return newRecipe._id.toString(); // Return the ID for redirection
 	} catch (error) {
-		console.error('Error saving recipe:', error);
+		console.error('❌ Error saving recipe:', error);
 		throw new Error('Failed to save the recipe');
 	}
 }
-
 export default addRecipe;

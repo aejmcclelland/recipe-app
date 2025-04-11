@@ -1,22 +1,30 @@
 import mongoose from 'mongoose';
-import Category from '@/models/Category'; // Import models explicitly
-import Recipe from '@/models/Recipe';
-import User from '@/models/User';
 
-let connected = false;
+const MONGODB_URI = process.env.MONGODB_URI;
+console.log('MONGODB_URI:', process.env.MONGODB_URI);
+if (!MONGODB_URI) {
+	throw new Error('Missing MONGODB_URI in environment variables.');
+}
+
+let isConnected = false;
 
 const connectDB = async () => {
-	mongoose.set('strictQuery', true); // Use strict mode for query filters
-
-	if (connected) {
-		console.log('MongoDB is already connected...');
+	if (isConnected) {
+		console.log(' MongoDB already connected');
 		return;
 	}
 
-	// Connect to MongoDB using connection string from .env
-	await mongoose.connect(process.env.MONGODB_URI);
+	try {
+		await mongoose.connect(MONGODB_URI, {
+			dbName: 'rebekahs-recipes', // This is still necessary
+		});
 
-	connected = true;
+		isConnected = true;
+		console.log(' MongoDB connected successfully');
+	} catch (error) {
+		console.error(' MongoDB connection error:', error);
+		throw new Error('Database connection failed');
+	}
 };
 
 export default connectDB;

@@ -7,6 +7,7 @@ const nextConfig = {
 		NEXTAUTH_URL: process.env.VERCEL_URL
 			? `https://${process.env.VERCEL_URL}` // Use Vercel URL in production
 			: 'http://localhost:3000', // Use localhost in development
+		MONGODB_URI: process.env.MONGODB_URI,
 	},
 	images: {
 		remotePatterns: [

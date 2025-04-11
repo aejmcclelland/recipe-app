@@ -15,7 +15,7 @@
     "@mui/icons-material": "^6.4.5",
     "@mui/material": "^6.4.5",
     "@types/react-dom": "19.0.4",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
     "cloudinary": "^2.5.1",
     "dotenv": "^16.4.7",
     "eslint-config-next": "^15.1.7",

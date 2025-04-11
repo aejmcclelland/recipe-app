@@ -1,14 +1,21 @@
 import GoogleProvider, { GoogleProfile } from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import mongoose from 'mongoose';
 import User from '@/models/User';
-import dbConnect from '@/config/database';
+import connectDB from '@/config/database';
 import type { AuthOptions } from 'next-auth/core/types';
 
-// Extend the GoogleProfile interface
+// Extend GoogleProfile interface
 interface CustomGoogleProfile extends GoogleProfile {
-	picture: string; // Ensure we can access the profile picture
+	picture: string;
 }
 
+console.log('🔍 Mongoose Models:', mongoose.models);
+console.log('🔍 User Model:', User);
+
+if (!User) {
+	throw new Error('❌ User model is NOT being imported correctly');
+}
 export const authOptions: AuthOptions = {
 	providers: [
 		GoogleProvider<CustomGoogleProfile>({
@@ -22,10 +29,10 @@ export const authOptions: AuthOptions = {
 			},
 			profile(profile: CustomGoogleProfile) {
 				return {
-					id: profile.sub, // Google's unique identifier
+					id: profile.sub,
 					email: profile.email,
-					name: profile.name, // Use the full name provided by Google
-					image: profile.picture, // Correctly typed `picture` property
+					name: profile.name,
+					image: profile.picture,
 				};
 			},
 		}),
@@ -36,7 +43,7 @@ export const authOptions: AuthOptions = {
 				password: { label: 'Password', type: 'password' },
 			},
 			async authorize(credentials) {
-				await dbConnect();
+				await connectDB();
 				const user = await User.findOne({ email: credentials?.email });
 
 				if (user && (await user.comparePassword(credentials?.password))) {
@@ -58,44 +65,52 @@ export const authOptions: AuthOptions = {
 	callbacks: {
 		async signIn({ user, account, profile }) {
 			if (account.provider === 'google' && profile) {
-				await dbConnect();
-
-				// Check if user exists in MongoDB
+				await connectDB();
 				let existingUser = await User.findOne({ email: profile.email });
 
-				// Create a new user if not found
 				if (!existingUser) {
 					existingUser = await User.create({
 						email: profile.email,
-						name: profile.name, // Full name from Google
-						image: (profile as CustomGoogleProfile).picture, // Google profile picture
+						firstName: profile.name.split(' ')[0],
+						lastName: profile.name.split(' ').slice(1).join(' ') || 'Unknown',
+						image: (profile as CustomGoogleProfile).picture,
 						authProvider: 'google',
 					});
 				}
 
-				// Map MongoDB _id to `user.id`
 				user.id = existingUser._id.toString();
 			}
 
 			return true;
 		},
 		async jwt({ token, user }) {
+			console.log('JWT Callback - token before:', token);
+
 			if (user) {
-				// Store essential fields in the token
 				token.user = {
-					id: user.id,
+					id: (user as { id: string }).id,
 					email: user.email,
 					name: user.name,
 					image: user.image,
 				};
 			}
+
+			console.log('JWT Callback - token after:', token);
 			return token;
 		},
 		async session({ session, token }) {
+			console.log('Session Callback - token:', token);
+
 			if (token.user) {
-				// Attach user data from token to the session
-				session.user = token.user;
+				session.user = {
+					id: (token.user as { id: string }).id,
+					email: token.user.email,
+					name: token.user.name,
+					image: token.user.image,
+				};
 			}
+
+			console.log('📌 Session Callback - session:', session);
 			return session;
 		},
 	},

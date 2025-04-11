@@ -1,10 +1,10 @@
 'use server';
 
 import User from '@/models/User';
-import dbConnect from '@/config/database';
+import connectDB from '@/config/database';
 
 export default async function registerUser(formData) {
-	await dbConnect();
+	await connectDB();
 	const { firstName, lastName, email, password } = formData;
 
 	try {

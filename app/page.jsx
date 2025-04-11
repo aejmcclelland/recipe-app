@@ -1,6 +1,7 @@
 
 import connectDB from '@/config/database';
 import Recipe from '../models/Recipe';
+
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import Category from '@/models/Category';
 import HomeClient from '@/components/HomeClient';

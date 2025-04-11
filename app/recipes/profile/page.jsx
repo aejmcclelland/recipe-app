@@ -20,7 +20,7 @@ const ProfilePage = async () => {
 
         console.log('Session User in Profile Page:', sessionUser);
 
-        if (!sessionUser || !sessionUser.user?.id) {
+        if (!sessionUser || !sessionUser.userId) {
             console.warn('Session user is missing or invalid.');
             return (
                 <Container maxWidth="lg">
@@ -29,7 +29,14 @@ const ProfilePage = async () => {
             );
         }
 
-        const userId = sessionUser.user.id;
+        const userId = sessionUser.userId;
+
+        const userDetails = {
+            id: sessionUser.userId,
+            name: sessionUser.name || 'Unknown',
+            email: sessionUser.email || '',
+            image: sessionUser.image || '/default-profile.png',
+        };
 
         // Fetch user's bookmarked recipes
         const userWithBookmarks = await User.findById(userId)
@@ -57,7 +64,7 @@ const ProfilePage = async () => {
         return (
             <Container maxWidth="lg">
                 {/* User Details */}
-                <UserDetails user={sessionUser.user} />
+                <UserDetails user={userDetails} />
 
                 {/* User's Recipes */}
                 <Box mt={4}>
@@ -65,7 +72,7 @@ const ProfilePage = async () => {
                     <Box display="flex" flexWrap="wrap" gap={2} justifyContent="center">
                         {userRecipes.map((recipe) => (
                             <Box key={recipe._id.toString()} sx={{ maxWidth: 400 }}>
-                                <RecipeOverviewCard recipe={recipe} user={sessionUser?.user} />
+                                <RecipeOverviewCard recipe={recipe} user={sessionUser} />
                             </Box>
                         ))}
                     </Box>
