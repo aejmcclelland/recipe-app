@@ -7,13 +7,9 @@ import { revalidatePath } from 'next/cache';
 import mongoose from 'mongoose';
 
 async function deleteRecipe(recipeId) {
-	console.log('Recipe ID to delete:', recipeId);
 	await connectDB();
 
-	// Convert the string ID to an ObjectId to ensure it matches the format
-	const objectId = new mongoose.Types.ObjectId(recipeId);
-
-	const recipe = await Recipe.findById(objectId);
+	const recipe = await Recipe.findById(recipeId);
 
 	// Delete image from Cloudinary if a valid publicId exists and it's not the default image
 	if (!recipe) {
@@ -31,8 +27,10 @@ async function deleteRecipe(recipeId) {
 	}
 
 	// Delete the recipe from the database
-	await Recipe.findByIdAndDelete(objectId);
-
+	await Recipe.findByIdAndDelete(recipeId);
+	if (!recipe) {
+		throw new Error('Recipe not found');
+	}
 	console.log('Recipe deleted successfully');
 	// Revalidate the path to ensure the UI reflects the changes
 	revalidatePath('/recipes');

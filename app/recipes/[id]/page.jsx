@@ -11,13 +11,15 @@ import { getSessionUser } from '@/utils/getSessionUser';
 import RecipeNotFound from '@/components/RecipeNotFound';
 import mongoose from 'mongoose';
 
+
+
 export default async function RecipeDetailPage({ params }) {
     // Destructure recipeId directly from params
     const recipeParams = await params; // Await `params` if it's asynchronous
     const recipeId = recipeParams?.id;
     // Fetch session user
     const sessionUser = await getSessionUser();
-
+    console.log('🔍 sessionUser in [id]/page:', sessionUser);
     // Connect to DB
     await connectDB();
 
@@ -58,7 +60,7 @@ export default async function RecipeDetailPage({ params }) {
 
                 {/* Bookmark Button */}
                 <Box sx={{ textAlign: 'center', marginTop: 2 }}>
-                    <BookmarkRecipe recipeId={recipeId} user={sessionUser?.user || null} />
+                    <BookmarkRecipe recipeId={recipeId} user={sessionUser} />
                 </Box>
 
                 {/* Edit Recipe Button (Only if the logged-in user owns the recipe) */}

@@ -13,18 +13,13 @@ async function checkBookmarkStatus(recipeId) {
 		if (!mongoose.Types.ObjectId.isValid(recipeId)) {
 			throw new Error(`Invalid recipe ID: ${recipeId}`);
 		}
-
 		const sessionUser = await getSessionUser();
-		console.log('Session user in checkBookmarkStatus:', sessionUser);
-
 		// Correctly access the user ID
-		const userId = sessionUser?.userId;
-
+		const userId = sessionUser?.id;
 		// Validate session user
 		if (!userId) {
-			throw new Error('You must be logged in to check bookmark status');
+			return { success: true, isBookmarked: false }; // Treat as not bookmarked if not logged in
 		}
-
 		// Ensure userId is valid
 		if (!mongoose.Types.ObjectId.isValid(userId)) {
 			throw new Error(`Invalid user ID: ${userId}`);
@@ -35,7 +30,9 @@ async function checkBookmarkStatus(recipeId) {
 			throw new Error(`User not found with ID: ${userId}`);
 		}
 
-		const isBookmarked = user.bookmarks.includes(recipeId.toString());
+		const isBookmarked = user.bookmarks.some(
+			(id) => id.toString() === recipeId.toString()
+		);
 
 		return { success: true, isBookmarked };
 	} catch (error) {

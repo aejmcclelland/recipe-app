@@ -13,13 +13,11 @@ async function addRecipe(formData) {
 	// Get the user's session
 	const sessionUser = await getSessionUser();
 
-	console.log('👤 Session User:', sessionUser);
-
-	if (!sessionUser || !sessionUser.userId) {
+	if (!sessionUser || !sessionUser.id) {
 		throw new Error('You must be logged in to add a recipe');
 	}
 
-	const userId = sessionUser.userId; // ✅ Ensure correct user ID is used
+	const userId = sessionUser.id; // ✅ Ensure correct user ID is used
 
 	const categoryName = formData.get('category');
 	const category = await Category.findOne({
@@ -53,7 +51,7 @@ async function addRecipe(formData) {
 		imageUrl = result.secure_url;
 	} else if (!imageUrl) {
 		imageUrl =
-			'https://res.cloudinary.com/dqeszgo28/image/upload/v1728739432/recipes/300_bebabf.png'; // Placeholder
+			'https://res.cloudinary.com/dqeszgo28/image/upload/v1744456700/recipes/placeholder-food.jpg'; // Placeholder
 	}
 
 	const ingredientsArray = JSON.parse(formData.get('ingredients'));

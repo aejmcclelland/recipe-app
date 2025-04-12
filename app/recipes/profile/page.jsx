@@ -18,9 +18,7 @@ const ProfilePage = async () => {
 
         const sessionUser = await getSessionUser({ cache: 'no-store' });
 
-        console.log('Session User in Profile Page:', sessionUser);
-
-        if (!sessionUser || !sessionUser.userId) {
+        if (!sessionUser || !sessionUser.id) {
             console.warn('Session user is missing or invalid.');
             return (
                 <Container maxWidth="lg">
@@ -29,10 +27,10 @@ const ProfilePage = async () => {
             );
         }
 
-        const userId = sessionUser.userId;
+        const userId = sessionUser.id;
 
         const userDetails = {
-            id: sessionUser.userId,
+            id: sessionUser.id,
             name: sessionUser.name || 'Unknown',
             email: sessionUser.email || '',
             image: sessionUser.image || '/default-profile.png',
@@ -51,9 +49,6 @@ const ProfilePage = async () => {
         const recipesDocs = await Recipe.find({ user: userId })
             .populate({ path: 'category', select: 'name' }) // Default inferred model (Category)
             .lean();
-
-        // Debugging user's recipes
-        console.log('User Recipes:', recipesDocs);
 
         // Serialize the recipes and bookmarks for client components
         const userRecipes = convertToSerializeableObject(recipesDocs);

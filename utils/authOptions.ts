@@ -84,11 +84,11 @@ export const authOptions: AuthOptions = {
 			return true;
 		},
 		async jwt({ token, user }) {
-			console.log('JWT Callback - token before:', token);
+			console.log('JWT Callback - user:', user);
 
-			if (user) {
+			if (user && user.id) {
 				token.user = {
-					id: (user as { id: string }).id,
+					id: user.id,
 					email: user.email,
 					name: user.name,
 					image: user.image,
@@ -99,16 +99,16 @@ export const authOptions: AuthOptions = {
 			return token;
 		},
 		async session({ session, token }) {
-			console.log('Session Callback - token:', token);
+	console.log('Session Callback - token.user:', token.user);
 
-			if (token.user) {
-				session.user = {
-					id: (token.user as { id: string }).id,
-					email: token.user.email,
-					name: token.user.name,
-					image: token.user.image,
-				};
-			}
+	if (token.user) {
+		session.user = {
+			id: token.user.id,
+			email: token.user.email,
+			name: token.user.name,
+			image: token.user.image,
+		};
+	}
 
 			console.log('📌 Session Callback - session:', session);
 			return session;

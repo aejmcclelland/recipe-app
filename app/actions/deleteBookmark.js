@@ -14,8 +14,7 @@ async function deleteBookmark(recipeId) {
 		}
 
 		const sessionUser = await getSessionUser();
-		console.log('Session user in deleteBookmark:', sessionUser);
-
+	
 		if (!sessionUser?.id) {
 			throw new Error('You must be logged in to remove a bookmark');
 		}

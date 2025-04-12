@@ -18,11 +18,9 @@ export default function BookmarkButton({ recipeId, user, initialBookmarked = fal
     }, [user]);
 
     const toggleBookmark = async () => {
-        console.log('User in toggleBookmark:', user);
-        console.log('Recipe ID in toggleBookmark:', recipeId);
 
-        if (!user || !user.id) {
-            console.error('User not logged in:', user);
+        if (!user || !user.user.id) {
+            console.error('User not logged in or missing userId:', user);
             alert('Please log in or sign up to save recipes!');
             router.push('/recipes/signin');
             return;

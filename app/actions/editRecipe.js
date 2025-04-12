@@ -50,7 +50,7 @@ async function updateRecipe(recipeId, formData) {
 		imageUrl = result.secure_url;
 	} else if (deleteImage) {
 		imageUrl =
-			'https://res.cloudinary.com/dqeszgo28/image/upload/v1728739432/300_bebabf.png';
+			'https://res.cloudinary.com/dqeszgo28/image/upload/v1744456700/recipes/placeholder-food.jpg';
 	}
 
 	// Handle ingredients data
