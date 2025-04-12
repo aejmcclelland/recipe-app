@@ -22,7 +22,7 @@ async function deleteRecipe(recipeId) {
 	const publicId = parts.at(-1).split('.').at(0); // Extract public ID
 
 	// Delete image from Cloudinary if a valid publicId exists and it's not the default image
-	if (publicId && publicId !== '300_bebabf') {
+	if (publicId && publicId !== 'placeholder-food') {
 		await cloudinary.uploader.destroy('recipes/' + publicId);
 	}
 

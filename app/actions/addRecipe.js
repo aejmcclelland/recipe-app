@@ -51,7 +51,7 @@ async function addRecipe(formData) {
 		imageUrl = result.secure_url;
 	} else if (!imageUrl) {
 		imageUrl =
-			'https://res.cloudinary.com/dqeszgo28/image/upload/v1744456700/recipes/placeholder-food.jpg'; // Placeholder
+			'https://res.cloudinary.com/dqeszgo28/image/upload/v1744456700/recipes/placeholder-food.jpg'; // Updated placeholder image URL
 	}
 
 	const ingredientsArray = JSON.parse(formData.get('ingredients'));
