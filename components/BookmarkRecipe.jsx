@@ -32,17 +32,16 @@ export default function BookmarkButton({ recipeId, recipeName, user, initialBook
                 const result = await deleteBookmark(recipeId);
                 console.log('Result from deleteBookmark:', result);
                 if (result?.success) {
-                    setIsBookmarked(!isBookmarked);
-                    toast[!isBookmarked ? 'success' : 'info'](
-                        !isBookmarked ? 'Recipe bookmarked!' : 'Recipe removed from bookmarks.'
-                    );
+                    setIsBookmarked(false);
+                    toast.info('Recipe removed from bookmarks.');
                 }
             } else {
                 // Call addBookmark if the recipe is not bookmarked
                 const result = await addBookmark(recipeId, recipeName);
                 console.log('Result from addBookmark:', result);
                 if (result?.isBookmarked) {
-                    setIsBookmarked(true); // Update state to reflect bookmark
+                    setIsBookmarked(true);
+                    toast.success('Recipe bookmarked!');
                 }
             }
         } catch (error) {
