@@ -19,7 +19,7 @@ export default function RecipeCard({ recipe }) {
             }}
         >
             <CardContent>
-                <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={2}>
+                <Box display="flex" flexDirection={{ mobile: 'column', laptop: 'row' }} gap={2}>
                     {/* Left Section: Image and Ingredients */}
                     <Box flex={1}>
                         {/* Recipe Image */}

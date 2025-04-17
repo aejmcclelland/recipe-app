@@ -39,7 +39,7 @@ const CopyWebClient: React.FC<CopyWebClientProps> = ({ categories }) => {
 		};
 
 		persistRecipe();
-	}, [save, data, selectedCategoryId]);
+	}, [save, data, selectedCategoryId, router]);
 
 	return (
 		<Container>
