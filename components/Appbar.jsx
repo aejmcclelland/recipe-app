@@ -9,11 +9,10 @@ import {
 	Tooltip,
 	useMediaQuery,
 } from '@mui/material';
-import {
-	Menu as MenuIcon,
-	AddCircle as AddCircleIcon,
-	RestaurantOutlined as RestaurantOutlinedIcon,
-} from '@mui/icons-material';
+import LanguageIcon from '@mui/icons-material/Language';
+import MenuIcon from '@mui/icons-material/Menu';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import RestaurantOutlinedIcon from '@mui/icons-material/RestaurantOutlined';
 import { usePathname } from 'next/navigation';
 import Drawer from '@mui/material/Drawer';
 import DrawerComponent from '../components/Drawer';
@@ -36,7 +35,7 @@ export default function SearchAppBar() {
 
 	return (
 		<Box sx={{ flexGrow: 1 }}>
-			<AppBar position='static'>
+			<AppBar className="no-print" position='static'>
 				<Toolbar>
 					{!isDetailPage && (
 						<IconButton
@@ -83,13 +82,22 @@ export default function SearchAppBar() {
 							ml: 'auto',
 						}}>
 						{session && (
-							<Tooltip title='Add a Recipe' placement='bottom'>
-								<Link href='/recipes/add' passHref>
-									<IconButton color='inherit' sx={{ mr: 2 }}>
-										<AddCircleIcon sx={{ fontSize: '2rem' }} />
-									</IconButton>
-								</Link>
-							</Tooltip>
+							<>
+								<Tooltip title='Add a Recipe' placement='bottom'>
+									<Link href='/recipes/add' passHref>
+										<IconButton color='inherit' sx={{ mr: 2 }}>
+											<AddCircleIcon sx={{ fontSize: '2rem' }} />
+										</IconButton>
+									</Link>
+								</Tooltip>
+								<Tooltip title='Import from Web' placement='bottom'>
+									<Link href='/recipes/copyWeb' passHref>
+										<IconButton color='inherit' sx={{ mr: 2 }}>
+											<LanguageIcon sx={{ fontSize: '2rem' }} />
+										</IconButton>
+									</Link>
+								</Tooltip>
+							</>
 						)}
 
 						{/* Import and Use LoginMenu */}

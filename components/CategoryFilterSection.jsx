@@ -3,7 +3,7 @@ import React from 'react';
 import { Box } from '@mui/material';
 import FilterCategory from '@/components/FilterCategory';
 
-export default function CategoryFilterSection() {
+export default function CategoryFilterSection({ categories }) {
     return (
         <Box
             sx={{
@@ -11,7 +11,7 @@ export default function CategoryFilterSection() {
                 borderBottom: '1px solid #ddd',
                 py: 2,
             }}>
-            <FilterCategory />
+            <FilterCategory categories={categories} />
         </Box>
     );
 }

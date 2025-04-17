@@ -1,0 +1,111 @@
+.
+├── app
+│   ├── actions
+│   │   ├── addBookmark.js
+│   │   ├── addRecipe.js
+│   │   ├── bookmarkRecipe.js
+│   │   ├── checkBookmarkStatus.js
+│   │   ├── deleteBookmark.js
+│   │   ├── deleteRecipe.js
+│   │   ├── editRecipe.js
+│   │   ├── registerUser.js
+│   │   ├── saveRecipe.js
+│   │   ├── searchRecipes.js
+│   │   └── updateProfileImage.js
+│   ├── api
+│   │   └── auth
+│   ├── fonts
+│   │   └── fonts.js
+│   ├── layout.js
+│   ├── page.jsx
+│   ├── page.module.css
+│   └── recipes
+│       ├── [id]
+│       ├── add
+│       ├── page.jsx
+│       ├── privacy-policy
+│       ├── profile
+│       ├── register
+│       ├── search-results
+│       ├── signin
+│       └── terms-of-service
+├── assets
+│   ├── globals.css
+│   └── images
+│       ├── default-profile.jpg
+│       ├── default-profile.png
+│       └── logo.jpg
+├── components
+│   ├── Appbar.jsx
+│   ├── AuthProvider.jsx
+│   ├── BackToHomeButton.jsx
+│   ├── BookmarkButton.jsx
+│   ├── BookmarkRecipe.jsx
+│   ├── BookmarkRecipeCard.jsx
+│   ├── CategoryFilter.jsx
+│   ├── CategoryFilterSection.jsx
+│   ├── Drawer.jsx
+│   ├── FavouriteRecipesProvider.jsx
+│   ├── FeaturedRecipes.jsx
+│   ├── FilterCategory.jsx
+│   ├── Footer.jsx
+│   ├── HomeClient.jsx
+│   ├── LoginMenu.jsx
+│   ├── NoBookmark.jsx
+│   ├── ProfileImageUpload.jsx
+│   ├── ProfileRecipes.jsx
+│   ├── RecipeAddForm.jsx
+│   ├── RecipeCard.jsx
+│   ├── RecipeDeleteForm.jsx
+│   ├── RecipeEditForm.jsx
+│   ├── RecipeNotFound.jsx
+│   ├── RecipeOverviewCard.jsx
+│   ├── RecipesClient.jsx
+│   ├── RecipeSearchForm.jsx
+│   ├── RegisterUser.jsx
+│   ├── RemoveBookmarkButton.jsx
+│   ├── SearchBar.jsx
+│   ├── SearchResultsClient.jsx
+│   ├── SignInForm.jsx
+│   ├── SubmitButton.jsx
+│   ├── UnavailableBookmark.jsx
+│   └── UserDetails.jsx
+├── config
+│   ├── cloudinary.js
+│   └── database.ts
+├── context
+│   └── FilterContext.js
+├── directory-tree.txt
+├── hooks
+│   └── useFilter.js
+├── middleware
+│   ├── authMiddleware.js
+│   └── converter.js
+├── middleware.js
+├── models
+│   ├── Category.js
+│   ├── Ingredient.js
+│   ├── Recipe.js
+│   └── User.ts
+├── next-env.d.ts
+├── next.config.mjs
+├── package.json
+├── pnpm-lock.yaml
+├── README.md
+├── rebekahs-recipes-structure.txt
+├── seedDB.js
+├── theme
+│   └── theme.js
+├── tsconfig.json
+├── tsconfig.tsbuildinfo
+├── types
+│   └── next-auth.d.ts
+└── utils
+    ├── authOptions.ts
+    ├── convertToObject.js
+    ├── fractionToDecimal.js
+    ├── getSessionUser.ts
+    ├── refreshSession.js
+    └── serializeBookmarks.js
+
+26 directories, 83 files

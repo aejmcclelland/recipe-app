@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Box } from '@mui/material';
 import { useFilter } from '@/context/FilterContext';
 
-export default function CategoryFilter() {
+export default function CategoryFilter({ categories = [] }) {
     const { selectedCategory, onFilterChange } = useFilter();
 
     return (
@@ -20,7 +20,7 @@ export default function CategoryFilter() {
                 '&::-webkit-scrollbar': { display: 'none' }, // Hide scrollbar
             }}
         >
-            {['All', 'Beef', 'Chicken', 'Pasta', 'Vegetable', 'Fish', 'Pork', 'Other'].map((category) => (
+            {['All', ...(Array.isArray(categories) ? categories.map((cat) => cat?.name || '') : [])].map((category) => (
                 <Button
                     key={category}
                     variant="text"

@@ -16,6 +16,11 @@ const nextConfig = {
 				hostname: 'res.cloudinary.com', // Cloudinary hostname
 				pathname: '/**',
 			},
+			{
+				protocol: 'https',
+				hostname: 'images.immediate.co.uk', // BBC Good Food images
+				pathname: '/**',
+			},
 		],
 	},
 	i18n: {
