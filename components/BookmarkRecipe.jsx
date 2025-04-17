@@ -7,9 +7,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import addBookmark from '../app/actions/addBookmark';
 import deleteBookmark from '../app/actions/deleteBookmark';
+import { toast } from 'react-toastify';
 
-
-export default function BookmarkButton({ recipeId, user, initialBookmarked = false }) {
+export default function BookmarkButton({ recipeId, recipeName, user, initialBookmarked = false }) {
     const [isBookmarked, setIsBookmarked] = useState(initialBookmarked);
     const router = useRouter();
 
@@ -19,7 +19,7 @@ export default function BookmarkButton({ recipeId, user, initialBookmarked = fal
 
     const toggleBookmark = async () => {
 
-        if (!user || !user.user.id) {
+        if (!user || !user.id) {
             console.error('User not logged in or missing userId:', user);
             alert('Please log in or sign up to save recipes!');
             router.push('/recipes/signin');
@@ -32,11 +32,14 @@ export default function BookmarkButton({ recipeId, user, initialBookmarked = fal
                 const result = await deleteBookmark(recipeId);
                 console.log('Result from deleteBookmark:', result);
                 if (result?.success) {
-                    setIsBookmarked(false); // Update state to reflect unbookmark
+                    setIsBookmarked(!isBookmarked);
+                    toast[!isBookmarked ? 'success' : 'info'](
+                        !isBookmarked ? 'Recipe bookmarked!' : 'Recipe removed from bookmarks.'
+                    );
                 }
             } else {
                 // Call addBookmark if the recipe is not bookmarked
-                const result = await addBookmark(recipeId);
+                const result = await addBookmark(recipeId, recipeName);
                 console.log('Result from addBookmark:', result);
                 if (result?.isBookmarked) {
                     setIsBookmarked(true); // Update state to reflect bookmark

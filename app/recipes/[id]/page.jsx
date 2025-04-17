@@ -49,7 +49,7 @@ export default async function RecipeDetailPage({ params }) {
                 {/* Recipe Name */}
                 <Box sx={{ textAlign: 'center', marginTop: 4, marginBottom: 4 }}>
                     <Typography variant="h3" component="h1" gutterBottom>
-                        {serializedRecipe.name} Recipe
+                        {serializedRecipe.name}
                     </Typography>
                 </Box>
 
@@ -60,7 +60,7 @@ export default async function RecipeDetailPage({ params }) {
 
                 {/* Bookmark Button */}
                 <Box sx={{ textAlign: 'center', marginTop: 2 }}>
-                    <BookmarkRecipe recipeId={recipeId} user={sessionUser} />
+                    <BookmarkRecipe recipeId={recipeId} recipeName={recipe.name} user={sessionUser} />
                 </Box>
 
                 {/* Edit Recipe Button (Only if the logged-in user owns the recipe) */}
