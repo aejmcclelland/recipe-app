@@ -24,10 +24,15 @@ export async function scrapeJamieOliver(url: string): Promise<RecipeResult> {
 		}
 	});
 
+	const image =
+		$('meta[property="og:image"]').attr('content') ||
+		'https://res.cloudinary.com/dqeszgo28/image/upload/v1728739432/300_bebabf.png';
+
 	return {
 		title,
 		ingredients,
 		method,
 		sourceUrl: url,
+		image,
 	};
 }
