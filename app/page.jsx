@@ -29,7 +29,7 @@ export default async function Home() {
 			Welcome to Rebekah&#39;s Recipes!
 		</Typography>
 		<Typography variant="body1" align="center" gutterBottom>
-			We are working hard to bring you the best recipes. Please be patient as we add more recipes to our collection.
+			Add your own recipes, or browse through our collection of delicious recipes, or better still add your favourite recipes from the web!
 		</Typography>
 		<SearchBar />
 		<CategoryFilterSection categories={categoriesWithIds} />
