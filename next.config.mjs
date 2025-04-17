@@ -21,6 +21,11 @@ const nextConfig = {
 				hostname: 'images.immediate.co.uk', // BBC Good Food images
 				pathname: '/**',
 			},
+			{
+				protocol: 'https',
+				hostname: 'cdn.sanity.io', // ✅ Add this
+				pathname: '/**',
+			},
 		],
 	},
 	i18n: {

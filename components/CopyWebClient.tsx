@@ -10,6 +10,7 @@ import ButtonToolbar from '@/components/ButtonToolbar';
 import { toast } from 'react-toastify';
 import { saveScrapedRecipe } from '@/app/actions/saveScrapedRecipe';
 import { useRouter } from 'next/navigation';
+import ScrapingSiteLinks from '@/components/ScrapingSiteLinks';
 
 interface CopyWebClientProps {
 	categories: Array<{ _id: string; name: string }>;
@@ -39,15 +40,27 @@ const CopyWebClient: React.FC<CopyWebClientProps> = ({ categories }) => {
 		};
 
 		persistRecipe();
-	}, [save, data, selectedCategoryId]);
+	}, [save, data, selectedCategoryId, router]);
 
 	return (
-		<Container>
-			<Typography className='no-print' variant='h4' gutterBottom sx={{ mb: 4 }}>
-				Copy a Recipe from the Web
-			</Typography>
-
-			<RecipeForm url={url} setUrl={setUrl} setData={setData} />
+		<Container maxWidth='laptop'>
+			<Box
+				sx={{
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center',
+					textAlign: 'center', // Optional if you want all text centered
+				}}>
+				<Typography
+					className='no-print'
+					variant='h4'
+					gutterBottom
+					sx={{ mb: 4 }}>
+					Get your favourite recipe from one of these websites
+				</Typography>
+				<ScrapingSiteLinks />
+				<RecipeForm url={url} setUrl={setUrl} setData={setData} />
+			</Box>
 
 			{data && (
 				<Box sx={{ paddingBottom: 1, flexGrow: 1 }}>
