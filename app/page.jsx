@@ -17,9 +17,11 @@ export default async function Home() {
 	const recipes = await Recipe.find().populate('category').lean();
 	const recipesWithIds = convertToSerializeableObject(recipes);
 
+	const categories = await Category.find({}).lean();
+	const categoriesWithIds = convertToSerializeableObject(categories);
+
 	const sessionUser = await getSessionUser();
 
-	console.log('Session retrieved on Home page:', sessionUser);
 	console.log('Recipes retrieved:', recipesWithIds);
 
 	return (<>
@@ -30,7 +32,7 @@ export default async function Home() {
 			We are working hard to bring you the best recipes. Please be patient as we add more recipes to our collection.
 		</Typography>
 		<SearchBar />
-		<CategoryFilterSection />
+		<CategoryFilterSection categories={categoriesWithIds} />
 		<HomeClient recipes={recipesWithIds} user={{ id: sessionUser?.id, ...sessionUser }} />
 	</>);
 

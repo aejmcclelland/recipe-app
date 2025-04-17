@@ -21,5 +21,12 @@ a {
   color: inherit;
   text-decoration: none;
 }
-/* Inside your styles/globals.css */
+
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
 

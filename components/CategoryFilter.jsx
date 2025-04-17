@@ -60,6 +60,14 @@ export default function CategoryFilter() {
             <Button
 
                 fullWidth
+                onClick={() => onFilterChange('Desserts')}
+                sx={{ textTransform: 'none' }}
+            >
+                Desserts
+            </Button>
+            <Button
+
+                fullWidth
                 onClick={() => onFilterChange('Other')}
                 sx={{ textTransform: 'none' }}
             >

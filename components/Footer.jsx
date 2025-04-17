@@ -6,7 +6,7 @@ const Footer = () => {
     const currentYear = new Date().getFullYear();
 
     return (
-        <Box
+        <Box className="no-print"
             component="footer"
             sx={{
                 backgroundColor: 'primary.main',
