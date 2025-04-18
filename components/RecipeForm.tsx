@@ -8,7 +8,6 @@ import React, {
 	useTransition,
 	FormEvent,
 } from 'react';
-import { useFormStatus } from 'react-dom';
 import { Box, TextField } from '@mui/material';
 import GetRecipeButton from './GetRecipeButton';
 import { scrapeData } from '../app/actions/scrapeData';
@@ -47,9 +46,14 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ url, setUrl, setData }) => {
 		<form onSubmit={handleScrape}>
 			<Box
 				className='no-print'
-				display='flex'
-				flexDirection='column'
-				sx={{ width: 500, maxWidth: '100%', mx: 'auto' }}>
+				sx={{
+					width: '100%',
+					maxWidth: 500,
+					mx: 'auto',
+					display: 'flex',
+					flexDirection: 'column',
+					gap: 2,
+				}}>
 				<TextField
 					fullWidth
 					label='Paste Recipe URL'
@@ -61,14 +65,12 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ url, setUrl, setData }) => {
 					name='url'
 					variant='outlined'
 					sx={{
-						mb: 2,
 						'& .MuiOutlinedInput-root': {
 							borderRadius: '12px',
-							width: 500,
-							maxWidth: '100%',
 						},
 					}}
 				/>
+
 				<GetRecipeButton isDisabled={isPending || !url} isPending={isPending} />
 			</Box>
 		</form>

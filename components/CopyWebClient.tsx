@@ -43,7 +43,13 @@ const CopyWebClient: React.FC<CopyWebClientProps> = ({ categories }) => {
 	}, [save, data, selectedCategoryId, router]);
 
 	return (
-		<Container maxWidth='laptop'>
+		<Container
+			sx={{
+				maxWidth: '1024px', // Or your theme.breakpoints.values.laptop + 'px'
+				width: '100%',
+				mx: 'auto',
+				px: 2,
+			}}>
 			<Box
 				sx={{
 					display: 'flex',
