@@ -20,7 +20,7 @@ export default function CategoryFilter() {
             <Button
 
                 fullWidth
-                onClick={() => { console.log('All categories clicked'); onFilterChange('All') }}
+                onClick={() => onFilterChange('All')}
                 sx={{ textTransform: 'none' }} // Optional: Remove button text capitalization
             >
                 All
@@ -28,7 +28,7 @@ export default function CategoryFilter() {
             <Button
 
                 fullWidth
-                onClick={() => { console.log('Beef category clicked'); onFilterChange('Beef') }}
+                onClick={() => onFilterChange('Beef')}
                 sx={{ textTransform: 'none' }} // Optional: Remove button text capitalization
             >
                 Beef
@@ -36,7 +36,7 @@ export default function CategoryFilter() {
             <Button
 
                 fullWidth
-                onClick={() => { console.log('Chicken category clicked'); onFilterChange('Chicken') }}
+                onClick={() => onFilterChange('Chicken')}
                 sx={{ textTransform: 'none' }}
             >
                 Chicken
