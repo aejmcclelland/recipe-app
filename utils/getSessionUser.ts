@@ -12,7 +12,6 @@ export const getSessionUser = async () => {
 			return null;
 		}
 
-		// Ensure `userId` is structured correctly
 		const sessionUser = {
 			id: session.user.id,
 			name: session.user.name,

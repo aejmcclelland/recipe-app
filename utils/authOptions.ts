@@ -84,8 +84,7 @@ export const authOptions: AuthOptions = {
 			return true;
 		},
 		async jwt({ token, user }) {
-
-			if (user && user.id) {
+			if (user?.id) {
 				token.user = {
 					id: user.id,
 					email: user.email,
@@ -93,21 +92,19 @@ export const authOptions: AuthOptions = {
 					image: user.image,
 				};
 			}
-
 			console.log('JWT Callback - token after:', token);
 			return token;
 		},
+
 		async session({ session, token }) {
-
-	if (token.user) {
-		session.user = {
-			id: token.user.id,
-			email: token.user.email,
-			name: token.user.name,
-			image: token.user.image,
-		};
-	}
-
+			if (token?.user) {
+				session.user = {
+					id: token.user.id,
+					email: token.user.email,
+					name: token.user.name,
+					image: token.user.image,
+				};
+			}
 			console.log('📌 Session Callback - session:', session);
 			return session;
 		},
