@@ -12,11 +12,11 @@ export default async function updateProfileImage(imageFile) {
 	// Get the logged-in user's session
 	const sessionUser = await getSessionUser();
 
-	if (!sessionUser || !sessionUser.userId) {
+	if (!sessionUser || !sessionUser.id) {
 		throw new Error('You must be logged in to update your profile image.');
 	}
 
-	const userId = sessionUser.userId;
+	const userId = sessionUser.id;
 
 	// Handle image upload to Cloudinary
 	let imageUrl;
