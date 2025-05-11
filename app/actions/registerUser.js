@@ -53,8 +53,12 @@ export default async function registerUser(formData) {
 
 		const msg = {
 			to: sanitizedEmail,
-			from: process.env.SENDGRID_SENDER,
+			from: {
+				name: "Rebekah's Recipes",
+				email: process.env.SENDGRID_SENDER, // now just "noreply@rebekahsrecipes.com"
+			},
 			subject: 'Verify your email for Rebekah’s Recipes',
+			text: `Hello ${firstName},\n\nThank you for registering at Rebekah’s Recipes. Please verify your email by clicking this link: ${verificationLink}\n\nThis link will expire in 1 hour.`,
 			html: `
 				<p>Hello ${firstName},</p>
 				<p>Thank you for registering at Rebekah’s Recipes. Please click the link below to verify your email address:</p>
