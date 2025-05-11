@@ -53,18 +53,15 @@ export default async function registerUser(formData) {
 
 		const msg = {
 			to: sanitizedEmail,
-			from: {
-				name: "Rebekah's Recipes",
-				email: process.env.SENDGRID_SENDER, // now just "noreply@rebekahsrecipes.com"
-			},
+			from: `"Rebekah's Recipes" <${process.env.SENDGRID_SENDER}>`,
 			subject: 'Verify your email for Rebekah’s Recipes',
 			text: `Hello ${firstName},\n\nThank you for registering at Rebekah’s Recipes. Please verify your email by clicking this link: ${verificationLink}\n\nThis link will expire in 1 hour.`,
 			html: `
-				<p>Hello ${firstName},</p>
-				<p>Thank you for registering at Rebekah’s Recipes. Please click the link below to verify your email address:</p>
-				<p><a href="${verificationLink}">Verify Email</a></p>
-				<p>This link will expire in 1 hour.</p>
-			`,
+        <p>Hello ${firstName},</p>
+        <p>Thank you for registering at Rebekah’s Recipes. Please click the link below to verify your email address:</p>
+        <p><a href="${verificationLink}">Verify Email</a></p>
+        <p>This link will expire in 1 hour.</p>
+    `,
 		};
 
 		await newUser.save();
