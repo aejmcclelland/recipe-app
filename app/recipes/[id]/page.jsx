@@ -10,7 +10,8 @@ import Link from 'next/link';
 import { getSessionUser } from '@/utils/getSessionUser';
 import RecipeNotFound from '@/components/RecipeNotFound';
 import mongoose from 'mongoose';
-import RecipeDeleteForm from '@/components/RecipeDeleteForm';
+import EditRecipeButton from '@/components/EditRecipeButton';
+import DeleteRecipeButton from '@/components/DeleteRecipeButton';
 
 
 export default async function RecipeDetailPage({ params }) {
