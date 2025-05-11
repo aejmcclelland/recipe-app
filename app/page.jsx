@@ -55,7 +55,7 @@ export default async function Home() {
 			) : userRecipes.length === 0 && isNewUser ? (
 				<>
 					<Typography variant="h5" align="center" gutterBottom>
-						Hello, {sessionUser.name}!
+						Hello, {firstName}!
 					</Typography>
 					<Typography variant="body1" align="center" gutterBottom>
 						Let’s get started by adding or importing your first recipe.
@@ -65,7 +65,7 @@ export default async function Home() {
 			) : (
 				<>
 					<Typography variant="h5" align="center" gutterBottom>
-						Hello, {sessionUser.name}!
+						Hello, {firstName}!
 					</Typography>
 					<Typography variant="body1" align="center" gutterBottom>
 						Add your own recipes, or better still add your favourite recipes from the web!
