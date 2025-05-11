@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { getSessionUser } from '@/utils/getSessionUser';
 import RecipeNotFound from '@/components/RecipeNotFound';
 import mongoose from 'mongoose';
-
+import RecipeDeleteForm from '@/components/RecipeDeleteForm';
 
 
 export default async function RecipeDetailPage({ params }) {
@@ -64,13 +64,19 @@ export default async function RecipeDetailPage({ params }) {
 
                 {/* Edit Recipe Button (Only if the logged-in user owns the recipe) */}
                 {sessionUser?.user?.id === serializedRecipe.user?._id?.toString() && (
-                    <Box sx={{ textAlign: 'center', marginTop: 2 }}>
-                        <Link href={`/recipes/${serializedRecipe._id}/edit`}>
-                            <Button variant="contained" color="primary">
-                                Edit Recipe
-                            </Button>
-                        </Link>
-                    </Box>
+                    <>
+                        <Box sx={{ textAlign: 'center', marginTop: 2 }}>
+                            <Link href={`/recipes/${serializedRecipe._id}/edit`}>
+                                <Button variant="contained" color="primary">
+                                    Edit Recipe
+                                </Button>
+                            </Link>
+                        </Box>
+                        {/* Delete Recipe Button */}
+                        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+                            <RecipeDeleteForm recipe={serializedRecipe} />
+                        </Box>
+                    </>
                 )}
 
                 {/* Back to Home Button */}

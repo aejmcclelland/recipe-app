@@ -8,13 +8,14 @@ import Grid from '@mui/material/Grid';
 
 function RecipeDeleteForm({ recipe }) {
     const [isDeleted, setIsDeleted] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const router = useRouter();
 
     const handleDeleteRecipe = async (recipeId) => {
-        console.log('Delete button clicked'); // Check if the button click is registered
         const confirmed = window.confirm('Are you sure you want to delete this recipe?');
-
         if (!confirmed) return;
+
+        setIsDeleting(true);  // Disable button while deleting
 
         try {
             // Convert recipeId to a string before passing to deleteRecipe
@@ -24,6 +25,7 @@ function RecipeDeleteForm({ recipe }) {
             router.push('/'); // Redirect to home page after successful deletion
         } catch (error) {
             console.error('Failed to delete recipe:', error);
+            setIsDeleting(false); // Re-enable button if error occurs
         }
     };
 
@@ -40,13 +42,14 @@ function RecipeDeleteForm({ recipe }) {
 
             <Box display="flex" justifyContent="flex-end">
                 <Button
-                    onClick={handleDeleteRecipe} // Use onClick instead of passing recipeId
+                    onClick={() => handleDeleteRecipe(recipe._id)}
                     variant="contained"
                     color="error"
                     sx={{ ml: 2 }}
-                    type='button'
+                    type="button"
+                    disabled={isDeleting}
                 >
-                    Delete Recipe
+                    {isDeleting ? 'Deleting...' : 'Delete Recipe'}
                 </Button>
             </Box>
 
