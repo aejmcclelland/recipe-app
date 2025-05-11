@@ -4,12 +4,7 @@ import { redirect } from 'next/navigation';
 import jwt from 'jsonwebtoken';
 import connectDB from '@/config/database';
 
-export default async function VerifyPage({
-	searchParams,
-}: {
-	searchParams: { [key: string]: string | string[] | undefined };
-}) {
-	// ✅ Remove await completely
+export default async function VerifyPage({ searchParams }) {
 	let token = searchParams.token;
 	token = Array.isArray(token) ? token[0] : token;
 
