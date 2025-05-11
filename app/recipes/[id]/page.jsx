@@ -11,6 +11,8 @@ import { getSessionUser } from '@/utils/getSessionUser';
 import RecipeNotFound from '@/components/RecipeNotFound';
 import mongoose from 'mongoose';
 import RecipeDeleteForm from '@/components/RecipeDeleteForm';
+import EditNoteIcon from '@mui/icons-material/EditNote';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 
 export default async function RecipeDetailPage({ params }) {
@@ -60,26 +62,22 @@ export default async function RecipeDetailPage({ params }) {
                     <RecipeCard recipe={serializedRecipe} user={sessionUser} />
                 </Box>
 
-                {/* Bookmark Button */}
-                <Box sx={{ textAlign: 'center', marginTop: 2 }}>
-                    <BookmarkRecipe recipeId={recipeId} recipeName={recipe.name} user={sessionUser} />
-                </Box>
-
-                {/* Edit Recipe Button (Only if the logged-in user owns the recipe) */}
                 {isOwner && (
-                    <>
-                        <Box sx={{ textAlign: 'center', marginTop: 2 }}>
-                            <Link href={`/recipes/${serializedRecipe._id}/edit`}>
-                                <Button variant="contained" color="primary">
-                                    Edit Recipe
-                                </Button>
-                            </Link>
-                        </Box>
-                        {/* Delete Recipe Button */}
-                        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
-                            <RecipeDeleteForm recipe={serializedRecipe} />
-                        </Box>
-                    </>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 2, gap: 2 }}>
+                        <BookmarkRecipe recipeId={recipeId} recipeName={recipe.name} user={sessionUser} />
+
+                        <Link href={`/recipes/${serializedRecipe._id}/edit`}>
+                            <Button variant="outlined" color="primary" sx={{ minWidth: 0, padding: 1 }}>
+                                <EditNoteIcon />
+                            </Button>
+                        </Link>
+
+                        <RecipeDeleteForm recipe={serializedRecipe}>
+                            <Button variant="outlined" color="error" sx={{ minWidth: 0, padding: 1 }}>
+                                <DeleteForeverIcon />
+                            </Button>
+                        </RecipeDeleteForm>
+                    </Box>
                 )}
 
                 {/* Back to Home Button */}
