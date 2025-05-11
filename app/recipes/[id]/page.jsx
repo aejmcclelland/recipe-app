@@ -63,6 +63,21 @@ export default async function RecipeDetailPage({ params }) {
                     <BookmarkRecipe recipeId={recipeId} recipeName={recipe.name} user={sessionUser} />
                 </Box>
 
+                {/* Method Steps */}
+                {serializedRecipe.method && Array.isArray(serializedRecipe.method) && (
+                    <Box sx={{ mt: 4 }}>
+                        <Typography variant="h5" gutterBottom>
+                            Method
+                        </Typography>
+                        <ol style={{ paddingLeft: '20px' }}>
+                            {serializedRecipe.method.map((step, index) => (
+                                <li key={index} style={{ marginBottom: '8px' }}>
+                                    {step}
+                                </li>
+                            ))}
+                        </ol>
+                    </Box>
+                )}
                 {/* Edit Recipe Button (Only if the logged-in user owns the recipe) */}
                 {sessionUser?.user?.id === serializedRecipe.user?._id?.toString() && (
                     <Box sx={{ textAlign: 'center', marginTop: 2 }}>
