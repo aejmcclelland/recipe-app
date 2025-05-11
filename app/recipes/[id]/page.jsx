@@ -11,8 +11,6 @@ import { getSessionUser } from '@/utils/getSessionUser';
 import RecipeNotFound from '@/components/RecipeNotFound';
 import mongoose from 'mongoose';
 import RecipeDeleteForm from '@/components/RecipeDeleteForm';
-import EditNoteIcon from '@mui/icons-material/EditNote';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 
 export default async function RecipeDetailPage({ params }) {
@@ -66,17 +64,8 @@ export default async function RecipeDetailPage({ params }) {
                     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 2, gap: 2 }}>
                         <BookmarkRecipe recipeId={recipeId} recipeName={recipe.name} user={sessionUser} />
 
-                        <Link href={`/recipes/${serializedRecipe._id}/edit`}>
-                            <Button variant="outlined" color="primary" sx={{ minWidth: 0, padding: 1 }}>
-                                <EditNoteIcon />
-                            </Button>
-                        </Link>
-
-                        <RecipeDeleteForm recipe={serializedRecipe}>
-                            <Button variant="outlined" color="error" sx={{ minWidth: 0, padding: 1 }}>
-                                <DeleteForeverIcon />
-                            </Button>
-                        </RecipeDeleteForm>
+                        <EditRecipeButton recipeId={recipe._id} />
+                        <DeleteRecipeButton recipeId={recipe._id} />
                     </Box>
                 )}
 
