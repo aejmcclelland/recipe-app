@@ -5,11 +5,10 @@ import connectDB from '@/config/database';
 export default async function VerifyPage({
 	searchParams,
 }: {
-	searchParams: { token?: string };
+	searchParams: () => Promise<{ token?: string }>;
 }) {
-	// ✅ NEW: await searchParams to avoid sync error
-	const params = searchParams;
-	const token = params?.token;
+	const params = await searchParams();
+	const token = params.token;
 
 	if (!token) return redirect('/recipes/verify/invalid');
 
@@ -28,15 +27,13 @@ export default async function VerifyPage({
 
 		if (user.verified) return redirect('/recipes/verify/success');
 
-		const result = await User.updateOne(
+		await User.updateOne(
 			{ email: normalizedEmail },
 			{ $set: { verified: true } }
 		);
-		console.log('Update result:', result);
 
 		return redirect('/recipes/verify/success');
 	} catch (err: any) {
-		// Don't accidentally catch internal Next redirects
 		if (err.digest?.startsWith('NEXT_REDIRECT')) throw err;
 
 		console.error('Verification error:', err);
