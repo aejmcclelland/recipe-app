@@ -69,11 +69,6 @@ export default async function RecipeDetailPage({ params }) {
                         <HomeButton />
                     </Box>
                 )}
-
-                {/* Back to Home Button */}
-                <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 4 }}>
-                    <BackToHomeButton />
-                </Box>
             </Container>
         );
     } catch (error) {
