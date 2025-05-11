@@ -35,7 +35,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ url, setUrl, setData }) => {
 		startTransition(async () => {
 			try {
 				const data = await scrapeData(formData);
-				setData(data); // ✅ sets data for page display
+				setData(data); // sets data for page display
 			} catch (err) {
 				console.error('Scrape failed:', err);
 			}

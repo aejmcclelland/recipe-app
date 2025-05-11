@@ -7,10 +7,11 @@ export interface IUser extends Document {
 	email: string;
 	firstName: string;
 	lastName: string;
-	password?: string; 
+	password?: string;
 	image?: string;
 	authProvider?: string;
 	bookmarks?: mongoose.Types.ObjectId[];
+	verified: boolean;
 	comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -22,6 +23,7 @@ const UserSchema = new Schema<IUser>(
 		password: { type: String }, // ← ADD THIS
 		image: { type: String },
 		authProvider: { type: String },
+		verified: { type: Boolean, default: false },
 		bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' }],
 	},
 	{ timestamps: true }
@@ -44,6 +46,9 @@ UserSchema.pre<IUser>('save', async function (next) {
 UserSchema.methods.comparePassword = async function (
 	candidatePassword: string
 ) {
+	if (!this.verified) {
+		throw new Error('Please verify your email before logging in.');
+	}
 	return await bcrypt.compare(candidatePassword, this.password!);
 };
 

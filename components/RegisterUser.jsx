@@ -4,6 +4,7 @@ import { Box, TextField, Button, Paper, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import registerUser from '@/app/actions/registerUser';
+import zxcvbn from 'zxcvbn';
 
 const RegisterForm = () => {
     const router = useRouter();
@@ -12,17 +13,33 @@ const RegisterForm = () => {
         lastName: '',
         email: '',
         password: '',
+        confirmPassword: '',
     });
     const [error, setError] = useState(null);
+    const [passwordStrength, setPasswordStrength] = useState(null);
+    const [passwordError, setPasswordError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [name]: value }));
+        if (name === 'password') {
+            const result = zxcvbn(value);
+            setPasswordStrength(result);
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (formData.password !== formData.confirmPassword) {
+            setPasswordError("Passwords do not match. Try again, please");
+            return;
+        } else {
+            setPasswordError('');
+        }
+
+        setIsSubmitting(true);
         try {
             const response = await registerUser(formData);
             toast.success(response.message || "User registered successfully!", {
@@ -33,7 +50,7 @@ const RegisterForm = () => {
                 pauseOnHover: true,
                 draggable: true,
             });
-            router.push('/');
+            router.push('/recipes/signin?registered=1');
         } catch (error) {
             toast.error(error.message || "Error registering user.", {
                 position: "top-right",
@@ -43,6 +60,8 @@ const RegisterForm = () => {
                 pauseOnHover: true,
                 draggable: true,
             });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -73,8 +92,46 @@ const RegisterForm = () => {
                         <TextField label="Last Name" name="lastName" required value={formData.lastName} onChange={handleChange} margin="normal" fullWidth />
                         <TextField label="Email" name="email" type="email" required value={formData.email} onChange={handleChange} margin="normal" fullWidth />
                         <TextField label="Password" name="password" type="password" required value={formData.password} onChange={handleChange} margin="normal" fullWidth />
-                        <Button variant="contained" color="primary" type="submit" fullWidth sx={{ mt: 2 }}>
-                            Register
+                        <TextField
+                            label="Confirm Password"
+                            name="confirmPassword"
+                            type="password"
+                            required
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                            margin="normal"
+                            fullWidth
+                        />
+                        {passwordError && (
+                            <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+                                {passwordError}
+                            </Typography>
+                        )}
+                        {passwordStrength && (
+                            <Box sx={{ width: '100%', mt: 1 }}>
+                                <Box
+                                    sx={{
+                                        height: 8,
+                                        borderRadius: 4,
+                                        backgroundColor: ['#ccc', '#f44336', '#ff9800', '#ffeb3b', '#4caf50'][passwordStrength.score],
+                                        width: `${(passwordStrength.score + 1) * 20}%`,
+                                        transition: 'width 0.3s ease-in-out',
+                                    }}
+                                />
+                                <Typography variant="caption" color="textSecondary" sx={{ mt: 0.5 }}>
+                                    {passwordStrength.feedback.suggestions[0] || 'Password strength looks good.'}
+                                </Typography>
+                            </Box>
+                        )}
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            type="submit"
+                            fullWidth
+                            sx={{ mt: 2 }}
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? 'Registering...' : 'Register'}
                         </Button>
                     </Box>
                 </form>

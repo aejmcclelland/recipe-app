@@ -8,6 +8,7 @@ import { useSearchParams } from 'next/navigation';
 
 export default function SignInForm() {
     const searchParams = useSearchParams();
+    const registered = searchParams.get('registered') === '1';
     const [providers, setProviders] = useState(null);
     const [loginError, setLoginError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -63,6 +64,12 @@ export default function SignInForm() {
                 <Typography variant="h4" gutterBottom>
                     Sign In
                 </Typography>
+
+                {registered && (
+                    <Typography color="success.main" sx={{ textAlign: 'center', mb: 2 }}>
+                        Your account has been created. Please sign in to continue.
+                    </Typography>
+                )}
 
                 {loginError && (
                     <Typography color="error" sx={{ textAlign: 'center', mb: 2 }}>
