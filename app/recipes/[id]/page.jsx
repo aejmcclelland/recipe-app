@@ -3,7 +3,7 @@ import Recipe from '../../../models/Recipe';
 import Ingredient from '@/models/Ingredient';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import RecipeCard from '@/components/RecipeCard';
-import BookmarkRecipe from '@/components/BookmarkRecipe';
+
 import { Box, Typography, Container, Button } from '@mui/material';
 import HomeButton from '@/components/HomeButton';
 import Link from 'next/link';
@@ -12,6 +12,7 @@ import RecipeNotFound from '@/components/RecipeNotFound';
 import mongoose from 'mongoose';
 import EditRecipeButton from '@/components/EditRecipeButton';
 import DeleteRecipeButton from '@/components/DeleteRecipeButton';
+import BookmarkButton from '@/components/BookmarkButton';
 
 
 export default async function RecipeDetailPage({ params }) {
