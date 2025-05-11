@@ -63,7 +63,7 @@ export default async function RecipeDetailPage({ params }) {
 
                 {isOwner && (
                     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginTop: 3, gap: 3, paddingBottom: 2 }}>
-                        <BookmarkRecipe recipeId={recipeId} recipeName={recipe.name} user={sessionUser} />
+                        <BookmarkButton recipe={recipe} />
                         <EditRecipeButton recipeId={recipe._id} />
                         <DeleteRecipeButton recipeId={recipe._id} />
                         <HomeButton />
