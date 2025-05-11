@@ -19,6 +19,8 @@ export default async function RecipeDetailPage({ params }) {
     const recipeId = recipeParams?.id;
     // Fetch session user
     const sessionUser = await getSessionUser();
+
+    const isOwner = sessionUser?.id && serializedRecipe.user?._id && sessionUser.id === serializedRecipe.user._id.toString();
     // Connect to DB
     await connectDB();
 
@@ -63,7 +65,7 @@ export default async function RecipeDetailPage({ params }) {
                 </Box>
 
                 {/* Edit Recipe Button (Only if the logged-in user owns the recipe) */}
-                {(serializedRecipe.user?._id && sessionUser?.user?.id === serializedRecipe.user?._id.toString()) && (
+                {isOwner && (
                     <>
                         <Box sx={{ textAlign: 'center', marginTop: 2 }}>
                             <Link href={`/recipes/${serializedRecipe._id}/edit`}>
