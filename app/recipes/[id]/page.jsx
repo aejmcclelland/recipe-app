@@ -63,7 +63,7 @@ export default async function RecipeDetailPage({ params }) {
                 </Box>
 
                 {/* Edit Recipe Button (Only if the logged-in user owns the recipe) */}
-                {sessionUser?.user?.id === serializedRecipe.user?._id?.toString() && (
+                {(serializedRecipe.user?._id && sessionUser?.user?.id === serializedRecipe.user?._id.toString()) && (
                     <>
                         <Box sx={{ textAlign: 'center', marginTop: 2 }}>
                             <Link href={`/recipes/${serializedRecipe._id}/edit`}>

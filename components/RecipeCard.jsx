@@ -56,9 +56,19 @@ export default function RecipeCard({ recipe }) {
                         <Typography variant="h6" gutterBottom>
                             Method:
                         </Typography>
-                        <Typography variant="body1">
-                            {recipe.method || 'No method provided'}
-                        </Typography>
+                        {Array.isArray(recipe.method) ? (
+                            <ol>
+                                {recipe.method.map((step, index) => (
+                                    <li key={index}>
+                                        {step}
+                                    </li>
+                                ))}
+                            </ol>
+                        ) : (
+                            <Typography variant="body1">
+                                {recipe.method || 'No method provided'}
+                            </Typography>
+                        )}
 
                         {/* Additional Information */}
                         <Box mt={2}>
