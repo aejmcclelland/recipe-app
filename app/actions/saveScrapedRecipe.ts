@@ -14,7 +14,14 @@ export async function saveScrapedRecipe(data: any, categoryId: string) {
 		throw new Error('Unauthorized or missing category');
 	}
 
-	const parsed = await parseScrapedRecipe(data);
+	const parsed: any = await parseScrapedRecipe(data);
+
+	if (parsed.method && typeof parsed.method === 'string') {
+		parsed.method = parsed.method
+			.split(/[\r\n]+/)
+			.map((line: string) => line.replace(/\s+/g, ' ').trim())
+			.filter((line) => line !== '');
+	}
 
 	const newRecipe = new Recipe({
 		...parsed,
@@ -23,8 +30,9 @@ export async function saveScrapedRecipe(data: any, categoryId: string) {
 		cookTime: 20,
 		serves: 2,
 		image:
-			data.image ??
-			'https://res.cloudinary.com/dqeszgo28/image/upload/v1744456700/recipes/placeholder-food.jpg',
+			(data.image && data.image.startsWith('https://res.cloudinary.com/'))
+				? data.image
+				: `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/t_email-opt/recipes/placeholder-food.jpg`,
 		user: user.id,
 	});
 

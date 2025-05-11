@@ -19,7 +19,6 @@ export default async function RecipeDetailPage({ params }) {
     const recipeId = recipeParams?.id;
     // Fetch session user
     const sessionUser = await getSessionUser();
-    console.log('🔍 sessionUser in [id]/page:', sessionUser);
     // Connect to DB
     await connectDB();
 
