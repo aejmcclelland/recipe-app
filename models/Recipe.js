@@ -23,10 +23,7 @@ const recipeSchema = new Schema({
 			},
 		},
 	],
-	method: {
-		type: String,
-		required: true,
-	},
+	method: { type: [String], required: true },
 	prepTime: {
 		type: Number,
 		required: true,
