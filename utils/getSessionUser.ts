@@ -2,26 +2,34 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/utils/authOptions';
 import type { Session } from 'next-auth';
 
-export const getSessionUser = async () => {
+type SessionUser = {
+	id: string;
+	name?: string | null;
+	email?: string | null;
+	image?: string | null;
+} | null;
+
+export const getSessionUser = async (): Promise<SessionUser> => {
 	try {
 		const session: Session | null = await getServerSession(authOptions);
-		console.log('🔍 Retrieved session in getSessionUser:', session);
+		if (process.env.NODE_ENV === 'development') {
+			console.log('🔍 Retrieved session in getSessionUser:', session);
+		}
 
-		if (!session || !session.user || !session.user.id) {
-			console.warn('No valid session user found:', session);
+		if (!session?.user?.id) {
+			if (process.env.NODE_ENV === 'development') {
+				console.warn('No valid session user found:', session);
+			}
 			return null;
 		}
 
-		const sessionUser = {
+		return {
 			id: session.user.id,
 			name: session.user.name,
 			email: session.user.email,
 			image: session.user.image,
 		};
-
-		console.log('getSessionUser is returning:', sessionUser);
-		return sessionUser;
-	} catch (error) {
+	} catch (error: any) {
 		console.error('Error fetching session:', error.message);
 		return null;
 	}

@@ -13,8 +13,10 @@ interface CustomGoogleProfile extends GoogleProfile {
 console.log('🔍 Mongoose Models:', mongoose.models);
 console.log('🔍 User Model:', User);
 
-if (!User) {
-	throw new Error('❌ User model is NOT being imported correctly');
+if (!User || !mongoose.models.User) {
+	throw new Error(
+		'User model is NOT being imported correctly or models not initialized'
+	);
 }
 export const authOptions: AuthOptions = {
 	providers: [
@@ -43,6 +45,9 @@ export const authOptions: AuthOptions = {
 				password: { label: 'Password', type: 'password' },
 			},
 			async authorize(credentials) {
+				if (!credentials?.email || !credentials?.password) {
+					return null;
+				}
 				await connectDB();
 				const user = await User.findOne({ email: credentials?.email });
 
@@ -65,6 +70,9 @@ export const authOptions: AuthOptions = {
 	callbacks: {
 		async signIn({ user, account, profile }) {
 			if (account.provider === 'google' && profile) {
+				if (!profile?.email) {
+					return false;
+				}
 				await connectDB();
 				let existingUser = await User.findOne({ email: profile.email });
 
@@ -92,7 +100,9 @@ export const authOptions: AuthOptions = {
 					image: user.image,
 				};
 			}
-			console.log('JWT Callback - token after:', token);
+			if (process.env.NODE_ENV === 'development') {
+				console.log('JWT Callback - token after:', token);
+			}
 			return token;
 		},
 
@@ -105,7 +115,9 @@ export const authOptions: AuthOptions = {
 					image: token.user.image,
 				};
 			}
-			console.log('📌 Session Callback - session:', session);
+			if (process.env.NODE_ENV === 'development') {
+				console.log('Session Callback - session:', session);
+			}
 			return session;
 		},
 	},

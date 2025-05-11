@@ -1,6 +1,8 @@
-import { signIn, signOut } from 'next-auth/react';
+import { getSession, signOut } from 'next-auth/react';
 
 export const refreshSession = async () => {
-	await signOut({ redirect: false }); // Sign out without redirecting
-	await signIn('credentials', { redirect: false }); // Re-sign in the user
+	const session = await getSession();
+	if (!session) return; // Exit early if no user session
+
+	await signOut({ callbackUrl: '/recipes/signin' });
 };
