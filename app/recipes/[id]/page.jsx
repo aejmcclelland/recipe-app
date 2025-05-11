@@ -20,7 +20,6 @@ export default async function RecipeDetailPage({ params }) {
     // Fetch session user
     const sessionUser = await getSessionUser();
 
-    const isOwner = sessionUser?.id && serializedRecipe.user?._id && sessionUser.id === serializedRecipe.user._id.toString();
     // Connect to DB
     await connectDB();
 
@@ -44,6 +43,8 @@ export default async function RecipeDetailPage({ params }) {
 
         // Serialize recipe data for client components
         const serializedRecipe = convertToSerializeableObject(recipe);
+
+        const isOwner = sessionUser?.id && serializedRecipe.user?._id && sessionUser.id === serializedRecipe.user._id.toString();
 
         return (
             <Container maxWidth="lg">
