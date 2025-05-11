@@ -5,7 +5,7 @@ import { convertToSerializeableObject } from '@/utils/convertToObject';
 import RecipeCard from '@/components/RecipeCard';
 import BookmarkRecipe from '@/components/BookmarkRecipe';
 import { Box, Typography, Container, Button } from '@mui/material';
-import BackToHomeButton from '@/components/BackToHomeButton';
+import HomeButton from '@/components/HomeButton';
 import Link from 'next/link';
 import { getSessionUser } from '@/utils/getSessionUser';
 import RecipeNotFound from '@/components/RecipeNotFound';
@@ -62,19 +62,11 @@ export default async function RecipeDetailPage({ params }) {
                 </Box>
 
                 {isOwner && (
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            flexWrap: 'wrap',
-                            marginTop: 3,
-                            gap: 3,
-                        }}
-                    >
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginTop: 3, gap: 3, paddingBottom: 2 }}>
                         <BookmarkRecipe recipeId={recipeId} recipeName={recipe.name} user={sessionUser} />
                         <EditRecipeButton recipeId={recipe._id} />
                         <DeleteRecipeButton recipeId={recipe._id} />
+                        <HomeButton />
                     </Box>
                 )}
 
