@@ -71,6 +71,7 @@ const ButtonToolbar: React.FC<ButtonToolbarProps> = ({
 				gap: 2,
 				zIndex: 10,
 				boxShadow: 3,
+				paddingBottom: 2,
 			}}>
 			<Tooltip title='Export to PDF'>
 				<IconButton

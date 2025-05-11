@@ -6,6 +6,7 @@ const FloatingIconButton = ({ onClick, icon, tooltip, color = '#d32f2f' }) => (
     <Tooltip title={tooltip}>
         <IconButton
             onClick={onClick}
+            aria-label={tooltip}
             sx={{
                 backgroundColor: color,
                 borderRadius: '50%',

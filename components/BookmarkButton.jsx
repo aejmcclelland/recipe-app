@@ -1,7 +1,5 @@
 'use client';
 import FloatingIconButton from './FloatingIconButton';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import { IconButton, Tooltip } from '@mui/material';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
 import BookmarkRemoveIcon from '@mui/icons-material/BookmarkRemove';
 import { useState, useEffect } from 'react';
@@ -17,7 +15,6 @@ const BookmarkButton = ({ recipe }) => {
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    // Check bookmark status on component mount
     useEffect(() => {
         const fetchBookmarkStatus = async () => {
             if (!userId || !recipeId) {
@@ -41,7 +38,6 @@ const BookmarkButton = ({ recipe }) => {
         fetchBookmarkStatus();
     }, [userId, recipeId]);
 
-    // Toggle bookmark status
     const handleClick = async () => {
         if (!userId) {
             toast.error('Please log in to bookmark recipes!');
@@ -52,7 +48,6 @@ const BookmarkButton = ({ recipe }) => {
             const result = await bookmarkRecipe(recipeId);
             if (result.success) {
                 setIsBookmarked(result.isBookmarked);
-                // Include the recipe name in the toast message
                 const action = result.isBookmarked ? 'added to' : 'removed from';
                 toast.success(`Recipe "${recipe.name}" ${action} your bookmarks.`);
             } else {
@@ -64,7 +59,7 @@ const BookmarkButton = ({ recipe }) => {
         }
     };
 
-    if (loading) return null; // Optionally display a loader while loading
+    if (loading) return null;
 
     return (
         <FloatingIconButton
