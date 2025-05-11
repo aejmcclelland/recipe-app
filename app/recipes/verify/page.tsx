@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { redirect } from 'next/navigation';
 import jwt from 'jsonwebtoken';
 import connectDB from '@/config/database';
@@ -5,10 +7,11 @@ import connectDB from '@/config/database';
 export default async function VerifyPage({
 	searchParams,
 }: {
-	searchParams: () => Promise<{ token?: string }>;
+	searchParams: any;
 }) {
 	const params = await searchParams();
-	const token = params.token;
+	let token = params.token;
+	token = Array.isArray(token) ? token[0] : token;
 
 	if (!token) return redirect('/recipes/verify/invalid');
 
