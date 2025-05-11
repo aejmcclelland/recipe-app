@@ -1,24 +1,19 @@
 'use client';
 
-import { IconButton, Tooltip } from '@mui/material';
+import FloatingIconButton from './FloatingIconButton';
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-const EditRecipeButton = ({ recipeId }) => (
-    <Tooltip title="Edit Recipe">
-        <IconButton
-            component={Link}
-            href={`/recipes/${recipeId}/edit`}
-            sx={{
-                color: 'gray',
-                border: '1px solid',
-                borderColor: 'gray',
-                borderRadius: '50%',
-            }}
-        >
-            <EditNoteOutlinedIcon />
-        </IconButton>
-    </Tooltip>
-);
+const EditRecipeButton = ({ recipeId }) => {
+    const router = useRouter();
+
+    return (
+        <FloatingIconButton
+            onClick={() => router.push(`/recipes/${recipeId}/edit`)}
+            icon={<EditNoteOutlinedIcon />}
+            tooltip="Edit Recipe"
+        />
+    );
+};
 
 export default EditRecipeButton;

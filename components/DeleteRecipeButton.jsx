@@ -1,9 +1,9 @@
 'use client';
 
-import { IconButton, Tooltip } from '@mui/material';
-import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import FloatingIconButton from './FloatingIconButton';
+import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import deleteRecipe from '@/app/actions/deleteRecipe';
 
 const DeleteRecipeButton = ({ recipeId }) => {
@@ -26,20 +26,11 @@ const DeleteRecipeButton = ({ recipeId }) => {
     };
 
     return (
-        <Tooltip title="Delete Recipe">
-            <IconButton
-                onClick={handleDelete}
-                sx={{
-                    color: 'gray',
-                    border: '1px solid',
-                    borderColor: 'gray',
-                    borderRadius: '50%',
-                }}
-                disabled={deleting}
-            >
-                <DeleteForeverOutlinedIcon />
-            </IconButton>
-        </Tooltip>
+        <FloatingIconButton
+            onClick={handleDelete}
+            icon={<DeleteForeverOutlinedIcon />}
+            tooltip="Delete Recipe"
+        />
     );
 };
 

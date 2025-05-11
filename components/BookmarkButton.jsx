@@ -1,5 +1,6 @@
 'use client';
-
+import FloatingIconButton from './FloatingIconButton';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import { IconButton, Tooltip } from '@mui/material';
 import BookmarkAddIcon from '@mui/icons-material/BookmarkAdd';
 import BookmarkRemoveIcon from '@mui/icons-material/BookmarkRemove';
@@ -66,19 +67,12 @@ const BookmarkButton = ({ recipe }) => {
     if (loading) return null; // Optionally display a loader while loading
 
     return (
-        <Tooltip title={isBookmarked ? 'Remove Bookmark' : 'Add Bookmark'}>
-            <IconButton
-                onClick={handleClick}
-                sx={{
-                    color: isBookmarked ? 'green' : 'gray',
-                    border: '1px solid',
-                    borderColor: isBookmarked ? 'green' : 'gray',
-                    borderRadius: '50%',
-                }}
-            >
-                {isBookmarked ? <BookmarkRemoveIcon /> : <BookmarkAddIcon />}
-            </IconButton>
-        </Tooltip>
+        <FloatingIconButton
+            onClick={handleClick}
+            icon={isBookmarked ? <BookmarkRemoveIcon /> : <BookmarkAddIcon />}
+            tooltip={isBookmarked ? 'Remove Bookmark' : 'Add Bookmark'}
+            color={isBookmarked ? 'green' : '#d32f2f'}
+        />
     );
 };
 
