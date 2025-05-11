@@ -22,9 +22,10 @@ export default async function registerUser(formData) {
 
 		const existingUser = await User.findOne({ email: sanitizedEmail });
 		if (existingUser) {
-			throw new Error(
-				'Unable to register with that email. Please try again or log in.'
-			);
+			return {
+				success: false,
+				message: 'Unable to register with that email. Please try again or log in.'
+			};
 		}
 
 		const newUser = new User({
