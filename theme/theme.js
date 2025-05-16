@@ -120,7 +120,7 @@ const theme = createTheme({
 					backgroundColor: alpha('#ffffff', 0.8),
 					borderRadius: '4px',
 					padding: '4px 8px',
-					maxWidth: '250px',
+					// maxWidth: '250px',
 					'& .MuiInputBase-input': {
 						padding: '8px 8px 8px calc(1em + 32px)',
 						transition: 'width 0.3s',

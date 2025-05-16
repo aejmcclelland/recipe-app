@@ -9,7 +9,6 @@ import {
     Typography,
     Box,
     Stack,
-    IconButton,
     FormControl,
     InputLabel,
     Select,
@@ -20,6 +19,7 @@ import AddIcon from '@mui/icons-material/Add';
 export default function RecipeAddForm({ categories }) {
     const [ingredients, setIngredients] = useState([]);
     const ingredientsRef = useRef(null);
+    const [selectedImage, setSelectedImage] = useState(null);
 
     const handleAddIngredient = () => {
         setIngredients([...ingredients, { ingredient: '', quantity: '', unit: '' }]);
@@ -46,20 +46,20 @@ export default function RecipeAddForm({ categories }) {
     };
 
     return (
-        <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
+        <Box sx={{ width: 800, maxWidth: '100%', mx: 'auto', p: 3 }}>
             <form action={addRecipe} onSubmit={handleFormSubmit}>
                 <Stack spacing={4}>
                     <Stack spacing={1}>
-                        <Typography variant="h4" >
+                        <Typography variant="h4" align="center">
                             Add a Recipe
                         </Typography>
-                        <Typography variant="subtitle2" color="text.secondary" >
+                        <Typography variant="subtitle2" color="text.secondary" align="center" >
                             Fill in the details to add your recipe
                         </Typography>
                     </Stack>
 
-                    <Box>
-                        <Typography variant="h5" align="left" sx={{ pl: 1 }}>
+                    <Stack spacing={2} >
+                        <Typography variant="h6" align="left" sx={{ mb: 0 }}>
                             Recipe Name
                         </Typography>
                         <TextField
@@ -69,34 +69,54 @@ export default function RecipeAddForm({ categories }) {
                             fullWidth
                             required
                             sx={{
-                                mt: 1,
-                                mb: 2,
-                                // Ensure full width inside Box
-                                width: '100%',
-                                maxWidth: '100%',
+                                fontWeight: 600,
+                                fontSize: '1.1rem',
+                                '& .MuiInputBase-root': {
+                                    height: 48,
+                                },
                             }}
                         />
-                    </Box>
+                    </Stack>
 
-                    <Stack spacing={3} direction={{ mobile: 'column', tablet: 'row' }} alignItems="center">
-                        <Stack spacing={1} alignItems="center">
-                            <Typography variant="body2">Upload Image (optional)</Typography>
-                            <IconButton
-                                component="label"
-                                sx={{
-                                    backgroundColor: '#d32f2f',
-                                    color: 'white',
-                                    width: 60,
-                                    height: 60,
-                                    borderRadius: '50%',
-                                    '&:hover': { backgroundColor: '#b71c1c' },
+                    <Stack spacing={2} sx={{ width: '100%' }}>
+                        <Button
+                            component="label"
+                            variant="contained"
+                            fullWidth
+                            startIcon={<AddIcon />}
+                            sx={{
+                                backgroundColor: '#d32f2f',
+                                color: '#fff',
+                                fontWeight: 600,
+                                fontSize: '1rem',
+                                height: 40,
+                                minHeight: 40,
+                                mb: 1,
+                                '&:hover': { backgroundColor: '#b71c1c' },
+                            }}
+                        >
+                            Upload Image (optional)
+                            <input
+                                hidden
+                                accept="image/*"
+                                type="file"
+                                name="imageFile"
+                                onChange={e => {
+                                    setSelectedImage(e.target.files[0]?.name || null);
                                 }}
-                            >
-                                <AddIcon fontSize="large" />
-                                <input hidden accept="image/*" type="file" name="imageFile" />
-                            </IconButton>
-                        </Stack>
+                            />
+                        </Button>
+                        {selectedImage && (
+                            <Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
+                                Selected: {selectedImage}
+                            </Typography>
+                        )}
+                    </Stack>
 
+                    <Stack spacing={2} sx={{ width: '100%', mb: 4 }}>
+                        <Typography variant="body2" align="left">
+                            Select a Category
+                        </Typography>
                         <FormControl fullWidth required>
                             <InputLabel id="category-label">Category</InputLabel>
                             <Select
@@ -113,85 +133,85 @@ export default function RecipeAddForm({ categories }) {
                             </Select>
                         </FormControl>
                     </Stack>
+                </Stack>
 
-                    <Stack spacing={1}>
-                        <Typography variant="h5">Times & Serves</Typography>
-                        <Stack spacing={2} direction={{ mobile: 'column', tablet: 'row' }}>
-                            <TextField
-                                label="Prep Time (mins)"
-                                name="prepTime"
-                                type="number"
-                                variant="outlined"
-                                fullWidth
-                                required
-                            />
-                            <TextField
-                                label="Cook Time (mins)"
-                                name="cookTime"
-                                type="number"
-                                variant="outlined"
-                                fullWidth
-                                required
-                            />
-                            <TextField
-                                label="Serves"
-                                name="serves"
-                                type="number"
-                                variant="outlined"
-                                fullWidth
-                                required
-                            />
-                        </Stack>
-                    </Stack>
-
-                    <Stack spacing={1}>
-                        <Typography variant="h5">Ingredients</Typography>
-                        <Stack spacing={2}>
-                            {ingredients.map((ingredient, index) => (
-                                <IngredientInputRow
-                                    key={index}
-                                    index={index}
-                                    ingredient={ingredient}
-                                    handleIngredientChange={(index, event) => {
-                                        const { name, value } = event.target;
-                                        handleIngredientChange(index, name, value);
-                                    }}
-                                    handleRemoveIngredient={() => {
-                                        const updated = ingredients.filter((_, i) => i !== index);
-                                        setIngredients(updated);
-                                    }}
-                                />
-                            ))}
-                            <Button
-                                variant="contained"
-                                onClick={handleAddIngredient}
-                                type="button"
-                                sx={{ width: { mobile: '100%', tablet: 'auto' } }}
-                            >
-                                + Add Ingredient
-                            </Button>
-
-                            <input type="hidden" name="ingredients" ref={ingredientsRef} />
-                        </Stack>
-                    </Stack>
-
-                    <Stack spacing={1}>
-                        <Typography variant="h5">Method</Typography>
+                <Stack spacing={4} sx={{ mt: 4 }}>
+                    <Typography variant="h5">Times & Serves</Typography>
+                    <Stack spacing={2} direction={{ mobile: 'column', tablet: 'row' }}>
                         <TextField
-                            label="Method"
-                            name="method"
+                            label="Prep Time (mins)"
+                            name="prepTime"
+                            type="number"
                             variant="outlined"
                             fullWidth
-                            multiline
-                            rows={5}
+                            required
+                        />
+                        <TextField
+                            label="Cook Time (mins)"
+                            name="cookTime"
+                            type="number"
+                            variant="outlined"
+                            fullWidth
+                            required
+                        />
+                        <TextField
+                            label="Serves"
+                            name="serves"
+                            type="number"
+                            variant="outlined"
+                            fullWidth
                             required
                         />
                     </Stack>
-
-                    <Button type="submit" variant="contained" size="large" fullWidth>
-                        Add Recipe
-                    </Button>
                 </Stack>
+
+                <Stack spacing={1} sx={{ mt: 4 }}>
+                    <Typography variant="h5">Ingredients</Typography>
+                    <Stack spacing={2}>
+                        {ingredients.map((ingredient, index) => (
+                            <IngredientInputRow
+                                key={index}
+                                index={index}
+                                ingredient={ingredient}
+                                handleIngredientChange={(index, event) => {
+                                    const { name, value } = event.target;
+                                    handleIngredientChange(index, name, value);
+                                }}
+                                handleRemoveIngredient={() => {
+                                    const updated = ingredients.filter((_, i) => i !== index);
+                                    setIngredients(updated);
+                                }}
+                            />
+                        ))}
+                        <Button
+                            variant="contained"
+                            onClick={handleAddIngredient}
+                            type="button"
+                            sx={{ width: { mobile: '100%', tablet: 'auto' } }}
+                        >
+                            + Add Ingredient
+                        </Button>
+
+                        <input type="hidden" name="ingredients" ref={ingredientsRef} />
+                    </Stack>
+                </Stack>
+
+                <Stack spacing={1} sx={{ mt: 4 }}>
+                    <Typography variant="h5">Method</Typography>
+                    <TextField
+                        label="Method"
+                        name="method"
+                        variant="outlined"
+                        fullWidth
+                        multiline
+                        rows={5}
+                        required
+                    />
+                </Stack>
+
+                <Button type="submit" variant="contained" size="large" fullWidth sx={{ mt: 4 }}>
+                    Add Recipe
+                </Button>
             </form>
         </Box>
     );
