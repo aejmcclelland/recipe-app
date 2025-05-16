@@ -23,7 +23,7 @@ export default function RecipeCard({ recipe }) {
                     {/* Left Section: Image and Ingredients */}
                     <Box flex={1}>
                         {/* Recipe Image */}
-                        <Box mb={2}>
+                        <Box mb={2} display="flex" justifyContent="center">
                             <Image
                                 src={recipe.image || 'https://res.cloudinary.com/dqeszgo28/image/upload/v1728739432/300_bebabf.png'} // Provide a default image URL
                                 alt={recipe.name || 'Recipe Image'}
@@ -57,15 +57,15 @@ export default function RecipeCard({ recipe }) {
                             Method:
                         </Typography>
                         {Array.isArray(recipe.method) ? (
-                            <ol>
+                            <Box component="ol" sx={{ pl: 3 }}>
                                 {recipe.method.map((step, index) => (
                                     <li key={index}>
                                         {step}
                                     </li>
                                 ))}
-                            </ol>
+                            </Box>
                         ) : (
-                            <Typography variant="body1">
+                            <Typography variant="body2">
                                 {recipe.method || 'No method provided'}
                             </Typography>
                         )}
