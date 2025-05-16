@@ -2,9 +2,10 @@
 import SearchResultsClient from '@/components/SearchResultsClient';
 
 export default async function SearchResultsPage({ searchParams }) {
-    const searchQuery = searchParams.searchQuery || '';
-    const ingredients = searchParams.ingredients || '';
-    const category = searchParams.category || '';
+    const params = await searchParams;
+    const searchQuery = params.searchQuery || '';
+    const ingredients = params.ingredients || '';
+    const category = params.category || '';
 
 
     return (

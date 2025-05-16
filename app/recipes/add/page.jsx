@@ -1,19 +1,19 @@
 import RecipeAddForm from '@/components/RecipeAddForm';
+import { getCategories } from '@/app/actions/getCategories';
 import BackToHomeButton from '@/components/BackToHomeButton';
 import { Box, Container } from '@mui/material';
 
-const AddRecipePage = () => {
+export default async function AddRecipePage() {
+    const categories = await getCategories();
+
     return (
         <section>
             <Container>
-                <h1>Add a New Recipe</h1>
-                <RecipeAddForm />
+                <RecipeAddForm categories={categories} />
                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                     <BackToHomeButton />
                 </Box>
             </Container>
         </section>
     );
-};
-
-export default AddRecipePage;
+}

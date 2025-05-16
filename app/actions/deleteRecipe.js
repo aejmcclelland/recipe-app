@@ -5,13 +5,13 @@ import connectDB from '@/config/database';
 import Recipe from '@/models/Recipe';
 import { revalidatePath } from 'next/cache';
 import mongoose from 'mongoose';
+import { redirect } from 'next/navigation';
 
 async function deleteRecipe(recipeId) {
 	await connectDB();
 
 	const recipe = await Recipe.findById(recipeId);
 
-	// Delete image from Cloudinary if a valid publicId exists and it's not the default image
 	if (!recipe) {
 		throw new Error('Recipe not found');
 	}
@@ -28,12 +28,8 @@ async function deleteRecipe(recipeId) {
 
 	// Delete the recipe from the database
 	await Recipe.findByIdAndDelete(recipeId);
-	if (!recipe) {
-		throw new Error('Recipe not found');
-	}
 	console.log('Recipe deleted successfully');
-	// Revalidate the path to ensure the UI reflects the changes
-	revalidatePath('/recipes');
+	redirect('/recipes');
 }
 
 export default deleteRecipe;

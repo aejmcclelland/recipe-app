@@ -1,219 +1,198 @@
 'use client';
-import { useState } from 'react';
-import { TextField, Button, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2'; // For Material UI Grid2 system
+import { useState, useRef } from 'react';
 import addRecipe from '@/app/actions/addRecipe';
 import { fractionToDecimal } from '@/utils/fractionToDecimal';
-import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
+import IngredientInputRow from './IngredientInputRow';
+import {
+    TextField,
+    Button,
+    Typography,
+    Box,
+    Stack,
+    IconButton,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 
-
-const RecipeAddForm = () => {
-    const router = useRouter();
+export default function RecipeAddForm({ categories }) {
     const [ingredients, setIngredients] = useState([]);
-    const [imageFile, setImageFile] = useState(null);
+    const ingredientsRef = useRef(null);
 
     const handleAddIngredient = () => {
         setIngredients([...ingredients, { ingredient: '', quantity: '', unit: '' }]);
     };
 
     const handleIngredientChange = (index, field, value) => {
-        const updatedIngredients = ingredients.map((ing, i) =>
+        const updated = ingredients.map((ing, i) =>
             i === index ? { ...ing, [field]: value } : ing
         );
-        setIngredients(updatedIngredients);
+        setIngredients(updated);
     };
 
-    const handleFileChange = (e) => {
-        setImageFile(e.target.files[0]);
-    };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault(); // Prevent default form submission
-
-        const formData = new FormData(event.target);
-
-        // Process ingredients, converting any fraction quantities to decimals
-        const processedIngredients = ingredients.map((ingredient) => {
+    const handleFormSubmit = () => {
+        const processed = ingredients.map((ingredient) => {
             const quantity = typeof ingredient.quantity === 'string' && ingredient.quantity.includes('/')
                 ? fractionToDecimal(ingredient.quantity)
                 : ingredient.quantity;
-            return {
-                ...ingredient,
-                quantity, // Use the converted quantity if it was a fraction
-            };
+            return { ...ingredient, quantity };
         });
 
-        // Append ingredients as JSON to formData
-        formData.append('ingredients', JSON.stringify(processedIngredients));
-
-        // Append imageFile if it exists
-        if (imageFile) {
-            formData.append('imageFile', imageFile);
+        if (ingredientsRef.current) {
+            ingredientsRef.current.value = JSON.stringify(processed);
         }
+    };
 
-        try {
-            // Call the server action function directly
-            const recipeId = await addRecipe(formData); // Capture the returned recipeId
-
-            if (recipeId) {
-                toast.success("Recipe added successfully!");
-                // Redirect user to the newly created recipe page
-                router.push(`/recipes/${recipeId}`);
-            } else {
-                throw new Error('Recipe creation failed.');
-            }
-        } catch (error) {
-            console.error('Error submitting form:', error);
-            toast.error("Error adding recipe. Please try again.");
-        }
-    }
     return (
-        <form onSubmit={handleSubmit} encType="multipart/form-data">
-            <Grid container spacing={+3}>
-                <Grid item xs={+12}>
-                    <TextField
-                        label="Recipe Name"
-                        name="name"
-                        variant="outlined"
-                        fullWidth
-                        required
-                    />
-                </Grid>
+        <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
+            <form action={addRecipe} onSubmit={handleFormSubmit}>
+                <Stack spacing={4}>
+                    <Stack spacing={1}>
+                        <Typography variant="h4" >
+                            Add a Recipe
+                        </Typography>
+                        <Typography variant="subtitle2" color="text.secondary" >
+                            Fill in the details to add your recipe
+                        </Typography>
+                    </Stack>
 
-                <Grid item xs={+12} sm={+6}>
-                    <TextField
-                        label="Prep Time (minutes)"
-                        name="prepTime"
-                        type="number"
-                        variant="outlined"
-                        fullWidth
-                        required
-                    />
-                </Grid>
+                    <Box>
+                        <Typography variant="h5" align="left" sx={{ pl: 1 }}>
+                            Recipe Name
+                        </Typography>
+                        <TextField
+                            name="name"
+                            placeholder="e.g. Classic Lasagna"
+                            variant="outlined"
+                            fullWidth
+                            required
+                            sx={{
+                                mt: 1,
+                                mb: 2,
+                                // Ensure full width inside Box
+                                width: '100%',
+                                maxWidth: '100%',
+                            }}
+                        />
+                    </Box>
 
-                <Grid item xs={+12} sm={+6}>
-                    <TextField
-                        label="Cook Time (minutes)"
-                        name="cookTime"
-                        type="number"
-                        variant="outlined"
-                        fullWidth
-                        required
-                    />
-                </Grid>
-
-                <Grid item xs={+12} sm={+6}>
-                    <TextField
-                        label="Serves"
-                        name="serves"
-                        type="number"
-                        variant="outlined"
-                        fullWidth
-                        required
-                    />
-                </Grid>
-
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                        label="Category"
-                        name="category"
-                        variant="outlined"
-                        fullWidth
-                        required
-                    />
-                </Grid>
-
-                <Grid item xs={12}>
-                    <TextField
-                        label="Method"
-                        name="method"
-                        variant="outlined"
-                        fullWidth
-                        multiline
-                        rows={4}
-                        required
-                    />
-                </Grid>
-
-                <Grid item xs={12}>
-                    <Typography variant="body1">Upload an image (optional)</Typography>
-                    <input type="file" name="imageFile" accept="image/*" onChange={handleFileChange}
-                        style={{ marginTop: '8px' }}
-                    />
-                </Grid>
-
-                {/* Ingredients Fields */}
-                {ingredients.map((ingredient, index) => (
-                    <Grid container spacing={2} key={index}>
-                        <Grid item xs={4}>
-                            <TextField
-                                label="Ingredient"
-                                value={ingredient.ingredient}
-                                onChange={(e) =>
-                                    handleIngredientChange(index, 'ingredient', e.target.value)
-                                }
-                                fullWidth
-                                variant="outlined"
-                                required
-                            />
-                        </Grid>
-                        <Grid item xs={4}>
-                            <TextField
-                                label="Quantity"
-                                value={ingredient.quantity}
-                                onChange={(e) =>
-                                    handleIngredientChange(index, 'quantity', e.target.value)
-                                }
-                                type="number"
-                                slotProps={{
-                                    input: { step: "any" } // Updated
+                    <Stack spacing={3} direction={{ mobile: 'column', tablet: 'row' }} alignItems="center">
+                        <Stack spacing={1} alignItems="center">
+                            <Typography variant="body2">Upload Image (optional)</Typography>
+                            <IconButton
+                                component="label"
+                                sx={{
+                                    backgroundColor: '#d32f2f',
+                                    color: 'white',
+                                    width: 60,
+                                    height: 60,
+                                    borderRadius: '50%',
+                                    '&:hover': { backgroundColor: '#b71c1c' },
                                 }}
-                                fullWidth
-                                variant="outlined"
-                                required
-                            />
-                        </Grid>
-                        <Grid item xs={4}>
+                            >
+                                <AddIcon fontSize="large" />
+                                <input hidden accept="image/*" type="file" name="imageFile" />
+                            </IconButton>
+                        </Stack>
+
+                        <FormControl fullWidth required>
+                            <InputLabel id="category-label">Category</InputLabel>
+                            <Select
+                                labelId="category-label"
+                                label="Category"
+                                name="category"
+                                defaultValue=""
+                            >
+                                {categories.map((category) => (
+                                    <MenuItem key={category._id} value={category.name}>
+                                        {category.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Stack>
+
+                    <Stack spacing={1}>
+                        <Typography variant="h5">Times & Serves</Typography>
+                        <Stack spacing={2} direction={{ mobile: 'column', tablet: 'row' }}>
                             <TextField
-                                label="Unit"
-                                value={ingredient.unit}
-                                onChange={(e) =>
-                                    handleIngredientChange(index, 'unit', e.target.value)
-                                }
-                                fullWidth
+                                label="Prep Time (mins)"
+                                name="prepTime"
+                                type="number"
                                 variant="outlined"
+                                fullWidth
                                 required
                             />
-                        </Grid>
-                    </Grid>
-                ))}
+                            <TextField
+                                label="Cook Time (mins)"
+                                name="cookTime"
+                                type="number"
+                                variant="outlined"
+                                fullWidth
+                                required
+                            />
+                            <TextField
+                                label="Serves"
+                                name="serves"
+                                type="number"
+                                variant="outlined"
+                                fullWidth
+                                required
+                            />
+                        </Stack>
+                    </Stack>
 
-                <Grid item xs={12}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleAddIngredient}
-                        fullWidth
-                    >
-                        Add Ingredient
-                    </Button>
-                </Grid>
+                    <Stack spacing={1}>
+                        <Typography variant="h5">Ingredients</Typography>
+                        <Stack spacing={2}>
+                            {ingredients.map((ingredient, index) => (
+                                <IngredientInputRow
+                                    key={index}
+                                    index={index}
+                                    ingredient={ingredient}
+                                    handleIngredientChange={(index, event) => {
+                                        const { name, value } = event.target;
+                                        handleIngredientChange(index, name, value);
+                                    }}
+                                    handleRemoveIngredient={() => {
+                                        const updated = ingredients.filter((_, i) => i !== index);
+                                        setIngredients(updated);
+                                    }}
+                                />
+                            ))}
+                            <Button
+                                variant="contained"
+                                onClick={handleAddIngredient}
+                                type="button"
+                                sx={{ width: { mobile: '100%', tablet: 'auto' } }}
+                            >
+                                + Add Ingredient
+                            </Button>
 
-                <Grid item xs={12}>
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        type="submit"
-                        fullWidth
-                    >
+                            <input type="hidden" name="ingredients" ref={ingredientsRef} />
+                        </Stack>
+                    </Stack>
+
+                    <Stack spacing={1}>
+                        <Typography variant="h5">Method</Typography>
+                        <TextField
+                            label="Method"
+                            name="method"
+                            variant="outlined"
+                            fullWidth
+                            multiline
+                            rows={5}
+                            required
+                        />
+                    </Stack>
+
+                    <Button type="submit" variant="contained" size="large" fullWidth>
                         Add Recipe
                     </Button>
-                </Grid>
-            </Grid>
-        </form>
+                </Stack>
+            </form>
+        </Box>
     );
-};
-
-
-export default RecipeAddForm;
+}

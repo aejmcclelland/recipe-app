@@ -25,14 +25,19 @@ export default function BookmarkRecipeCard({ recipe, user, isBookmarked }) {
                 sx={{
                     flex: '1 1 33%',
                     position: 'relative',
-                    height: { xs: 200, sm: 'auto' },
+                    flex: { xs: '0 0 auto', sm: '1 1 33%' },
+                    width: '100%',
+                    height: { xs: 200, sm: 250 },
+                    overflow: 'hidden',
                 }}
             >
                 <Link href={`/recipes/${recipe._id}`} passHref>
                     <Image
                         src={recipe.image}
                         alt={recipe.name}
-                        fill
+                        fill={true}
+                        sizes="(max-width: 600px) 100vw, (max-width: 960px) 50vw, 33vw"
+                        quality={75}
                         style={{
                             objectFit: 'cover',
                             height: '100%',
