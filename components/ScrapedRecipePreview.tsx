@@ -7,22 +7,22 @@ import { RecipeResult } from '@/types/recipe';
 interface Props {
 	data?: RecipeResult;
 	ingredients?: string[];
-	method?: string[];
+	steps?: string[];
 	image?: string;
-	section?: 'ingredients' | 'method';
+	section?: 'ingredients' | 'steps';
 }
 
 const ScrapedRecipePreview: React.FC<Props> = ({
 	data,
 	ingredients: propsIngredients,
-	method: propsMethod,
+	steps: propsSteps,
 	section,
 	image,
 }) => {
 	const title = data?.title;
 	const sourceUrl = data?.sourceUrl;
 	const ingredients = propsIngredients ?? data?.ingredients ?? [];
-	const method = propsMethod ?? data?.method ?? [];
+	const steps = propsSteps ?? data?.steps ?? [];
 	const imageSrc = image ?? data?.image;
 
 	return (
@@ -70,11 +70,11 @@ const ScrapedRecipePreview: React.FC<Props> = ({
 				</>
 			)}
 
-			{section === 'method' && (
+			{section === 'steps' && (
 				<>
-					<Typography variant='h6'>Method:</Typography>
+					<Typography variant='h6'>Steps:</Typography>
 					<List>
-						{method.map((step, index) => (
+						{steps.map((step, index) => (
 							<ListItem key={index} sx={{ pl: 0 }}>
 								{index + 1}. {step}
 							</ListItem>

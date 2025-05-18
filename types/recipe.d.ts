@@ -2,7 +2,7 @@
 export interface RecipeResult {
 	title: string;
 	ingredients: string[];
-	method: string[];
+	steps: string[];
 	sourceUrl: string;
 	image: string;
 }

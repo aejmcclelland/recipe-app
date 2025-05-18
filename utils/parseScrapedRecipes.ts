@@ -4,7 +4,7 @@ import Ingredient from '@/models/Ingredient';
 export async function parseScrapedRecipe(rawData: {
 	title: string;
 	ingredients: string[];
-	method: string[];
+	steps: string[];
 }): Promise<{
 	name: string;
 	ingredients: {
@@ -12,9 +12,8 @@ export async function parseScrapedRecipe(rawData: {
 		quantity: number;
 		unit: string;
 	}[];
-	method: string;
+	steps: string;
 }> {
-
 	const parsedIngredients = await Promise.all(
 		rawData.ingredients.map(async (item) => {
 			const name = item.trim().toLowerCase();
@@ -35,6 +34,6 @@ export async function parseScrapedRecipe(rawData: {
 	return {
 		name: rawData.title,
 		ingredients: parsedIngredients,
-		method: rawData.method.join('\n'),
+		steps: rawData.steps.join('\n'),
 	};
 }

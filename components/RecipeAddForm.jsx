@@ -15,21 +15,43 @@ import {
     MenuItem
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import StepsInputRow from './StepsInputRow';
+
 
 export default function RecipeAddForm({ categories }) {
     const [ingredients, setIngredients] = useState([]);
     const ingredientsRef = useRef(null);
     const [selectedImage, setSelectedImage] = useState(null);
 
+    const [steps, setSteps] = useState([]);
+    const stepsRef = useRef(null);
+
+
     const handleAddIngredient = () => {
         setIngredients([...ingredients, { ingredient: '', quantity: '', unit: '' }]);
     };
 
     const handleIngredientChange = (index, field, value) => {
-        const updated = ingredients.map((ing, i) =>
-            i === index ? { ...ing, [field]: value } : ing
+        const updatedIngredients = ingredients.map((ingredient, i) =>
+            i === index ? { ...ingredient, [field]: value } : ingredient
         );
-        setIngredients(updated);
+        setIngredients(updatedIngredients);
+    };
+
+    const handleAddStep = () => {
+        setSteps([...steps, '']);
+    };
+
+    // Change step
+    const handleStepChange = (index, value) => {
+        const updated = [...steps];
+        updated[index] = value;
+        setSteps(updated);
+    };
+
+    // Remove step
+    const handleRemoveStep = (index) => {
+        setSteps(steps.filter((_, i) => i !== index));
     };
 
     const handleFormSubmit = () => {
@@ -42,6 +64,9 @@ export default function RecipeAddForm({ categories }) {
 
         if (ingredientsRef.current) {
             ingredientsRef.current.value = JSON.stringify(processed);
+        }
+        if (stepsRef.current) {
+            stepsRef.current.value = JSON.stringify(steps);
         }
     };
 
@@ -173,10 +198,7 @@ export default function RecipeAddForm({ categories }) {
                                 key={index}
                                 index={index}
                                 ingredient={ingredient}
-                                handleIngredientChange={(index, event) => {
-                                    const { name, value } = event.target;
-                                    handleIngredientChange(index, name, value);
-                                }}
+                                handleIngredientChange={handleIngredientChange}
                                 handleRemoveIngredient={() => {
                                     const updated = ingredients.filter((_, i) => i !== index);
                                     setIngredients(updated);
@@ -197,16 +219,27 @@ export default function RecipeAddForm({ categories }) {
                 </Stack>
 
                 <Stack spacing={1} sx={{ mt: 4 }}>
-                    <Typography variant="h5">Method</Typography>
-                    <TextField
-                        label="Method"
-                        name="method"
-                        variant="outlined"
-                        fullWidth
-                        multiline
-                        rows={5}
-                        required
-                    />
+                    <Typography variant="h5">Steps</Typography>
+                    <Stack spacing={2}>
+                        {steps.map((step, index) => (
+                            <StepsInputRow
+                                key={index}
+                                index={index}
+                                step={step}
+                                handleStepChange={handleStepChange}
+                                handleRemoveStep={handleRemoveStep}
+                            />
+                        ))}
+                        <Button
+                            variant="contained"
+                            onClick={handleAddStep}
+                            type="button"
+                            sx={{ width: { mobile: '100%', tablet: 'auto' } }}
+                        >
+                            + Add Step
+                        </Button>
+                        <input type="hidden" name="steps" ref={stepsRef} />
+                    </Stack>
                 </Stack>
 
                 <Button type="submit" variant="contained" size="large" fullWidth sx={{ mt: 4 }}>

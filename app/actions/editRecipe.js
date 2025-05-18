@@ -65,7 +65,7 @@ async function updateRecipe(recipeId, formData) {
 	const updatedRecipe = {
 		name: formData.get('name'),
 		ingredients,
-		method: formData.get('method'),
+		steps: formData.get('steps'),
 		prepTime: formData.get('prepTime'),
 		cookTime: formData.get('cookTime'),
 		serves: formData.get('serves'),

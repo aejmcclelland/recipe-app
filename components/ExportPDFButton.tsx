@@ -7,14 +7,14 @@ import jsPDF from 'jspdf';
 interface ExportPDFButtonProps {
 	title: string;
 	ingredients: string[];
-	method: string[];
+	steps: string[];
 	icon: React.ReactNode;
 }
 
 const ExportPDFButton: React.FC<ExportPDFButtonProps> = ({
 	title,
 	ingredients,
-	method,
+	steps,
 	icon,
 }) => {
 	const handleExport = () => {
@@ -29,10 +29,10 @@ const ExportPDFButton: React.FC<ExportPDFButtonProps> = ({
 			doc.text(`- ${item}`, 10, 40 + index * 8);
 		});
 
-		let methodStartY = 40 + ingredients.length * 8 + 10;
-		doc.text('Method:', 10, methodStartY);
-		method.forEach((step, index) => {
-			doc.text(`${index + 1}. ${step}`, 10, methodStartY + 10 + index * 8);
+		let stepsStartY = 40 + ingredients.length * 8 + 10;
+		doc.text('Steps:', 10, stepsStartY);
+		steps.forEach((step, index) => {
+			doc.text(`${index + 1}. ${step}`, 10, stepsStartY + 10 + index * 8);
 		});
 
 		doc.save(`${title.replace(/\s+/g, '_')}.pdf`);

@@ -18,7 +18,7 @@ const RecipeEditForm = ({ recipe, categories = [] }) => {
     const [cookTime, setCookTime] = useState(recipe.cookTime || ''); // Track cookTime
     const [serves, setServes] = useState(recipe.serves || ''); // Track serves
     const [ingredients, setIngredients] = useState(recipe.ingredients || []); // Initialize with recipe ingredients
-    const [method, setMethod] = useState(recipe.method || ''); // Track method
+    const [steps, setSteps] = useState(recipe.steps || ''); // Track steps
 
     const handleCategoryChange = (event) => {
         setSelectedCategory(event.target.value);
@@ -31,8 +31,8 @@ const RecipeEditForm = ({ recipe, categories = [] }) => {
     const handleDeleteImageChange = (event) => {
         setDeleteImage(event.target.checked);
     };
-    // const handleMethodChange = (event) => {
-    //     setMethod(event.target.value);
+    // const handleStepsdChange = (event) => {
+    //     setSteps(event.target.value);
     // };
 
     const handleIngredientChange = (index, field, value) => {
@@ -222,10 +222,10 @@ const RecipeEditForm = ({ recipe, categories = [] }) => {
                 </Grid>
                 <Grid item xs={12}>
                     <TextField
-                        label="Method"
-                        name="method"
-                        value={method}
-                        onChange={(e) => setMethod(e.target.value)}
+                        label="Steps"
+                        name="steps"
+                        value={steps}
+                        onChange={(e) => setSteps(e.target.value)}
                         multiline
                         rows={4}
                         fullWidth

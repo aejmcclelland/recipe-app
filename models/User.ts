@@ -42,7 +42,7 @@ UserSchema.pre<IUser>('save', async function (next) {
 	}
 });
 
-// Compare password method
+// Compare password steps
 UserSchema.methods.comparePassword = async function (
 	candidatePassword: string
 ) {

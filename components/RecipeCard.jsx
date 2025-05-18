@@ -51,22 +51,22 @@ export default function RecipeCard({ recipe }) {
                         </Box>
                     </Box>
 
-                    {/* Right Section: Recipe Method */}
+                    {/* Right Section: Recipe steps */}
                     <Box flex={1}>
                         <Typography variant="h6" gutterBottom>
-                            Method:
+                            Steps:
                         </Typography>
-                        {Array.isArray(recipe.method) ? (
+                        {Array.isArray(recipe.steps) ? (
                             <Box component="ol" sx={{ pl: 3 }}>
-                                {recipe.method.map((step, index) => (
+                                {recipe.steps.map((step, index) => (
                                     <li key={index}>
                                         {step}
                                     </li>
                                 ))}
                             </Box>
                         ) : (
-                            <Typography variant="body2">
-                                {recipe.method || 'No method provided'}
+                            <Typography variant="body2" color="text.secondary">
+                                No steps provided
                             </Typography>
                         )}
 

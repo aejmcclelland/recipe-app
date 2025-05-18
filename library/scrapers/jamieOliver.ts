@@ -16,11 +16,11 @@ export async function scrapeJamieOliver(url: string): Promise<RecipeResult> {
 		}
 	});
 
-	const method: string[] = [];
+	const steps: string[] = [];
 	$('.rich-text ol li').each((i, el) => {
 		const text = $(el).text().trim();
 		if (text) {
-			method.push(text);
+			steps.push(text);
 		}
 	});
 
@@ -31,7 +31,7 @@ export async function scrapeJamieOliver(url: string): Promise<RecipeResult> {
 	return {
 		title,
 		ingredients,
-		method,
+		steps,
 		sourceUrl: url,
 		image,
 	};

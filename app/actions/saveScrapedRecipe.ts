@@ -16,8 +16,8 @@ export async function saveScrapedRecipe(data: any, categoryId: string) {
 
 	const parsed: any = await parseScrapedRecipe(data);
 
-	if (parsed.method && typeof parsed.method === 'string') {
-		parsed.method = parsed.method
+	if (parsed.steps && typeof parsed.steps === 'string') {
+		parsed.steps = parsed.steps
 			.split(/[\r\n]+/)
 			.map((line: string) => line.replace(/\s+/g, ' ').trim())
 			.filter((line) => line !== '');

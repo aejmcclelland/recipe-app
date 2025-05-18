@@ -19,25 +19,25 @@ export async function scrapeBBC(url: string): Promise<RecipeResult> {
 		ingredients.push($(el).text().trim());
 	});
 
-	const method: string[] = [];
+	const steps: string[] = [];
 
 	// Try common step containers first
 	$(
-		'.editor-content ol li, .method__item, .grouped-list__list-item, .method__list p, .instructions-section li, .method li'
+		'.editor-content ol li, .steps_item, .grouped-list__list-item, .steps_list p, .instructions-section li, .steps li'
 	).each((i, el) => {
 		const text = $(el).text().trim();
-		if (text) method.push(text);
+		if (text) steps.push(text);
 	});
 
 	// Fallback: use paragraph tags under editor-content if nothing found
-	if (method.length === 0) {
+	if (steps.length === 0) {
 		$('.editor-content p').each((i, el) => {
 			const text = $(el).text().trim();
 			if (text.length > 30) {
-				method.push(text);
+				steps.push(text);
 			}
 		});
 	}
 
-	return { title, ingredients, method, sourceUrl: url, image };
+	return { title, ingredients, steps, sourceUrl: url, image };
 }

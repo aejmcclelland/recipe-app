@@ -108,10 +108,10 @@ const CopyWebClient: React.FC<CopyWebClientProps> = ({ categories }) => {
 						<Grid size={{ mobile: 12, laptop: 8 }}>
 							<Box sx={{ p: 2 }}>
 								<Typography variant='h6' gutterBottom>
-									Method:
+									Steps:
 								</Typography>
 								<ol>
-									{data.method.map((step, i) => (
+									{data.steps.map((step, i) => (
 										<li key={i}>{step}</li>
 									))}
 								</ol>
@@ -129,7 +129,7 @@ const CopyWebClient: React.FC<CopyWebClientProps> = ({ categories }) => {
 								<ButtonToolbar
 									title={data.title}
 									ingredients={data.ingredients}
-									method={data.method}
+									steps={data.steps}
 									setUrl={setUrl}
 									setData={setData}
 									categoryId={selectedCategoryId}

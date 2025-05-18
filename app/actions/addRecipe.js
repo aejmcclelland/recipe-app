@@ -74,11 +74,22 @@ export default async function addRecipe(formData) {
 		})
 	);
 
+	let stepsArray = [];
+	try {
+		const rawSteps = formData.get('steps');
+		if (typeof rawSteps === 'string') {
+			stepsArray = JSON.parse(rawSteps);
+		}
+	} catch (err) {
+		console.error('Error parsing steps:', err);
+		throw new Error('Invalid steps format');
+	}
+
 	// extract and sanitize other fields
 	const recipeData = {
 		name: (formData.get('name') || '').toString(),
 		ingredients,
-		method: (formData.get('method') || '').toString(),
+		steps: stepsArray,
 		prepTime: Number(formData.get('prepTime') || 0),
 		cookTime: Number(formData.get('cookTime') || 0),
 		serves: Number(formData.get('serves') || 0),
@@ -88,13 +99,7 @@ export default async function addRecipe(formData) {
 	};
 
 	// Save recipe
-	try {
-		const newRecipe = new Recipe(recipeData);
-		await newRecipe.save();
-		redirect(`/recipes/${newRecipe._id.toString()}`);
-		//return newRecipe._id.toString(); // allow redirect
-	} catch (error) {
-		console.error('Error saving recipe:', error);
-		throw new Error('Failed to save the recipe');
-	}
+	const newRecipe = new Recipe(recipeData);
+	await newRecipe.save();
+	redirect(`/recipes/${newRecipe._id.toString()}`);
 }
