@@ -48,7 +48,7 @@ export default function IngredientInputRow({ index, ingredient, handleIngredient
                 />
             </Grid>
             <Grid item xs={1}>
-                <IconButton color="error" onClick={() => handleRemoveIngredient(index)}>
+                <IconButton color="error" onClick={() => handleRemoveIngredient(index)} sx={{ color: '#d32f2f' }}>
                     <DeleteIcon />
                 </IconButton>
             </Grid>

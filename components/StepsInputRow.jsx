@@ -1,7 +1,7 @@
 // components/StepsInputRow.jsx
 'use client';
 import { TextField, IconButton } from '@mui/material';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import  DeleteIcon  from '@mui/icons-material/Delete';
 
 export default function StepsInputRow({ index, step, handleStepChange, handleRemoveStep }) {
     return (
@@ -13,8 +13,8 @@ export default function StepsInputRow({ index, step, handleStepChange, handleRem
                 value={step}
                 onChange={e => handleStepChange(index, e.target.value)}
             />
-            <IconButton color="error" onClick={() => handleRemoveStep(index)}>
-                <RemoveCircleOutlineIcon />
+            <IconButton color="error" onClick={() => handleRemoveStep(index)} sx={{ color: '#d32f2f' }}>
+                <DeleteIcon />
             </IconButton>
         </div>
     );
