@@ -5,4 +5,7 @@ export interface RecipeResult {
 	steps: string[];
 	sourceUrl: string;
 	image: string;
+	prepTime?: int;
+	cookTime?: int;
+	serves?: int;
 }

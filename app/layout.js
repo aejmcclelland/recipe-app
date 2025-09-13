@@ -26,6 +26,19 @@ export default function RootLayout({ children }) {
 						name='viewport'
 						content='width=device-width, initial-scale=1.0'
 					/>
+					<link rel='canonical' href='https://rebekahsrecipes.com/' />
+					<meta property='og:url' content='https://rebekahsrecipes.com/' />
+					<meta property='og:title' content='Rebekah’s Recipes' />
+					<meta
+						property='og:description'
+						content='Recipe-sharing app with Google auth, bookmarking and Cloudinary uploads.'
+					/>
+					<meta
+						property='og:image'
+						content='https://rebekahsrecipes.com/og-image.jpg'
+					/>
+					<meta property='og:image:width' content='1200' />
+					<meta property='og:image:height' content='627' />
 					<meta name='description' content={metadata.description} />
 					<title>{metadata.title}</title>
 				</head>

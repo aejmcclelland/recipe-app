@@ -19,7 +19,6 @@ function ProfileRecipes({ recipes }) {
 
     const handleDelete = async (recipeId) => {
         await deleteRecipe(recipeId);
-        // Optionally update UI here as needed or trigger a re-fetch
     };
 
     return (

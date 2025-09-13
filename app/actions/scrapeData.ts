@@ -1,6 +1,7 @@
 'use server';
 import { scrapeBBC } from '@/library/scrapers/bbcGoodFood';
 import { scrapeJamieOliver } from '@/library/scrapers/jamieOliver';
+import { scrapeBBCFood } from '@/library/scrapers/bbcFood';
 
 export async function scrapeData(formData: FormData) {
 	const url = formData.get('url')?.toString();
@@ -12,6 +13,9 @@ export async function scrapeData(formData: FormData) {
 	}
 	if (url.includes('jamieoliver.com')) {
 		return await scrapeJamieOliver(url);
+	}
+	if (url.includes('bbc.co.uk/food/recipes')) {
+		return await scrapeBBCFood(url);
 	}
 
 	throw new Error('This site is not supported yet');
