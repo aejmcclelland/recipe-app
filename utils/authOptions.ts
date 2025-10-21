@@ -3,7 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import mongoose from 'mongoose';
 import User from '@/models/User';
 import connectDB from '@/config/database';
-import type { AuthOptions } from 'next-auth/core/types';
+import type { AuthOptions } from 'next-auth';
 
 // Extend GoogleProfile interface
 interface CustomGoogleProfile extends GoogleProfile {

@@ -14,10 +14,10 @@
     "strict": false,
     "noEmit": true,
     "incremental": true,
-    "ignoreDeprecations": "6.0",
+    "ignoreDeprecations": "5.0",
     "module": "esnext",
     "esModuleInterop": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -26,7 +26,6 @@
         "name": "next"
       }
     ],
-    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./*"
@@ -34,11 +33,10 @@
     }
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
     "next-env.d.ts",
-    "src/types/**/*.d.ts",
     ".next/types/**/*.ts",
+    "**/*.ts",
+    "**/*.tsx"
   ],
   "exclude": [
     "node_modules"
