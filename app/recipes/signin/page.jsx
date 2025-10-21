@@ -1,6 +1,6 @@
+import Image from 'next/image';
 import SignInForm from '@/components/SignInForm';
-import { Box, Container, Stack, Typography, Avatar } from '@mui/material';
-import RestaurantOutlinedIcon from '@mui/icons-material/RestaurantOutlined';
+import { Box, Container, Stack, Typography } from '@mui/material';
 import { Suspense } from 'react';
 
 const SignInPage = () => {
@@ -20,16 +20,12 @@ const SignInPage = () => {
           <Stack spacing={3} sx={{ width: '100%', textAlign: 'center' }}>
             {/* Brand header */}
             <Stack spacing={1} alignItems="center">
-              <Avatar
-                sx={{
-                  bgcolor: 'primary.main',
-                  width: 72,
-                  height: 72,
-                }}
-                aria-hidden
-              >
-                <RestaurantOutlinedIcon fontSize="large" />
-              </Avatar>
+              <Image
+                src="/assets/images/logo.jpg"
+                width={72}
+                height={72}
+                alt="Rebekah’s Recipes Logo"
+              />
               <Typography variant="h5" component="h1">
                 Rebekah’s Recipes
               </Typography>
