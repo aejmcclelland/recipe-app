@@ -28,6 +28,15 @@ const nextConfig = {
 			},
 		],
 	},
+	async redirects() {
+		return [
+			{
+				source: '/recipes/privacy-policy',
+				destination: '/privacy-policy',
+				permanent: true,
+			},
+		];
+	},
 	i18n: {
 		locales: ['en'],
 		defaultLocale: 'en',
