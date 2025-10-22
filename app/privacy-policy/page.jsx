@@ -2,7 +2,7 @@
 import { Container, Typography, Box, List, ListItem, ListItemText } from '@mui/material';
 
 export const metadata = {
-    title: "Terms of Service — Rebekah’s Recipes",
+    title: "Terms of Service — Rebekah&apos;s Recipes",
     alternates: { canonical: '/terms-of-service' },
 };
 
@@ -20,7 +20,7 @@ export default function TermsOfService() {
 
                 <Typography variant="h5" gutterBottom>2. Use of Service</Typography>
                 <Typography variant="body1" gutterBottom>
-                    You agree to use the service only for lawful purposes and in a way that does not infringe the rights of, restrict, or inhibit anyone else's use and enjoyment of the service.
+                    You agree to use the service only for lawful purposes and in a way that does not infringe the rights of, restrict, or inhibit anyone else&apos;s use and enjoyment of the service.
                 </Typography>
 
                 <Typography variant="h5" gutterBottom>3. User Responsibilities</Typography>
@@ -43,7 +43,7 @@ export default function TermsOfService() {
 
                 <Typography variant="h5" gutterBottom>5. Limitation of Liability</Typography>
                 <Typography variant="body1" gutterBottom>
-                    RebekahsRecipes shall not be liable for any damages arising out of or related to your use of the service. The service is provided "as is" without warranties of any kind.
+                    RebekahsRecipes shall not be liable for any damages arising out of or related to your use of the service. The service is provided &quot;as is&quot; without warranties of any kind.
                 </Typography>
 
                 <Typography variant="h5" gutterBottom>6. Changes</Typography>
