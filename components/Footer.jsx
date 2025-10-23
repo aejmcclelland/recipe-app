@@ -44,10 +44,10 @@ const Footer = () => {
                             Legal
                         </Typography>
                         <Box display="flex" flexDirection="column" alignItems={{ xs: 'center', sm: 'flex-start' }} gap={1}>
-                            <Link href="/recipes/privacy-policy" color="inherit" underline="hover">
+                            <Link href="/privacy-policy" color="inherit" underline="hover">
                                 Privacy Policy
                             </Link>
-                            <Link href="/recipes/terms-of-service" color="inherit" underline="hover">
+                            <Link href="/terms-of-service" color="inherit" underline="hover">
                                 Terms of Service
                             </Link>
                         </Box>
