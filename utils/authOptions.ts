@@ -10,9 +10,6 @@ interface CustomGoogleProfile extends GoogleProfile {
 	picture: string;
 }
 
-console.log('🔍 Mongoose Models:', mongoose.models);
-console.log('🔍 User Model:', User);
-
 if (!User || !mongoose.models.User) {
 	throw new Error(
 		'User model is NOT being imported correctly or models not initialized'
