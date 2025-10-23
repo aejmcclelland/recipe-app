@@ -8,7 +8,7 @@ import updateProfileImage from '@/app/actions/updateProfileImage';
 import { refreshSession } from '@/utils/refreshSession';
 
 export default function ProfileImageUpload({ user, onImageUpdated }) {
-    const [imagePreview, setImagePreview] = useState(user.image || '/images/default-profile.png');
+    const [imagePreview, setImagePreview] = useState(user.image || '../public/images/default-profile.png');
     const [uploading, setUploading] = useState(false);
 
     const handleFileChange = async (e) => {

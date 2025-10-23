@@ -6,13 +6,13 @@ import Recipe from '@/models/Recipe';
 import User from '@/models/User';
 import { getSessionUser } from '@/utils/getSessionUser';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
-import defaultProfile from '@/assets/images/default-profile.png';
+import defaultProfile from '@/public/images/default-profile.png';
 import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 import { serializeBookmarks } from '@/utils/serializeBookmarks';
 import BookmarkRecipeCard from '@/components/BookmarkRecipeCard';
 import UserDetails from '@/components/UserDetails';
 import Category from '@/models/Category'; // ✅ Add this line near your other imports
-import ProfileDetailsForm from '@/components/ProfileDetailsForm';
+
 
 const ProfilePage = async () => {
     try {

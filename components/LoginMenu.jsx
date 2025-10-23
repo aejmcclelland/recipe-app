@@ -19,7 +19,7 @@ export default function LoginMenu() {
             return `${session.user.image}?t=${Date.now()}`;
         }
         if (session?.user?.image === 'default-profile.png') {
-            return '/images/default-profile.png';
+            return '../public/images/default-profile.png';
         }
         return null;
     };
@@ -34,7 +34,7 @@ export default function LoginMenu() {
                             alt={session?.user?.name || 'Default Avatar'}
                             onError={(e) => {
                                 e.target.onerror = null;
-                                e.target.src = '/images/default-profile.png';
+                                e.target.src = '../public/images/default-profile.png';
                             }}
                         />
                     ) : (
