@@ -1,9 +1,6 @@
 {
   "compilerOptions": {
     "target": "ES2017",
-    "types": [
-      "next-auth"
-    ],
     "lib": [
       "dom",
       "dom.iterable",

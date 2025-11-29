@@ -10,6 +10,7 @@ import { archivo, shadowsIntoLight } from '@/app/fonts/fonts';
 import Footer from '@/components/Footer';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata = {
 	title: ' Welcome to Rebekah&#39;s Recipes!',
@@ -61,6 +62,7 @@ export default function RootLayout({ children }) {
 							</Box>
 						</ThemeProvider>
 					</FilterProvider>
+					<SpeedInsights />
 				</body>
 			</html>
 		</AuthProvider>
