@@ -3,7 +3,7 @@
 import User from '@/models/User';
 import connectDB from '@/config/database';
 import jwt from 'jsonwebtoken';
-import { sendMail } from '@/lib/mailer';
+import { sendMail } from '@/utils/mailer';
 
 export default async function registerUser(formData) {
 	await connectDB();
