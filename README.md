@@ -75,7 +75,6 @@ To deploy this application, consider using:
 
 - **User Authentication**: Allow users to sign in and submit their own recipes.
 - **Recipe Ratings**: Enable users to rate and like recipes.
-- **Cloudinary Image Storage**: Store images using Cloudinary for optimized loading and management.
 
 ## License
 
