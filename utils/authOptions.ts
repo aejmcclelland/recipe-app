@@ -1,10 +1,12 @@
-import type { AuthOptions } from 'next-auth';
+// app/api/auth/[...nextauth]/route.ts
+import NextAuth, { type AuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
+
 import connectDB from '@/config/database';
 import User from '@/models/User';
 
-export const authOptions: AuthOptions = {
+const authOptions: AuthOptions = {
 	providers: [
 		GoogleProvider({
 			clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -16,8 +18,6 @@ export const authOptions: AuthOptions = {
 				},
 			},
 			profile(profile) {
-				// profile type here is the Google profile from NextAuth.
-				// `picture` isn't in the base type, so we cast.
 				const picture =
 					(profile as { picture?: string }).picture ??
 					(profile as { image?: string }).image ??
@@ -46,7 +46,6 @@ export const authOptions: AuthOptions = {
 				await connectDB();
 
 				const user = await User.findOne({ email: credentials.email });
-
 				if (!user) return null;
 
 				const isMatch = await user.comparePassword(credentials.password);
@@ -67,7 +66,6 @@ export const authOptions: AuthOptions = {
 	},
 
 	callbacks: {
-		// Google sign-in: ensure user exists in Mongo and attach id to `user`
 		async signIn({ user, account, profile }) {
 			if (account?.provider === 'google' && profile?.email) {
 				await connectDB();
@@ -86,14 +84,12 @@ export const authOptions: AuthOptions = {
 					});
 				}
 
-				// Expose Mongo _id for jwt callback
 				(user as any).id = existingUser._id.toString();
 			}
 
 			return true;
 		},
 
-		// Put `user` info into the JWT
 		async jwt({ token, user }) {
 			if (user && (user as any).id) {
 				token.user = {
@@ -107,7 +103,6 @@ export const authOptions: AuthOptions = {
 			return token;
 		},
 
-		// Expose `token.user` on `session.user`
 		async session({ session, token }) {
 			if (session.user && token?.user) {
 				session.user.id = token.user.id;
@@ -125,3 +120,7 @@ export const authOptions: AuthOptions = {
 		error: '/recipes/register?error=account_exists',
 	},
 };
+
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };

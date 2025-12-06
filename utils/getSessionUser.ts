@@ -1,5 +1,4 @@
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/utils/authOptions';
 import type { Session } from 'next-auth';
 
 type SessionUser = {
@@ -11,9 +10,11 @@ type SessionUser = {
 
 export const getSessionUser = async (): Promise<SessionUser> => {
 	try {
-		const session: Session | null = await getServerSession(authOptions);
+		// no authOptions argument now
+		const session: Session | null = await getServerSession();
+
 		if (process.env.NODE_ENV === 'development') {
-			console.log('🔍 Retrieved session in getSessionUser:', session);
+			console.log('Retrieved session in getSessionUser:', session);
 		}
 
 		if (!session?.user?.id) {
