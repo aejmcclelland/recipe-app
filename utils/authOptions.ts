@@ -1,8 +1,6 @@
 import type { AuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import type { Session } from 'next-auth';
-import type { JWT } from 'next-auth/jwt';
 import connectDB from '@/config/database';
 import User from '@/models/User';
 
@@ -106,10 +104,6 @@ export const authOptions: AuthOptions = {
 				};
 			}
 
-			if (process.env.NODE_ENV === 'development') {
-				console.log('JWT Callback - token after:', token);
-			}
-
 			return token;
 		},
 
@@ -120,10 +114,6 @@ export const authOptions: AuthOptions = {
 				session.user.email = token.user.email;
 				session.user.name = token.user.name;
 				session.user.image = token.user.image;
-			}
-
-			if (process.env.NODE_ENV === 'development') {
-				console.log('Session Callback - session:', session);
 			}
 
 			return session;
