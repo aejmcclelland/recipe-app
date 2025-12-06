@@ -4,8 +4,13 @@ import { redirect } from 'next/navigation';
 import jwt from 'jsonwebtoken';
 import connectDB from '@/config/database';
 
-export default async function VerifyPage({ searchParams }) {
-	let token = searchParams.token;
+type VerifyPageProps = {
+  searchParams: Promise<{ token?: string | string[] }>;
+};
+
+export default async function VerifyPage({ searchParams }: VerifyPageProps) {
+	const params = await searchParams;
+	let token = params.token;
 	token = Array.isArray(token) ? token[0] : token;
 
 	if (!token) return redirect('/recipes/verify/invalid');
