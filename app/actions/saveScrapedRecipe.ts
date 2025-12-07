@@ -34,7 +34,7 @@ export async function saveScrapedRecipe(data: any, categoryId: string) {
 			: 'https://res.cloudinary.com/dqeszgo28/image/upload/v1744456700/recipes/placeholder-food.jpg',
 		user: user.id,
 	});
-
+	console.log('saveScrapedRecipe – user:', user, 'categoryId:', categoryId);
 	await newRecipe.save();
 
 	return convertToSerializeableObject(newRecipe.toObject());
