@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Box, TextField, Button } from '@mui/material';
 import { toast } from 'react-toastify';
 import updateProfileDetails from '@/app/actions/updateProfileDetails';
-import { refreshSession } from '@/utils/refreshSession';
-import ProfileImageUpload from './ProfileImageUpload';
+import { DeleteAccountSection } from '@/components/DeleteAccount';
 
 export default function ProfileDetailsForm({ user, onDetailsUpdated }) {
 	const [firstName, setFirstName] = useState(user.firstName || '');
@@ -17,7 +16,6 @@ export default function ProfileDetailsForm({ user, onDetailsUpdated }) {
 		try {
 			setIsSaving(true);
 			await updateProfileDetails({ firstName, lastName, email });
-			await refreshSession(); // Optional: refresh session if user info is in session
 			toast.success('Profile updated!');
 			onDetailsUpdated?.();
 		} catch (err) {
@@ -48,6 +46,8 @@ export default function ProfileDetailsForm({ user, onDetailsUpdated }) {
 			<Button variant='contained' onClick={handleSubmit} disabled={isSaving}>
 				{isSaving ? 'Saving...' : 'Save Changes'}
 			</Button>
+			{/* Delete account section */}
+			<DeleteAccountSection />
 		</Box>
 	);
 }
