@@ -11,7 +11,6 @@ export const useFilter = () => {
 		router.push(`/recipes?category=${category}`); // Update the URL with the category
 	};
 
-	console.log('Currently selected category:', selectedCategory);
 
 	return {
 		selectedCategory,

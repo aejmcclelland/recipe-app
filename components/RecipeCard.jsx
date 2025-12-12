@@ -8,8 +8,6 @@ export default function RecipeCard({ recipe }) {
         return <Typography variant="h6">No Recipe Found</Typography>;
     }
 
-    // Log ingredients array specifically
-    console.log('Recipe ingredients:', JSON.stringify(recipe.ingredients, null, 2));
     return (
         <Card
             sx={{

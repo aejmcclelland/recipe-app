@@ -14,7 +14,7 @@ async function addBookmark(recipeId) {
 		}
 
 		const sessionUser = await getSessionUser();
-		console.log('Session user in addBookmark:', sessionUser);
+
 
 		if (!sessionUser?.id) {
 			throw new Error('You must be logged in to add a bookmark');
