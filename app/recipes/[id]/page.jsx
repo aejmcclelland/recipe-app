@@ -3,7 +3,7 @@ import Recipe from '../../../models/Recipe';
 import Ingredient from '@/models/Ingredient';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import RecipeCard from '@/components/RecipeCard';
-import { Box, Typography, Container, Button } from '@mui/material';
+import { Box, Typography, Container } from '@mui/material';
 import HomeButton from '@/components/HomeButton';
 import Link from 'next/link';
 import { getSessionUser } from '@/utils/getSessionUser';
@@ -44,6 +44,18 @@ export default async function RecipeDetailPage({ params }) {
 
         // Serialize recipe data for client components
         const serializedRecipe = convertToSerializeableObject(recipe);
+
+        // Normalise legacy scraped ingredient defaults (avoid displaying ': 1 unit')
+        if (Array.isArray(serializedRecipe.ingredients)) {
+            serializedRecipe.ingredients = serializedRecipe.ingredients.map((ing) => {
+                const isLegacyDefault = ing?.quantity === 1 && ing?.unit === 'unit';
+                if (!isLegacyDefault) return ing;
+
+                // Remove the placeholder values so the UI can render just the ingredient name/text
+                const { quantity, unit, ...rest } = ing;
+                return rest;
+            });
+        }
 
         const isOwner = sessionUser?.id && serializedRecipe.user?._id && sessionUser.id === serializedRecipe.user._id.toString();
 

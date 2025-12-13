@@ -10,17 +10,24 @@ export async function saveScrapedRecipe(data: any, categoryId: string) {
 	await connectDB();
 	const user = await getSessionUser();
 
-	if (!user || !categoryId) {
+	if (!user?.id || !categoryId) {
 		throw new Error('Unauthorized or missing category');
 	}
 
 	const parsed: any = await parseScrapedRecipe(data);
 
-	if (parsed.steps && typeof parsed.steps === 'string') {
+	// Normalise steps to a string[] (Recipe schema expects an array of strings)
+	if (typeof parsed.steps === 'string') {
 		parsed.steps = parsed.steps
 			.split(/[\r\n]+/)
 			.map((line: string) => line.replace(/\s+/g, ' ').trim())
-			.filter((line) => line !== '');
+			.filter(Boolean);
+	} else if (Array.isArray(parsed.steps)) {
+		parsed.steps = parsed.steps
+			.map((line: string) => (line || '').replace(/\s+/g, ' ').trim())
+			.filter(Boolean);
+	} else {
+		parsed.steps = [];
 	}
 
 	const newRecipe = new Recipe({
@@ -34,7 +41,6 @@ export async function saveScrapedRecipe(data: any, categoryId: string) {
 			: 'https://res.cloudinary.com/dqeszgo28/image/upload/v1744456700/recipes/placeholder-food.jpg',
 		user: user.id,
 	});
-	console.log('saveScrapedRecipe – user:', user, 'categoryId:', categoryId);
 	await newRecipe.save();
 
 	return convertToSerializeableObject(newRecipe.toObject());

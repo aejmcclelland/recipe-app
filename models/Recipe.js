@@ -1,3 +1,4 @@
+// models/Recipe.js
 import pkg from 'mongoose'; // Import the entire mongoose package
 const { Schema, model, models } = pkg;
 
@@ -15,11 +16,11 @@ const recipeSchema = new Schema({
 			},
 			quantity: {
 				type: Number, // The specific quantity for this recipe
-				required: true,
+				required: false, // allow scraped/free-text ingredients without parsed quantities
 			},
 			unit: {
 				type: String, // The unit (grams, ml, etc.)
-				required: true,
+				required: false, // allow scraped/free-text ingredients without parsed units
 			},
 		},
 	],

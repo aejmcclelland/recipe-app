@@ -1,3 +1,4 @@
+// components/RecipeCard.jsx
 'use client';
 import * as React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
@@ -39,7 +40,22 @@ export default function RecipeCard({ recipe }) {
                                 {Array.isArray(recipe.ingredients) && recipe.ingredients.length > 0 ? (
                                     recipe.ingredients.map((ing, index) => (
                                         <li key={index}>
-                                            {`${ing.ingredient?.name || 'Unknown Ingredient'}: ${ing.quantity || 'N/A'} ${ing.unit || ''}`}
+                                            {(() => {
+                                                const name = ing?.ingredient?.name || 'Unknown Ingredient';
+                                                const qty = ing?.quantity;
+                                                const unit = ing?.unit;
+
+                                                // Hide legacy placeholder values that were previously injected for scraped recipes
+                                                const isLegacyDefault = qty === 1 && unit === 'unit';
+
+                                                // If we don't have a meaningful quantity/unit, just show the ingredient name
+                                                if (qty == null || isLegacyDefault) return name;
+
+                                                // If we have a quantity but no unit, show just the quantity
+                                                if (!unit) return `${name}: ${qty}`;
+
+                                                return `${name}: ${qty} ${unit}`;
+                                            })()}
                                         </li>
                                     ))
                                 ) : (
