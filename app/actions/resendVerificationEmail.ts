@@ -22,7 +22,7 @@ export async function resendVerificationEmail(
 
 	const user = await User.findOne({ email });
 	if (!user) return { ok: true };
-	if (user.verified) return { ok: true };
+	if (user.emailVerified) return { ok: true };
 
 	if (!process.env.JWT_SECRET) {
 		throw new Error('JWT_SECRET is not configured');

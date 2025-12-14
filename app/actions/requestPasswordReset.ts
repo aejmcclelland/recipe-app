@@ -20,9 +20,6 @@ export async function requestPasswordReset(emailRaw: string) {
 	const user = await User.findOne({ email });
 	if (!user) return { ok: true };
 
-	// Optional: if you only want verified users to reset via email
-	// if (!user.verified) return { ok: true };
-
 	const token = crypto.randomBytes(32).toString('hex');
 	const tokenHash = sha256(token);
 

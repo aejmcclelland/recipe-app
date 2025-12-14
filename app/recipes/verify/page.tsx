@@ -24,7 +24,7 @@ export default async function VerifyPage({ searchParams }: VerifyPageProps) {
 		const user = await User.findOne({ email: normalizedEmail });
 		if (!user) return redirect('/recipes/verify/invalid');
 
-		if (user.verified) return redirect('/recipes/verify/success');
+		if (user.emailVerified) return redirect('/recipes/verify/success');
 
 		await User.updateOne(
 			{ email: normalizedEmail },

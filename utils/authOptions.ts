@@ -54,7 +54,7 @@ export const authOptions: AuthOptions = {
 
 				// Block sign-in until the user's email is verified.
 				// Do this after password validation to avoid leaking account state.
-				if (!user.verified) {
+				if (!user.emailVerified) {
 					return Promise.reject(new Error('EMAIL_NOT_VERIFIED'));
 				}
 
@@ -96,9 +96,9 @@ export const authOptions: AuthOptions = {
 						authProvider: 'google',
 						verified: true,
 					});
-				} else if (!existingUser.verified) {
+				} else if (!existingUser.emailVerified) {
 					// Google is a verified identity provider; mark as verified if missing.
-					existingUser.verified = true;
+					existingUser.emailVerified = true;
 					await existingUser.save();
 				}
 
