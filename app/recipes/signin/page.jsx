@@ -1,4 +1,4 @@
-import Image from 'next/image';
+// app/recipes/signin/page.jsx
 import SignInForm from '@/components/SignInForm';
 import { Box, Container, Stack, Typography } from '@mui/material';
 import { Suspense } from 'react';

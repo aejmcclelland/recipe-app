@@ -1,3 +1,4 @@
+// components/RegisterUser.jsx
 'use client';
 import { useState } from 'react';
 import { Box, TextField, Button, Paper, Typography } from '@mui/material';
@@ -42,15 +43,30 @@ const RegisterForm = () => {
         setIsSubmitting(true);
         try {
             const response = await registerUser(formData);
-            toast.success(response.message || "User registered successfully!", {
-                position: "top-right",
+
+            // If the server action reports failure (e.g. duplicate email), show error and STOP.
+            if (!response?.success) {
+                toast.error(response?.message || 'Unable to register. Please try again.', {
+                    position: 'top-right',
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                return; // IMPORTANT: do not redirect on failure
+            }
+
+            toast.success('Account created — please verify your email before signing in. We’ve sent you a verification link.', {
+                position: 'top-right',
                 autoClose: 3000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
                 draggable: true,
             });
-            router.push('/recipes/signin?registered=1');
+
+            router.push('/recipes/signin?registered=1&verify=1');
         } catch (error) {
             toast.error(error.message || "Error registering user.", {
                 position: "top-right",

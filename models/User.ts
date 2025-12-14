@@ -12,6 +12,8 @@ export interface IUser extends Document {
 	authProvider?: string;
 	bookmarks?: mongoose.Types.ObjectId[];
 	verified: boolean;
+	resetPasswordTokenHash?: string | null;
+	resetPasswordExpires?: Date | null;
 	comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -24,6 +26,8 @@ const UserSchema = new Schema<IUser>(
 		image: { type: String },
 		authProvider: { type: String },
 		verified: { type: Boolean, default: false },
+		resetPasswordTokenHash: { type: String, default: null },
+		resetPasswordExpires: { type: Date, default: null },
 		bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' }],
 	},
 	{ timestamps: true }
@@ -46,9 +50,7 @@ UserSchema.pre<IUser>('save', async function (next) {
 UserSchema.methods.comparePassword = async function (
 	candidatePassword: string
 ) {
-	if (!this.verified) {
-		throw new Error('Please verify your email before logging in.');
-	}
+	// Password comparison only — verification is handled in authOptions
 	return await bcrypt.compare(candidatePassword, this.password!);
 };
 

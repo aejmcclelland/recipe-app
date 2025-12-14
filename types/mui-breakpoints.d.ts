@@ -4,16 +4,17 @@ import '@mui/system';
 
 declare module '@mui/material/styles' {
 	interface BreakpointOverrides {
-		// only include the breakpoints you're using
+		// keep default MUI breakpoints enabled
+		xs: true;
+		sm: true;
+		md: true;
+		lg: true;
+		xl: true;
+
+		// custom breakpoints used in this project
 		mobile: true;
 		tablet: true;
 		laptop: true;
 		desktop: true;
-		// disable default breakpoints
-		xs: false;
-		sm: false;
-		md: false;
-		lg: false;
-		xl: false;
 	}
 }

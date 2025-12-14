@@ -1,3 +1,4 @@
+// app/actions/registerUser.js
 'use server';
 
 import User from '@/models/User';
@@ -65,8 +66,7 @@ export default async function registerUser(formData) {
 			text: `Hello ${formattedFirstName},\n\nWelcome to Rebekah’s Recipes!\n\nPlease verify your email by clicking this link:\n\n${verificationLink}\n\nIf you didn’t create an account, you can safely ignore this email.\n\nThe Rebekah’s Recipes Team`,
 			html: `
 	    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px 10px; box-sizing: border-box; color: #333;">
-	      <img src="https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/t_email-opt/rebekahs-logo.png" alt="Rebekah’s Recipes" style="max-width: 150px; display: block; margin: 0 auto 20px;">
-	      <h2 style="text-align: center; color: #d32f2f;">🍽️ Rebekah’s Recipes</h2>
+	      <img src="https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload/v1765666651/recipes-logo_ncjgf6.jpg" alt="Rebekah’s Recipes" style="max-width: 150px; display: block; margin: 0 auto 20px;">
 	      <p>Hi ${formattedFirstName},</p>
 	      <p>Welcome to <strong>Rebekah’s Recipes</strong>! Please confirm your email address to get started.</p>
 	      <div style="text-align: center; margin: 30px 0;">
@@ -76,6 +76,8 @@ export default async function registerUser(formData) {
 	      <p style="word-break: break-word;"><a href="${verificationLink}">${verificationLink}</a></p>
 	      <hr>
 	      <p style="font-size: 12px; color: #999;">You’re receiving this email because you registered at RebekahsRecipes.com. If this wasn’t you, you can ignore this email.</p>
+
+		  <p style="font-size: 12px; color: Work/school emails can quarantine verification messages. Try checking Junk/Other, or use a personal email.
 	    </div>
 	    `,
 		};

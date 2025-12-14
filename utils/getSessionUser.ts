@@ -14,15 +14,8 @@ export const getSessionUser = async (): Promise<SessionUser | null> => {
 	try {
 		const session: Session | null = await getServerSession();
 
-		if (process.env.NODE_ENV === 'development') {
-			console.log('Retrieved session in getSessionUser:', session);
-		}
-
 		const email = session?.user?.email;
 		if (!email) {
-			if (process.env.NODE_ENV === 'development') {
-				console.warn('No valid session user found (no email):', session);
-			}
 			return null;
 		}
 
@@ -32,9 +25,6 @@ export const getSessionUser = async (): Promise<SessionUser | null> => {
 		const userDoc = await User.findOne({ email: normalizedEmail });
 
 		if (!userDoc) {
-			if (process.env.NODE_ENV === 'development') {
-				console.warn('No DB user found for session email:', normalizedEmail);
-			}
 			return null;
 		}
 
@@ -45,7 +35,9 @@ export const getSessionUser = async (): Promise<SessionUser | null> => {
 			image: session.user?.image ?? userDoc.image ?? null,
 		};
 	} catch (error: any) {
-		console.error('Error fetching session:', error.message);
+		if (process.env.NODE_ENV === 'development') {
+			console.error('Error fetching session:', error);
+		}
 		return null;
 	}
 };

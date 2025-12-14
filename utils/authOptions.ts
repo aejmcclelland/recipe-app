@@ -45,11 +45,18 @@ export const authOptions: AuthOptions = {
 
 				await connectDB();
 
-				const user = await User.findOne({ email: credentials.email });
+				const email = credentials.email.trim().toLowerCase();
+				const user = await User.findOne({ email });
 				if (!user) return null;
 
 				const isMatch = await user.comparePassword(credentials.password);
 				if (!isMatch) return null;
+
+				// Block sign-in until the user's email is verified.
+				// Do this after password validation to avoid leaking account state.
+				if (!user.verified) {
+					return Promise.reject(new Error('EMAIL_NOT_VERIFIED'));
+				}
 
 				return {
 					id: user._id.toString(),
@@ -70,18 +77,29 @@ export const authOptions: AuthOptions = {
 			if (account?.provider === 'google' && profile?.email) {
 				await connectDB();
 
-				let existingUser = await User.findOne({ email: profile.email });
+				const email = profile.email.trim().toLowerCase();
+				let existingUser = await User.findOne({ email });
+
+				// If the email already exists as a credentials user, don't let Google create a duplicate.
+				if (existingUser && existingUser.authProvider && existingUser.authProvider !== 'google') {
+					return '/recipes/signin?error=account_exists';
+				}
 
 				if (!existingUser) {
 					const [firstName, ...rest] = (profile.name ?? 'User').split(' ');
 
 					existingUser = await User.create({
-						email: profile.email,
+						email,
 						firstName,
 						lastName: rest.join(' ') || 'Unknown',
 						image: (profile as any).picture,
 						authProvider: 'google',
+						verified: true,
 					});
+				} else if (!existingUser.verified) {
+					// Google is a verified identity provider; mark as verified if missing.
+					existingUser.verified = true;
+					await existingUser.save();
 				}
 
 				(user as any).id = existingUser._id.toString();
@@ -117,6 +135,6 @@ export const authOptions: AuthOptions = {
 
 	pages: {
 		signIn: '/recipes/signin',
-		error: '/recipes/register?error=account_exists',
+		error: '/recipes/signin?error=account_exists',
 	},
 };

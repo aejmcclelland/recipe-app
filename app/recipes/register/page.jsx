@@ -1,3 +1,4 @@
+// app/recipes/register/page.jsx
 import RegisterForm from '@/components/RegisterUser';
 import BackToHomeButton from '@/components/BackToHomeButton';
 import { Box, Container, Typography, Paper } from '@mui/material';
