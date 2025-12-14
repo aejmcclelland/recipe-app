@@ -1,0 +1,58 @@
+.gsi-material-button {
+  appearance: none;
+  background-color: #fff;
+  border: 1px solid #747775;
+  border-radius: 4px;
+  box-sizing: border-box;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+
+  font-family: Roboto, Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: #1f1f1f;
+
+  height: 56px;
+  width: 100%;
+  max-width: 320px;
+
+  padding: 0 16px;
+  position: relative;
+  transition: box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.gsi-material-button-content-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.gsi-material-button-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.gsi-material-button-contents {
+  flex-grow: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.gsi-material-button:hover {
+  box-shadow:
+    0 1px 2px rgba(60, 64, 67, 0.3),
+    0 1px 3px rgba(60, 64, 67, 0.15);
+}
+
+.gsi-material-button:active {
+  background-color: #f7f8f8;
+}
+
+.gsi-material-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

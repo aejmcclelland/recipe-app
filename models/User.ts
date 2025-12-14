@@ -11,7 +11,7 @@ export interface IUser extends Document {
 	image?: string;
 	authProvider?: string;
 	bookmarks?: mongoose.Types.ObjectId[];
-	verified: boolean;
+	emailVerified: boolean;
 	resetPasswordTokenHash?: string | null;
 	resetPasswordExpires?: Date | null;
 	comparePassword(candidatePassword: string): Promise<boolean>;
@@ -25,7 +25,7 @@ const UserSchema = new Schema<IUser>(
 		password: { type: String }, // ← ADD THIS
 		image: { type: String },
 		authProvider: { type: String },
-		verified: { type: Boolean, default: false },
+		emailVerified: { type: Boolean, default: false },
 		resetPasswordTokenHash: { type: String, default: null },
 		resetPasswordExpires: { type: Date, default: null },
 		bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' }],

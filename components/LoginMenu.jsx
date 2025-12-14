@@ -61,9 +61,9 @@ export default function LoginMenu() {
                     paper: {
                         elevation: 6,
                         sx: {
-                            mt: 2,
+                            mt: 1.4,
                             minWidth: 120,
-                            borderRadius: 2,
+                            //borderRadius: 2,
                             textAlign: 'center',
                             px: 0.5,
                         },

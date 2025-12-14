@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import ThemeRegistry from './ThemeRegistry';
 import '../assets/globals.css';
+import '../assets/google-button.css';
 
 export const metadata = {
 	title: " Welcome to Rebekah's Recipes!",

@@ -20,12 +20,7 @@ const SignInPage = () => {
           <Stack spacing={3} sx={{ width: '100%', textAlign: 'center' }}>
             {/* Brand header */}
             <Stack spacing={1} alignItems="center">
-              <Typography variant="h5" component="h1">
-                Rebekah’s Recipes
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Sign in to continue
-              </Typography>
+              
             </Stack>
 
             {/* Sign-in form */}

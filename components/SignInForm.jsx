@@ -12,11 +12,15 @@ import {
 	Divider,
 	Stack,
 	Link as MuiLink,
+	InputAdornment,
 } from '@mui/material';
 import { toast } from 'react-toastify';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { resendVerificationEmail } from '@/app/actions/resendVerificationEmail';
+import GoogleButton from '@/components/GoogleButton';
 
 export default function SignInForm() {
 	const searchParams = useSearchParams();
@@ -99,7 +103,6 @@ export default function SignInForm() {
 			password,
 			callbackUrl: '/recipes/profile',
 		});
-		console.log('signIn res:', res);
 		setIsLoading(false);
 
 		if (res?.ok) {
@@ -122,7 +125,7 @@ export default function SignInForm() {
 		<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 4 }}>
 			<Paper sx={{ p: 4, width: '100%', maxWidth: 420, textAlign: 'center' }}>
 				<Typography variant="h4" gutterBottom>
-					Sign In
+					Sign in to Rebekah’s Recipes
 				</Typography>
 
 				{(registered || verifyPending) && !needsVerification && (
@@ -141,14 +144,10 @@ export default function SignInForm() {
 					<Stack spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
 						{/* Google sign-in */}
 						{providers.google && (
-							<Button
-								variant="outlined"
-								disabled={isLoading}
+							<GoogleButton
 								onClick={handleGoogleSignIn}
-								sx={{ width: '100%', maxWidth: 320, textTransform: 'none' }}
-							>
-								{isLoading ? 'Signing in…' : 'Continue with Google'}
-							</Button>
+								disabled={isLoading}
+							/>
 						)}
 
 						<Divider>or</Divider>
@@ -173,13 +172,22 @@ export default function SignInForm() {
 											setNeedsVerification(false);
 										}}
 										autoComplete="email"
+										slotProps={{
+											input: {
+												startAdornment: (
+													<InputAdornment position="start">
+														<MailOutlineIcon fontSize="small" />
+													</InputAdornment>
+												),
+											},
+										}}
 									/>
 
 									<Button
 										variant="contained"
 										type="submit"
 										fullWidth
-										sx={{ mt: 1, textTransform: 'none' }}
+										sx={{ textTransform: 'none' }}
 										disabled={isLoading || !canContinue}
 									>
 										Continue
@@ -196,25 +204,6 @@ export default function SignInForm() {
 								sx={{ width: '100%', maxWidth: 320 }}
 							>
 								<Stack spacing={2}>
-									<Stack direction="row" justifyContent="space-between" alignItems="center">
-										<Typography variant="body2" color="text.secondary">
-											Logging in as <strong>{trimmedEmail}</strong>
-										</Typography>
-										<MuiLink
-											component="button"
-											type="button"
-											underline="hover"
-											onClick={() => {
-												setStep(1);
-												setPassword('');
-												setLoginError(null);
-												setNeedsVerification(false);
-											}}
-										>
-											Back
-										</MuiLink>
-									</Stack>
-
 									<TextField
 										label="Password"
 										name="password"
@@ -224,6 +213,15 @@ export default function SignInForm() {
 										value={password}
 										onChange={(e) => setPassword(e.target.value)}
 										autoComplete="current-password"
+										slotProps={{
+											input: {
+												startAdornment: (
+													<InputAdornment position="start">
+														<LockOutlinedIcon fontSize="small" />
+													</InputAdornment>
+												),
+											},
+										}}
 									/>
 
 									<Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -253,10 +251,10 @@ export default function SignInForm() {
 										variant="contained"
 										type="submit"
 										fullWidth
-										sx={{ mt: 1, textTransform: 'none' }}
+										sx={{ textTransform: 'none' }}
 										disabled={isLoading || !canSubmit}
 									>
-										{isLoading ? 'Signing in…' : 'Log in'}
+										{isLoading ? 'Signing in…' : 'Continue'}
 									</Button>
 								</Stack>
 							</Box>
