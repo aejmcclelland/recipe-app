@@ -1,3 +1,4 @@
+// components/LoginMenu.jsx
 'use client';
 
 import React, { useState } from 'react';
@@ -47,7 +48,27 @@ export default function LoginMenu() {
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleCloseMenu}
-                sx={{ mt: '45px' }}
+                disableScrollLock
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                slotProps={{
+                    paper: {
+                        elevation: 6,
+                        sx: {
+                            mt: 2,
+                            minWidth: 120,
+                            borderRadius: 2,
+                            textAlign: 'center',
+                            px: 0.5,
+                        },
+                    },
+                }}
             >
                 {session
                     ? [
