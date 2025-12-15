@@ -1,40 +1,81 @@
 'use client';
-import React, { useState } from 'react';
-import { Box, Typography } from '@mui/material';
+
+import React, { useMemo, useState } from 'react';
+import { Box, Typography, Stack, Divider } from '@mui/material';
 import ProfileImageUpload from './ProfileImageUpload';
 import ProfileDetailsForm from './ProfileDetailsForm';
 
-export default function UserDetails({ user }) {
-    const [userImage, setUserImage] = useState(user.image || '/default-profile.png');
+export default function UserDetails({ user, onDetailsUpdated }) {
+	const [userImage, setUserImage] = useState(user?.image || '/default-profile.png');
 
-    const handleImageUpdate = (newImageUrl) => {
-        setUserImage(newImageUrl);
-    };
+	const fullName = useMemo(() => {
+		const first = (user?.firstName || '').trim();
+		const last = (user?.lastName || '').trim();
+		const combined = `${first} ${last}`.trim();
+		return combined || user?.name || 'Guest';
+	}, [user?.firstName, user?.lastName, user?.name]);
 
-    return (
-        <Box
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                mb: 4,
-                p: 3,
-                border: '1px solid #ddd',
-                borderRadius: 2,
-                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-                maxWidth: 400,
-                mx: 'auto',
-            }}
-        >
-            {/* Use ProfileImageUpload */}
-            <ProfileImageUpload user={{ ...user, image: userImage }} onImageUpdated={handleImageUpdate} />
-            <Typography variant="h5">Welcome, {user.name || 'Guest'}!</Typography>
-            <Typography variant="body2" sx={{ mt: 1, mb: 1, color: 'text.secondary' }}>
-                You can update your name and email below:
-            </Typography>
-            <Box mt={2} width="100%">
-                <ProfileDetailsForm user={user} onDetailsUpdated={() => {}} />
-            </Box>
-        </Box>
-    );
+	const handleImageUpdate = (newImageUrl) => {
+		setUserImage(newImageUrl);
+	};
+
+	const profileUser = useMemo(
+		() => ({
+			...(user || {}),
+			image: userImage,
+		}),
+		[user, userImage]
+	);
+
+	return (
+		<Box
+			sx={{
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'center',
+				mb: 4,
+				p: 3,
+				border: '1px solid #ddd',
+				borderRadius: 2,
+				boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+				width: '100%',
+				maxWidth: 520,
+				mx: 'auto',
+			}}
+		>
+			{/* Avatar */}
+			<ProfileImageUpload user={profileUser} onImageUpdated={handleImageUpdate} />
+
+			{/* Header */}
+			<Typography variant="h5" sx={{ mt: 1 }}>
+				{fullName}
+			</Typography>
+			<Typography variant="body2" sx={{ mt: 0.5, color: 'text.secondary' }}>
+				{user?.email || ''}
+			</Typography>
+
+			<Divider sx={{ width: '100%', my: 2 }} />
+
+			{/* Read-only summary */}
+			<Stack spacing={0.5} sx={{ width: '100%', mb: 2 }}>
+				<Typography variant="subtitle2" color="text.secondary">
+					Current details
+				</Typography>
+				<Typography variant="body2">
+					<strong>First name:</strong> {user?.firstName || '—'}
+				</Typography>
+				<Typography variant="body2">
+					<strong>Surname:</strong> {user?.lastName || '—'}
+				</Typography>
+				<Typography variant="body2">
+					<strong>Email:</strong> {user?.email || '—'}
+				</Typography>
+			</Stack>
+
+			{/* Editable form */}
+			<Box sx={{ width: '100%' }}>
+				<ProfileDetailsForm user={profileUser} onDetailsUpdated={onDetailsUpdated} />
+			</Box>
+		</Box>
+	);
 }

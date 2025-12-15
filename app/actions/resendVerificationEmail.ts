@@ -25,21 +25,25 @@ export async function resendVerificationEmail(
 	if (user.emailVerified) return { ok: true };
 
 	if (!process.env.JWT_SECRET) {
-		throw new Error('JWT_SECRET is not configured');
+		// Avoid breaking the flow if env is misconfigured (especially in production).
+		// We still return ok to prevent account enumeration.
+		console.error('JWT_SECRET is not configured');
+		return { ok: true };
 	}
 
 	const token = jwt.sign({ email }, process.env.JWT_SECRET, {
 		expiresIn: '1h',
 	});
 
-	const siteUrl =
+	const rawSiteUrl =
 		process.env.NODE_ENV === 'development'
 			? 'http://localhost:3000'
-			: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+			: process.env.NEXT_PUBLIC_SITE_URL;
 
-	const normalizedSiteUrl = siteUrl.endsWith('/recipes')
-		? siteUrl
-		: `${siteUrl}/recipes`;
+	// Normalise (avoid trailing slash issues like "https://example.com/" -> "https://example.com//recipes")
+	const siteUrl = (rawSiteUrl ?? 'http://localhost:3000').replace(/\/+$/, '');
+
+	const normalizedSiteUrl = siteUrl.endsWith('/recipes') ? siteUrl : `${siteUrl}/recipes`;
 
 	const verificationLink = `${normalizedSiteUrl}/verify?token=${token}`;
 

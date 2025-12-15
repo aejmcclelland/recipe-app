@@ -1,5 +1,6 @@
-// 'use server';
+// app/recipes/profile/page.jsx
 export const dynamic = 'force-dynamic';
+
 import { Box, Container, Typography } from '@mui/material';
 import connectDB from '@/config/database';
 import Recipe from '@/models/Recipe';
@@ -11,13 +12,9 @@ import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 import { serializeBookmarks } from '@/utils/serializeBookmarks';
 import BookmarkRecipeCard from '@/components/BookmarkRecipeCard';
 import UserDetails from '@/components/UserDetails';
-import { DeleteAccountSection } from '@/components/DeleteAccount';
-import Category from '@/models/Category'; // ✅ Add this line near your other imports
-
 
 const ProfilePage = async () => {
     try {
-        // Connect to the database
         await connectDB();
 
         const sessionUser = await getSessionUser({ cache: 'no-store' });
@@ -33,11 +30,29 @@ const ProfilePage = async () => {
 
         const userId = sessionUser.id;
 
-        const userDetails = {
-            id: sessionUser.id,
-            name: sessionUser.name || 'Unknown',
-            email: sessionUser.email || '',
-            image: sessionUser.image || defaultProfile,
+        // Fetch fresh user details for the profile area (incl. email verification state)
+        const userDoc = await User.findById(userId)
+            .select('firstName lastName email emailVerified image')
+            .lean();
+
+        if (!userDoc) {
+            return (
+                <Container maxWidth="lg">
+                    <p>Unable to load your profile details.</p>
+                </Container>
+            );
+        }
+
+        // Combined user object for the profile header + avatar + edit form.
+        // (We keep sessionUser fields for anything not stored on the User doc.)
+        const profileUser = {
+            id: userId,
+            name: sessionUser.name || `${userDoc.firstName || ''} ${userDoc.lastName || ''}`.trim() || 'Unknown',
+            firstName: userDoc.firstName || '',
+            lastName: userDoc.lastName || '',
+            email: userDoc.email || '',
+            emailVerified: !!userDoc.emailVerified,
+            image: sessionUser.image || userDoc.image || defaultProfile?.src || defaultProfile,
         };
 
         // Fetch user's bookmarked recipes
@@ -45,25 +60,23 @@ const ProfilePage = async () => {
             .populate({
                 path: 'bookmarks',
                 model: 'Recipe',
-                populate: { path: 'category', select: 'name', model: 'Category', },
+                populate: { path: 'category', select: 'name', model: 'Category' },
             })
             .lean();
 
         // Fetch user's own recipes
         const recipesDocs = await Recipe.find({ user: userId })
-            .populate({ path: 'category', select: 'name' }) // Default inferred model (Category)
+            .populate({ path: 'category', select: 'name' })
             .lean();
 
-        // Serialize the recipes and bookmarks for client components
         const userRecipes = convertToSerializeableObject(recipesDocs);
         const userBookmarks = convertToSerializeableObject(userWithBookmarks);
         const bookmarkedRecipes = serializeBookmarks(userBookmarks?.bookmarks || []);
 
-        // Render the profile page
         return (
             <Container maxWidth="lg">
-                {/* User Details */}
-                <UserDetails user={userDetails} />
+                {/* Profile header + avatar + edit form */}
+                <UserDetails user={profileUser} />
 
                 {/* User's Recipes */}
                 <Box mt={4}>
@@ -82,8 +95,8 @@ const ProfilePage = async () => {
                     <h3>Bookmarked Recipes</h3>
                     <Box
                         display="grid"
-                        gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} // Single column for small screens, two columns for medium+
-                        gap={4} // Larger gap between grid items
+                        gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }}
+                        gap={4}
                     >
                         {bookmarkedRecipes.length > 0 ? (
                             bookmarkedRecipes.map((recipe) => (
@@ -99,7 +112,6 @@ const ProfilePage = async () => {
                         )}
                     </Box>
                 </Box>
-             
             </Container>
         );
     } catch (error) {
@@ -110,6 +122,7 @@ const ProfilePage = async () => {
             </Container>
         );
     }
+
 };
 
 export default ProfilePage;

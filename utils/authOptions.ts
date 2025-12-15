@@ -81,8 +81,12 @@ export const authOptions: AuthOptions = {
 				let existingUser = await User.findOne({ email });
 
 				// If the email already exists as a credentials user, don't let Google create a duplicate.
-				if (existingUser && existingUser.authProvider && existingUser.authProvider !== 'google') {
-					return '/recipes/signin?error=account_exists';
+				if (
+					existingUser &&
+					existingUser.authProvider &&
+					existingUser.authProvider !== 'google'
+				) {
+					return '/recipes/signin';
 				}
 
 				if (!existingUser) {
@@ -94,11 +98,11 @@ export const authOptions: AuthOptions = {
 						lastName: rest.join(' ') || 'Unknown',
 						image: (profile as any).picture,
 						authProvider: 'google',
-						verified: true,
+						emailVerified: new Date(),
 					});
 				} else if (!existingUser.emailVerified) {
 					// Google is a verified identity provider; mark as verified if missing.
-					existingUser.emailVerified = true;
+					existingUser.emailVerified = new Date();
 					await existingUser.save();
 				}
 
@@ -135,6 +139,6 @@ export const authOptions: AuthOptions = {
 
 	pages: {
 		signIn: '/recipes/signin',
-		error: '/recipes/signin?error=account_exists',
+		error: '/recipes/signin',
 	},
 };

@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { signIn, getProviders } from 'next-auth/react';
 import {
 	Button,
@@ -23,6 +24,7 @@ import { resendVerificationEmail } from '@/app/actions/resendVerificationEmail';
 import GoogleButton from '@/components/GoogleButton';
 
 export default function SignInForm() {
+	const router = useRouter();
 	const searchParams = useSearchParams();
 	const registered = searchParams.get('registered') === '1';
 	const verifyPending = searchParams.get('verify') === '1';
@@ -101,20 +103,17 @@ export default function SignInForm() {
 			redirect: false,
 			email: trimmedEmail,
 			password,
-			callbackUrl: '/recipes/profile',
 		});
 		setIsLoading(false);
 
 		if (res?.ok) {
-			window.location.href = res.url; // Redirect on success
+			router.push('/recipes/profile');
 			return;
 		}
 
 		if (res?.error === 'EMAIL_NOT_VERIFIED') {
 			setNeedsVerification(true);
-			setLoginError(
-				'Please verify your email before signing in. You can resend the verification link below.'
-			);
+			setLoginError('Please verify your email before signing in. You can resend the verification link below.');
 			return;
 		}
 
