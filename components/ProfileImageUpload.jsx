@@ -1,14 +1,26 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Avatar, Tooltip, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { toast } from 'react-toastify';
+import { useSession } from 'next-auth/react';
 import updateProfileImage from '@/app/actions/updateProfileImage';
 
 export default function ProfileImageUpload({ user, onImageUpdated }) {
-    const [imagePreview, setImagePreview] = useState(user.image || '../public/images/default-profile.png');
+    const { data: session, update } = useSession();
+
+    const fallbackImage = '/images/default-profile.png';
+    const initialImage = user?.image || session?.user?.image || fallbackImage;
+
+    const [imagePreview, setImagePreview] = useState(initialImage);
     const [uploading, setUploading] = useState(false);
+
+    // If parent/user updates later, keep preview in sync
+    useEffect(() => {
+        setImagePreview(user?.image || session?.user?.image || fallbackImage);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user?.image, session?.user?.image]);
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
@@ -21,7 +33,25 @@ export default function ProfileImageUpload({ user, onImageUpdated }) {
 
                 if (newImageUrl) {
                     setImagePreview(newImageUrl); // Update the image preview
-                    onImageUpdated(newImageUrl); // Notify the parent component
+
+                 
+                    try {
+                        await update({
+                            ...session,
+                            user: {
+                                ...session?.user,
+                                image: newImageUrl,
+                            },
+                        });
+                    } catch (err) {
+                        // Not fatal; DB + preview have already updated
+                        console.warn('Failed to update session image:', err);
+                    }
+
+                    if (typeof onImageUpdated === 'function') {
+                        onImageUpdated(newImageUrl); // Notify the parent component
+                    }
+
                     toast.success('Profile image updated successfully!');
                 } else {
                     throw new Error('Failed to update profile image');

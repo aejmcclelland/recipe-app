@@ -112,7 +112,8 @@ export const authOptions: AuthOptions = {
 			return true;
 		},
 
-		async jwt({ token, user }) {
+		async jwt({ token, user, trigger, session }) {
+			// Initial sign-in
 			if (user && (user as any).id) {
 				token.user = {
 					id: (user as any).id,
@@ -120,6 +121,13 @@ export const authOptions: AuthOptions = {
 					name: user.name,
 					image: user.image,
 				};
+			}
+
+			// ✅ Allow client-side `useSession().update()` to refresh token values
+			if (trigger === 'update' && session?.user && token.user) {
+				token.user.name = session.user.name ?? token.user.name;
+				token.user.email = session.user.email ?? token.user.email;
+				token.user.image = session.user.image ?? token.user.image;
 			}
 
 			return token;

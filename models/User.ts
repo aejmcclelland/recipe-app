@@ -23,8 +23,15 @@ const UserSchema = new Schema<IUser>(
 		email: { type: String, required: true, unique: true },
 		firstName: { type: String, required: true },
 		lastName: { type: String, required: true },
-		password: { type: String }, // ← ADD THIS
-		image: { type: String },
+		password: { type: String },
+		image: {
+			type: String,
+			default: null,
+			validate: {
+				validator: (v: string | null) => !v || v.startsWith('http'),
+				message: 'Image must be a URL',
+			},
+		},
 		authProvider: { type: String },
 		emailVerified: { type: Date, default: null },
 		resetPasswordTokenHash: { type: String, default: null },

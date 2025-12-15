@@ -15,32 +15,37 @@ export default function LoginMenu() {
     const handleOpenMenu = (event) => setAnchorEl(event.currentTarget);
     const handleCloseMenu = () => setAnchorEl(null);
 
-    const getAvatarSrc = () => {
-        if (session?.user?.image && session.user.image !== 'default-profile.png') {
-            return `${session.user.image}?t=${Date.now()}`;
+    const avatarSrc = React.useMemo(() => {
+        const img = session?.user?.image;
+
+        // If we have a real URL (Cloudinary / Google / etc.), use it.
+        if (img && typeof img === 'string' && img.trim() && !img.includes('default-profile')) {
+            // Cache-bust only when the image value changes (not every render)
+            const url = img.trim();
+            const sep = url.includes('?') ? '&' : '?';
+            return `${url}${sep}v=${encodeURIComponent(url)}`;
         }
-        if (session?.user?.image === 'default-profile.png') {
-            return '../public/images/default-profile.png';
-        }
-        return null;
-    };
+
+        // Next.js public assets must be referenced from the web root
+        return '/images/default-profile.png';
+    }, [session?.user?.image]);
 
     return (
         <>
-            <Tooltip title={session ? "Account" : "Sign In"}>
+            <Tooltip title={session?.user ? 'Account' : 'Sign In'}>
                 <IconButton onClick={handleOpenMenu} sx={{ p: 0 }}>
-                    {getAvatarSrc() ? (
-                        <Avatar
-                            src={getAvatarSrc()}
-                            alt={session?.user?.name || 'Default Avatar'}
-                            onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = '../public/images/default-profile.png';
-                            }}
-                        />
-                    ) : (
-                        <AccountCircleIcon fontSize="large" />
-                    )}
+                    <Avatar
+                        src={avatarSrc}
+                        alt={session?.user?.name || 'User Avatar'}
+                        imgProps={{
+                            referrerPolicy: 'no-referrer',
+                        }}
+                        onError={(e) => {
+                            // Fallback if the remote image fails to load
+                            const img = e.currentTarget.querySelector('img');
+                            if (img) img.src = '/images/default-profile.png';
+                        }}
+                    />
                 </IconButton>
             </Tooltip>
 
