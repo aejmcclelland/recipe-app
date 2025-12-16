@@ -1,251 +1,363 @@
+// components/RecipeEditForm.jsx
 'use client';
-import { Button, TextField, Typography, Select, MenuItem, FormControl, InputLabel, Checkbox, FormControlLabel } from '@mui/material';
-import updateRecipe from '@/app/actions/editRecipe';
-import Grid from '@mui/material/Grid';
-import { useState } from 'react';
+
+import { useMemo, useRef, useState } from 'react';
+import {
+	Box,
+	Button,
+	Checkbox,
+	FormControl,
+	FormControlLabel,
+	InputLabel,
+	MenuItem,
+	Select,
+	Stack,
+	TextField,
+	Typography,
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
+import updateRecipe from '@/app/actions/editRecipe';
+import IngredientInputRow from './IngredientInputRow';
+import StepsInputRow from './StepsInputRow';
 
+const DEFAULT_IMAGE =
+	'https://res.cloudinary.com/dqeszgo28/image/upload/v1728739432/300_bebabf.png';
 
-const RecipeEditForm = ({ recipe, categories = [] }) => {
-    const router = useRouter();
-    const [selectedCategory, setSelectedCategory] = useState(recipe.category);
-    const [imageFile, setImageFile] = useState(null);
-    const [deleteImage, setDeleteImage] = useState(false);
-    const [prepTime, setPrepTime] = useState(recipe.prepTime || ''); // Track prepTime
-    const [cookTime, setCookTime] = useState(recipe.cookTime || ''); // Track cookTime
-    const [serves, setServes] = useState(recipe.serves || ''); // Track serves
-    const [ingredients, setIngredients] = useState(recipe.ingredients || []); // Initialize with recipe ingredients
-    const [steps, setSteps] = useState(recipe.steps || ''); // Track steps
+export default function RecipeEditForm({ recipe, categories = [] }) {
+	const router = useRouter();
 
-    const handleCategoryChange = (event) => {
-        setSelectedCategory(event.target.value);
-    };
+	// Normalise initial values
+	const initialCategoryId = useMemo(() => {
+		// recipe.category might be an id OR a populated object
+		if (!recipe?.category) return '';
+		if (typeof recipe.category === 'string') return recipe.category;
+		return recipe.category._id ?? '';
+	}, [recipe]);
 
-    const handleImageChange = (event) => {
-        setImageFile(event.target.files[0]);
-    };
+	const initialSteps = useMemo(() => {
+		if (!recipe?.steps) return [];
+		return Array.isArray(recipe.steps) ? recipe.steps : [String(recipe.steps)];
+	}, [recipe]);
 
-    const handleDeleteImageChange = (event) => {
-        setDeleteImage(event.target.checked);
-    };
-    // const handleStepsdChange = (event) => {
-    //     setSteps(event.target.value);
-    // };
+	const [selectedCategory, setSelectedCategory] = useState(initialCategoryId);
+	const [imageFile, setImageFile] = useState(null);
+	const [selectedImageName, setSelectedImageName] = useState(null);
+	const [deleteImage, setDeleteImage] = useState(false);
 
-    const handleIngredientChange = (index, field, value) => {
-        const updatedIngredients = ingredients.map((ingredient, i) =>
-            i === index ? { ...ingredient, [field]: value } : ingredient
-        );
-        setIngredients(updatedIngredients);
-    };
+	const [prepTime, setPrepTime] = useState(recipe?.prepTime ?? '');
+	const [cookTime, setCookTime] = useState(recipe?.cookTime ?? '');
+	const [serves, setServes] = useState(recipe?.serves ?? '');
 
-    const handleAddIngredient = () => {
-        setIngredients([...ingredients, { ingredient: '', quantity: '', unit: '' }]);
-    };
+	// Ingredients are edited client-side and submitted as JSON
+	const [ingredients, setIngredients] = useState(recipe?.ingredients ?? []);
 
-    const notifySuccess = () => toast.success("Recipe updated successfully!");
-    const notifyError = () => toast.error("Error updating recipe!");
+	// Steps as editable rows (same UX as Add form)
+	const [steps, setSteps] = useState(initialSteps);
+	const stepsRef = useRef(null);
 
+	const handleCategoryChange = (event) => {
+		setSelectedCategory(event.target.value);
+	};
 
-    const updateRecipeById = async (event) => {
-        event.preventDefault();
+	const handleImageChange = (event) => {
+		const file = event.target.files?.[0] ?? null;
+		setImageFile(file);
+		setSelectedImageName(file?.name ?? null);
+		// If they upload a new image, assume they don't want to delete
+		if (file) setDeleteImage(false);
+	};
 
-        const formData = new FormData(event.target);
+	const handleDeleteImageChange = (event) => {
+		const checked = event.target.checked;
+		setDeleteImage(checked);
+		// If they choose delete, clear any selected upload
+		if (checked) {
+			setImageFile(null);
+			setSelectedImageName(null);
+		}
+	};
 
-        // Add the ingredients array to the formData
-        formData.append('ingredients', JSON.stringify(ingredients));
+	const handleIngredientChange = (index, field, value) => {
+		const updatedIngredients = ingredients.map((ingredient, i) =>
+			i === index ? { ...ingredient, [field]: value } : ingredient
+		);
+		setIngredients(updatedIngredients);
+	};
 
-        // Add the delete image flag and the image file to formData
-        if (imageFile) {
-            formData.append('imageFile', imageFile);
-        }
-        formData.append('deleteImage', deleteImage);
+	const handleAddIngredient = () => {
+		setIngredients([
+			...ingredients,
+			{ ingredient: '', quantity: '', unit: '' },
+		]);
+	};
 
-        try {
-            // Await the returned recipe ID to ensure the update completed
-            const recipeId = await updateRecipe(recipe._id, formData);
-            router.push(`/recipes/${recipeId}`);
-            notifySuccess();
-        } catch (error) {
-            notifyError();
-            console.error('Error updating recipe:', error);
-        }
-    };
+	const handleRemoveIngredient = (index) => {
+		setIngredients(ingredients.filter((_, i) => i !== index));
+	};
 
-    return (
-        <form onSubmit={updateRecipeById}>
-            <Grid container spacing={3}>
-                <Grid item xs={12}>
-                    <Image
-                        src={recipe.image || 'https://res.cloudinary.com/dqeszgo28/image/upload/v1728739432/300_bebabf.png'} // Provide a default image URL
-                        alt={recipe.name || 'Recipe Image'}
-                        width={300}
-                        height={187}
-                        className="w-full h-auto"
-                        style={{ objectFit: 'cover' }}
-                    />
-                </Grid>
+	const handleAddStep = () => {
+		setSteps([...steps, '']);
+	};
 
-                {/* Image upload and delete option */}
-                <Grid item xs={12}>
-                    <Typography variant="h6">Recipe Image</Typography>
-                    <input type="file" accept="image/*" onChange={handleImageChange} />
-                    <FormControlLabel
-                        control={<Checkbox checked={deleteImage} onChange={handleDeleteImageChange} />}
-                        label="Delete current image and use default image"
-                    />
-                </Grid>
+	const handleStepChange = (index, value) => {
+		const updated = [...steps];
+		updated[index] = value;
+		setSteps(updated);
+	};
 
-                <Grid item xs={12}>
-                    <TextField
-                        label="Recipe Name"
-                        name="name"
-                        variant="outlined"
-                        defaultValue={recipe.name}
-                        fullWidth
-                        required
-                    />
-                </Grid>
+	const handleRemoveStep = (index) => {
+		setSteps(steps.filter((_, i) => i !== index));
+	};
 
-                {/* Category Dropdown */}
-                <Grid item xs={12} sm={6}>
-                    <FormControl fullWidth required>
-                        <InputLabel>Category</InputLabel>
-                        <Select
-                            label="Category"
-                            name="category"
-                            value={selectedCategory}
-                            onChange={handleCategoryChange}
-                        >
-                            {Array.isArray(categories) && categories.length > 0 ? (
-                                categories.map((category) => (
-                                    <MenuItem key={category._id} value={category._id}>
-                                        {category.name}
-                                    </MenuItem>
-                                ))
-                            ) : (
-                                <MenuItem value="" disabled>
-                                    No categories available
-                                </MenuItem>
-                            )}
-                        </Select>
-                    </FormControl>
-                </Grid>
+	const updateRecipeById = async (event) => {
+		event.preventDefault();
 
-                {/* Ingredients Section */}
-                <Grid item xs={12}>
-                    <Typography variant="h6" gutterBottom>
-                        Ingredients
-                    </Typography>
-                    {ingredients.map((ingredient, index) => (
-                        <Grid container spacing={2} key={index}>
-                            <Grid item xs={4}>
-                                <TextField
-                                    label="Ingredient"
-                                    value={ingredient.ingredient.name || ingredient.ingredient}
-                                    onChange={(e) => handleIngredientChange(index, 'ingredient', e.target.value)}
-                                    fullWidth
-                                    required
-                                />
-                            </Grid>
-                            <Grid item xs={4}>
-                                <TextField
-                                    label="Quantity"
-                                    value={ingredient.quantity}
-                                    onChange={(e) => handleIngredientChange(index, 'quantity', e.target.value)}
-                                    type="number"
-                                    fullWidth
-                                    variant="outlined"
-                                    required
-                                />
-                            </Grid>
-                            <Grid item xs={4}>
-                                <TextField
-                                    label="Unit"
-                                    value={ingredient.unit}
-                                    onChange={(e) => handleIngredientChange(index, 'unit', e.target.value)}
-                                    fullWidth
-                                    required
-                                />
-                            </Grid>
-                        </Grid>
-                    ))}
+		const formData = new FormData(event.target);
 
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={handleAddIngredient}
-                        sx={{ mt: 2 }}
-                    >
-                        Add Ingredient
-                    </Button>
-                </Grid>
+		// Persist controlled values
+		formData.set('category', selectedCategory);
+		formData.set('prepTime', String(prepTime));
+		formData.set('cookTime', String(cookTime));
+		formData.set('serves', String(serves));
 
-                {/* Prep Time, Cook Time, and Serves Section */}
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                        label="Prep Time (minutes)"
-                        name="prepTime"
-                        type="number"
-                        value={prepTime}
-                        onChange={(e) => setPrepTime(e.target.value)}
-                        fullWidth
-                        required
-                    />
-                </Grid>
+		// Add ingredients + steps as JSON
+		formData.set('ingredients', JSON.stringify(ingredients));
+		if (stepsRef.current) {
+			stepsRef.current.value = JSON.stringify(steps);
+			formData.set('steps', stepsRef.current.value);
+		} else {
+			formData.set('steps', JSON.stringify(steps));
+		}
 
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                        label="Cook Time (minutes)"
-                        name="cookTime"
-                        type="number"
-                        value={cookTime}
-                        onChange={(e) => setCookTime(e.target.value)}
-                        fullWidth
-                        required
-                    />
-                </Grid>
+		// Image flags
+		if (imageFile) formData.set('imageFile', imageFile);
+		formData.set('deleteImage', String(deleteImage));
 
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                        label="Serves"
-                        name="serves"
-                        type="number"
-                        value={serves}
-                        onChange={(e) => setServes(e.target.value)}
-                        fullWidth
-                        required
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <TextField
-                        label="Steps"
-                        name="steps"
-                        value={steps}
-                        onChange={(e) => setSteps(e.target.value)}
-                        multiline
-                        rows={4}
-                        fullWidth
-                        variant="outlined"
-                        required
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                    >
-                        Update Recipe
-                    </Button>
-                </Grid>
-            </Grid>
-        </form>
-    );
-};
+		try {
+			const recipeId = await updateRecipe(recipe._id, formData);
+			toast.success('Recipe updated successfully!');
+			router.push(`/recipes/${recipeId}`);
+		} catch (error) {
+			console.error('Error updating recipe:', error);
+			toast.error('Error updating recipe!');
+		}
+	};
 
-export default RecipeEditForm;
+	return (
+		<Box sx={{ width: 800, maxWidth: '100%', mx: 'auto', p: 3 }}>
+			<form onSubmit={updateRecipeById}>
+				<Stack spacing={4}>
+					<Stack spacing={1}>
+						<Typography
+							variant="subtitle2"
+							color="text.secondary"
+							align="center"
+						>
+							Update your recipe details below
+						</Typography>
+					</Stack>
+
+					{/* Current image preview */}
+					<Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+						<Image
+							src={deleteImage ? DEFAULT_IMAGE : recipe.image || DEFAULT_IMAGE}
+							alt={recipe?.name || 'Recipe Image'}
+							width={300}
+							height={187}
+							style={{ objectFit: 'cover', borderRadius: 12 }}
+						/>
+					</Box>
+
+					{/* Image upload */}
+					<Stack spacing={2} sx={{ width: '100%' }}>
+						<Button
+							component="label"
+							variant="contained"
+							fullWidth
+							startIcon={<AddIcon />}
+							sx={{
+								backgroundColor: '#d32f2f',
+								color: '#fff',
+								fontWeight: 600,
+								fontSize: '1rem',
+								height: 40,
+								minHeight: 40,
+								'&:hover': { backgroundColor: '#b71c1c' },
+							}}
+						>
+							Upload New Image (optional)
+							<input
+								hidden
+								accept="image/*"
+								type="file"
+								onChange={handleImageChange}
+							/>
+						</Button>
+
+						{selectedImageName && (
+							<Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
+								Selected: {selectedImageName}
+							</Typography>
+						)}
+
+						<FormControlLabel
+							control={
+								<Checkbox
+									checked={deleteImage}
+									onChange={handleDeleteImageChange}
+								/>
+							}
+							label="Delete current image and use default image"
+						/>
+					</Stack>
+
+					{/* Name */}
+					<Stack spacing={2}>
+						<Typography variant="h6" align="left">
+							Recipe Name
+						</Typography>
+						<TextField
+							name="name"
+							placeholder="e.g. Classic Lasagna"
+							variant="outlined"
+							fullWidth
+							required
+							defaultValue={recipe?.name ?? ''}
+							sx={{
+								fontWeight: 600,
+								fontSize: '1.1rem',
+								'& .MuiInputBase-root': {
+									height: 48,
+								},
+							}}
+						/>
+					</Stack>
+
+					{/* Category */}
+					<Stack spacing={2} sx={{ width: '100%' }}>
+						<Typography variant="body2" align="left">
+							Select a Category
+						</Typography>
+						<FormControl fullWidth required>
+							<InputLabel id="category-label">Category</InputLabel>
+							<Select
+								labelId="category-label"
+								label="Category"
+								name="category"
+								value={selectedCategory}
+								onChange={handleCategoryChange}
+							>
+								{Array.isArray(categories) && categories.length > 0 ? (
+									categories.map((category) => (
+										<MenuItem key={category._id} value={category._id}>
+											{category.name}
+										</MenuItem>
+									))
+								) : (
+									<MenuItem value="" disabled>
+										No categories available
+									</MenuItem>
+								)}
+							</Select>
+						</FormControl>
+					</Stack>
+
+					{/* Times & Serves */}
+					<Stack spacing={4} sx={{ mt: 1 }}>
+						<Typography variant="h5">Times & Serves</Typography>
+						<Stack spacing={2} direction={{ mobile: 'column', tablet: 'row' }}>
+							<TextField
+								label="Prep Time (mins)"
+								name="prepTime"
+								type="number"
+								variant="outlined"
+								fullWidth
+								required
+								value={prepTime}
+								onChange={(e) => setPrepTime(e.target.value)}
+							/>
+							<TextField
+								label="Cook Time (mins)"
+								name="cookTime"
+								type="number"
+								variant="outlined"
+								fullWidth
+								required
+								value={cookTime}
+								onChange={(e) => setCookTime(e.target.value)}
+							/>
+							<TextField
+								label="Serves"
+								name="serves"
+								type="number"
+								variant="outlined"
+								fullWidth
+								required
+								value={serves}
+								onChange={(e) => setServes(e.target.value)}
+							/>
+						</Stack>
+					</Stack>
+
+					{/* Ingredients */}
+					<Stack spacing={1}>
+						<Typography variant="h5">Ingredients</Typography>
+						<Stack spacing={2}>
+							{ingredients.map((ingredient, index) => (
+								<IngredientInputRow
+									key={index}
+									index={index}
+									ingredient={ingredient}
+									handleIngredientChange={handleIngredientChange}
+									handleRemoveIngredient={() => handleRemoveIngredient(index)}
+								/>
+							))}
+
+							<Button
+								variant="contained"
+								onClick={handleAddIngredient}
+								type="button"
+								sx={{ width: { mobile: '100%', tablet: 'auto' } }}
+							>
+								+ Add Ingredient
+							</Button>
+						</Stack>
+					</Stack>
+
+					{/* Steps */}
+					<Stack spacing={1}>
+						<Typography variant="h5">Steps</Typography>
+						<Stack spacing={2}>
+							{steps.map((step, index) => (
+								<StepsInputRow
+									key={index}
+									index={index}
+									step={step}
+									handleStepChange={handleStepChange}
+									handleRemoveStep={handleRemoveStep}
+								/>
+							))}
+							<Button
+								variant="contained"
+								onClick={handleAddStep}
+								type="button"
+								sx={{ width: { mobile: '100%', tablet: 'auto' } }}
+							>
+								+ Add Step
+							</Button>
+							<input type="hidden" name="steps" ref={stepsRef} />
+						</Stack>
+					</Stack>
+
+					<Button type="submit" variant="contained" size="large" fullWidth sx={{ mt: 1 }}>
+						Update Recipe
+					</Button>
+				</Stack>
+			</form>
+		</Box>
+	);
+}
