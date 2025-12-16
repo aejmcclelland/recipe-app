@@ -22,7 +22,7 @@ const SearchBar = () => {
             sx={{
                 display: 'flex',
                 alignItems: 'center',
-                backgroundColor: '#f5f5f5',
+                backgroundColor: '#ffffffff',
                 borderRadius: 2,
                 padding: '4px 8px',
                 boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',

@@ -1,4 +1,4 @@
-//
+// models/Ingredient.ts
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IngredientDocument extends Document {

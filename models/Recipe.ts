@@ -1,8 +1,25 @@
-// models/Recipe.js
-import pkg from 'mongoose'; // Import the entire mongoose package
-const { Schema, model, models } = pkg;
+// models/Recipe.ts
+import mongoose, { Schema, model, models, type Model, type Document } from 'mongoose';
 
-const recipeSchema = new Schema({
+export type RecipeIngredientItem = {
+	ingredient: mongoose.Types.ObjectId;
+	quantity?: number;
+	unit?: string;
+};
+
+export interface IRecipe extends Document {
+	name: string;
+	ingredients: RecipeIngredientItem[];
+	steps: string[];
+	prepTime: number;
+	cookTime: number;
+	serves: number;
+	image: string;
+	category: mongoose.Types.ObjectId;
+	user: mongoose.Types.ObjectId;
+}
+
+const recipeSchema = new Schema<IRecipe>({
 	name: {
 		type: String,
 		required: true,
@@ -11,20 +28,23 @@ const recipeSchema = new Schema({
 		{
 			ingredient: {
 				type: Schema.Types.ObjectId,
-				ref: 'Ingredient', // Reference to the Ingredient model
+				ref: 'Ingredient',
 				required: true,
 			},
 			quantity: {
-				type: Number, // The specific quantity for this recipe
+				type: Number,
 				required: false, // allow scraped/free-text ingredients without parsed quantities
 			},
 			unit: {
-				type: String, // The unit (grams, ml, etc.)
+				type: String,
 				required: false, // allow scraped/free-text ingredients without parsed units
 			},
 		},
 	],
-	steps: { type: [String], required: true },
+	steps: {
+		type: [String],
+		required: true,
+	},
 	prepTime: {
 		type: Number,
 		required: true,
@@ -44,7 +64,7 @@ const recipeSchema = new Schema({
 			'https://res.cloudinary.com/dqeszgo28/image/upload/v1728739432/300_bebabf.png',
 	},
 	category: {
-		type: Schema.Types.ObjectId, // References the Category schema
+		type: Schema.Types.ObjectId,
 		ref: 'Category',
 		required: true,
 	},
@@ -55,6 +75,7 @@ const recipeSchema = new Schema({
 	},
 });
 
-const Recipe = models.Recipe || model('Recipe', recipeSchema);
+const Recipe: Model<IRecipe> =
+	(models.Recipe as Model<IRecipe>) || model<IRecipe>('Recipe', recipeSchema);
 
 export default Recipe;
