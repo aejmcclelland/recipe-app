@@ -45,7 +45,7 @@ const RecipeEditPage = async ({ params }) => {
             <Box
                 mt={4}
                 display="flex"
-                justifyContent="flex-end"
+                justifyContent="center"
             >
                 <RecipeDeleteForm recipe={recipe} />
             </Box>

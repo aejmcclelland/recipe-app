@@ -8,6 +8,7 @@
     },
     "include": [
         "**/*.js",
-        "**/*.jsx"
+        "**/*.jsx",
+        "models/Recipe.ts"
     ]
 }
