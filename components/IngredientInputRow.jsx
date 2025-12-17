@@ -1,57 +1,48 @@
-'use client'
+// components/StepsInputRow.jsx
+'use client';
 
-import { TextField, IconButton, MenuItem } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import { Stack, IconButton, TextField } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-const unitOptions = [
-    "g", "kg", "ml", "l", "tsp", "tbsp", "cup",
-    "piece", "clove", "fillet", "leaf", "pinch", "can", "slice", "packet"
-];
-
-export default function IngredientInputRow({ index, ingredient, handleIngredientChange, handleRemoveIngredient }) {
+export default function IngredientInputRow({
+    index,
+    ingredient,
+    handleIngredientChange,
+    handleRemoveIngredient,
+}) {
     return (
-        <Grid container spacing={1} alignItems="center" sx={{ mt: 1 }}>
-            <Grid item xs={3}>
-                <TextField
-                    label="Quantity"
-                    name="quantity"
-                    type="number"
-                    value={ingredient.quantity}
-                    onChange={e => handleIngredientChange(index, e.target.name, e.target.value)}
-                    fullWidth
-                />
-            </Grid>
-            <Grid item xs={3}>
-                <TextField
-                    select
-                    label="Unit"
-                    name="unit"
-                    value={ingredient.unit}
-                    onChange={e => handleIngredientChange(index, e.target.name, e.target.value)}
-                    fullWidth
-                >
-                    {unitOptions.map((option) => (
-                        <MenuItem key={option} value={option}>
-                            {option}
-                        </MenuItem>
-                    ))}
-                </TextField>
-            </Grid>
-            <Grid item xs={5}>
-                <TextField
-                    label="Ingredient"
-                    name="ingredient"
-                    value={ingredient.ingredient}
-                    onChange={e => handleIngredientChange(index, e.target.name, e.target.value)}
-                    fullWidth
-                />
-            </Grid>
-            <Grid item xs={1}>
-                <IconButton color="error" onClick={() => handleRemoveIngredient(index)} sx={{ color: '#d32f2f' }}>
-                    <DeleteIcon />
-                </IconButton>
-            </Grid>
-        </Grid>
+        <Stack direction="row" spacing={2} alignItems="center" sx={{ width: '100%' }}>
+            <TextField
+                label="Quantity"
+                value={ingredient.quantity ?? ''}
+                onChange={(e) => handleIngredientChange(index, 'quantity', e.target.value)}
+                sx={{ width: 120, flexShrink: 0 }}
+                slotProps={{ inputMode: 'decimal' }}
+            />
+
+            <TextField
+                label="Unit"
+                value={ingredient.unit ?? ''}
+                onChange={(e) => handleIngredientChange(index, 'unit', e.target.value)}
+                sx={{ width: 140, flexShrink: 0 }}
+            />
+
+            <TextField
+                label="Ingredient"
+                value={ingredient.ingredient?.name ?? ingredient.ingredient ?? ''}
+                onChange={(e) => handleIngredientChange(index, 'ingredient', e.target.value)}
+                sx={{ flex: 1, minWidth: 0 }}
+                fullWidth
+            />
+
+            <IconButton
+                aria-label="Remove ingredient"
+                onClick={handleRemoveIngredient}
+                sx={{ flexShrink: 0}}
+               
+            >
+                <DeleteIcon color="warning" />
+            </IconButton>
+        </Stack>
     );
 }

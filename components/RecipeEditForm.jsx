@@ -152,6 +152,8 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 			<form onSubmit={updateRecipeById}>
 				<Stack spacing={4}>
 					<Stack spacing={1}>
+						
+
 						<Typography
 							variant="subtitle2"
 							color="text.secondary"

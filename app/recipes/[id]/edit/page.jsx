@@ -35,15 +35,18 @@ const RecipeEditPage = async ({ params }) => {
     }
 
     return (
-        <Container maxWidth="md" sx={{ mt: 4 }}>
+        <Container maxWidth="md" sx={{ mt: 4, justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', }}>
             <Typography variant="h4" component="h1" align="center" gutterBottom>
                 Edit Recipe
             </Typography>
             <Box mt={2}>
                 <RecipeEditForm recipe={recipe} categories={serializedCategories} />
             </Box>
-            <Box mt={4}>
-
+            <Box
+                mt={4}
+                display="flex"
+                justifyContent="flex-end"
+            >
                 <RecipeDeleteForm recipe={recipe} />
             </Box>
         </Container>

@@ -13,18 +13,28 @@ async function updateRecipe(recipeId, formData) {
 	// Get the user's session
 	const sessionUser = await getSessionUser();
 
-	if (!sessionUser) {
+	if (!sessionUser || !sessionUser.id) {
 		throw new Error('You must be logged in to edit a recipe');
 	}
-	const { userId } = sessionUser;
+	const userId = sessionUser.id;
 	const categoryId = formData.get('category');
 	const deleteImage = formData.get('deleteImage') === 'true';
 
 	// Fetch the existing recipe
 	const existingRecipe = await Recipe.findById(recipeId);
 
+	// Check if the recipe exists
+	if (!existingRecipe) {
+		throw new Error('Recipe not found');
+	}
+
+	// Check if the recipe has an owner (older recipes may predate auth)
+	if (!existingRecipe.user) {
+		throw new Error('This recipe has no owner set. Please re-save it under your account or contact support.');
+	}
+
 	// Check if the user is the owner of the recipe
-	if (!existingRecipe || existingRecipe.user.toString() !== userId) {
+	if (existingRecipe.user.toString() !== userId) {
 		throw new Error('You are not authorized to edit this recipe');
 	}
 

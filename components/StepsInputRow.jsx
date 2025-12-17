@@ -1,21 +1,32 @@
 // components/StepsInputRow.jsx
 'use client';
-import { TextField, IconButton } from '@mui/material';
-import  DeleteIcon  from '@mui/icons-material/Delete';
 
-export default function StepsInputRow({ index, step, handleStepChange, handleRemoveStep }) {
+import { Stack, IconButton, TextField } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+export default function StepsInputRow({
+    index,
+    step,
+    handleStepChange,
+    handleRemoveStep,
+}) {
     return (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <Stack direction="row" spacing={2} alignItems="center" sx={{ width: '100%' }}>
             <TextField
-                fullWidth
-                variant="outlined"
                 label={`Step ${index + 1}`}
-                value={step}
-                onChange={e => handleStepChange(index, e.target.value)}
+                value={step ?? ''}
+                onChange={(e) => handleStepChange(index, e.target.value)}
+                sx={{ flex: 1, minWidth: 0 }}
+                fullWidth
             />
-            <IconButton color="error" onClick={() => handleRemoveStep(index)} sx={{ color: '#d32f2f' }}>
-                <DeleteIcon />
+
+            <IconButton
+                aria-label="Remove step"
+                onClick={() => handleRemoveStep(index)}
+                sx={{ flexShrink: 0 }}
+            >
+                <DeleteIcon color='warning'/>
             </IconButton>
-        </div>
+        </Stack>
     );
 }
