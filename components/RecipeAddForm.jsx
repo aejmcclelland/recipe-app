@@ -29,38 +29,50 @@ export default function RecipeAddForm({ categories }) {
 
 
     const handleAddIngredient = () => {
-        setIngredients([...ingredients, { ingredient: '', quantity: '', unit: '' }]);
+        setIngredients((prev) => [...prev, { ingredient: '', quantity: '', unit: '', customUnit: '' }]);
     };
 
     const handleIngredientChange = (index, field, value) => {
-        const updatedIngredients = ingredients.map((ingredient, i) =>
-            i === index ? { ...ingredient, [field]: value } : ingredient
-        );
-        setIngredients(updatedIngredients);
+        setIngredients((prev) => {
+            const next = prev.map((ing, i) => (i === index ? { ...ing, [field]: value } : ing));
+            return next;
+        });
     };
 
     const handleAddStep = () => {
-        setSteps([...steps, '']);
+        setSteps((prev) => [...prev, '']);
     };
 
     // Change step
     const handleStepChange = (index, value) => {
-        const updated = [...steps];
-        updated[index] = value;
-        setSteps(updated);
+        setSteps((prev) => {
+            const updated = [...prev];
+            updated[index] = value;
+            return updated;
+        });
     };
 
     // Remove step
     const handleRemoveStep = (index) => {
-        setSteps(steps.filter((_, i) => i !== index));
+        setSteps((prev) => prev.filter((_, i) => i !== index));
     };
 
     const handleFormSubmit = () => {
         const processed = ingredients.map((ingredient) => {
-            const quantity = typeof ingredient.quantity === 'string' && ingredient.quantity.includes('/')
-                ? fractionToDecimal(ingredient.quantity)
-                : ingredient.quantity;
-            return { ...ingredient, quantity };
+            const quantity =
+                typeof ingredient.quantity === 'string' && ingredient.quantity.includes('/')
+                    ? fractionToDecimal(ingredient.quantity)
+                    : ingredient.quantity;
+
+            const unit = ingredient.unit === 'other'
+                ? (ingredient.customUnit ?? '').trim()
+                : (ingredient.unit ?? '').trim();
+
+            return {
+                ...ingredient,
+                quantity,
+                unit,
+            };
         });
 
         if (ingredientsRef.current) {
@@ -90,7 +102,7 @@ export default function RecipeAddForm({ categories }) {
                         </Typography>
                         <TextField
                             name="name"
-                            placeholder="e.g. Classic Lasagna"
+                            placeholder="e.g. Mum's Lasagne"
                             variant="outlined"
                             fullWidth
                             required
@@ -191,7 +203,7 @@ export default function RecipeAddForm({ categories }) {
                     </Stack>
                 </Stack>
 
-                <Stack spacing={1} sx={{ mt: 4 }}>
+                <Stack spacing={4} sx={{ mt: 4, mb: 4 }}>
                     <Typography variant="h5">Ingredients</Typography>
                     <Stack spacing={2}>
                         {ingredients.map((ingredient, index) => (
@@ -201,8 +213,7 @@ export default function RecipeAddForm({ categories }) {
                                 ingredient={ingredient}
                                 handleIngredientChange={handleIngredientChange}
                                 handleRemoveIngredient={() => {
-                                    const updated = ingredients.filter((_, i) => i !== index);
-                                    setIngredients(updated);
+                                    setIngredients((prev) => prev.filter((_, i) => i !== index));
                                 }}
                             />
                         ))}

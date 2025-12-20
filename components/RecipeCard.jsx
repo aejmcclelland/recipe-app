@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Card, CardContent, Typography, Box } from '@mui/material';
 import Image from 'next/image';
+import { pluraliseUnit } from '@/utils/pluraliseUnit';
 
 export default function RecipeCard({ recipe }) {
     if (!recipe) {
@@ -29,6 +30,7 @@ export default function RecipeCard({ recipe }) {
                                 width={300}
                                 height={187}
                                 className="w-full h-auto"
+                                loading='eager'
                                 style={{ objectFit: 'cover' }}
                             />
                         </Box>
@@ -36,32 +38,41 @@ export default function RecipeCard({ recipe }) {
                         {/* Ingredients */}
                         <Box mt={2} sx={{ paddingLeft: 2 }}>
                             <Typography variant="h6">Ingredients:</Typography>
-                            <ul>
-                                {Array.isArray(recipe.ingredients) && recipe.ingredients.length > 0 ? (
-                                    recipe.ingredients.map((ing, index) => (
-                                        <li key={index}>
-                                            {(() => {
-                                                const name = ing?.ingredient?.name || 'Unknown Ingredient';
-                                                const qty = ing?.quantity;
-                                                const unit = ing?.unit;
+                            {Array.isArray(recipe.ingredients) && recipe.ingredients.length > 0 ? (
+                                <ul>
+                                    {recipe.ingredients.map((ing, index) => {
+                                        const name = ing?.ingredient?.name ?? 'Unknown Ingredient';
+                                        const quantity = ing?.quantity;
+                                        const unit = ing?.unit === 'other' ? ing?.customUnit : ing?.unit;
 
-                                                // Hide legacy placeholder values that were previously injected for scraped recipes
-                                                const isLegacyDefault = qty === 1 && unit === 'unit';
+                                        // Hide legacy placeholder values that were previously injected for scraped recipes
+                                        const isLegacyDefault = quantity === 1 && unit === 'unit';
 
-                                                // If we don't have a meaningful quantity/unit, just show the ingredient name
-                                                if (qty == null || isLegacyDefault) return name;
+                                        // No meaningful quantity/unit -> just show the ingredient name
+                                        if (quantity == null || isLegacyDefault) {
+                                            return <li key={index}>{name}</li>;
+                                        }
 
-                                                // If we have a quantity but no unit, show just the quantity
-                                                if (!unit) return `${name}: ${qty}`;
+                                        // Quantity but no unit -> "2 chicken"
+                                        if (!unit) {
+                                            return (
+                                                <li key={index}>
+                                                    {quantity} {name}
+                                                </li>
+                                            );
+                                        }
 
-                                                return `${name}: ${qty} ${unit}`;
-                                            })()}
-                                        </li>
-                                    ))
-                                ) : (
-                                    <Typography variant="body2">No Ingredients Found</Typography>
-                                )}
-                            </ul>
+                                        // Quantity + unit -> pluralised correctly
+                                        return (
+                                            <li key={index}>
+                                                {quantity} {name} {pluraliseUnit(unit, quantity)} 
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            ) : (
+                                <Typography variant="body2">No Ingredients Found</Typography>
+                            )}
                         </Box>
                     </Box>
 

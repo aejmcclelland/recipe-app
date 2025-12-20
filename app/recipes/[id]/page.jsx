@@ -5,7 +5,6 @@ import { convertToSerializeableObject } from '@/utils/convertToObject';
 import RecipeCard from '@/components/RecipeCard';
 import { Box, Typography, Container } from '@mui/material';
 import HomeButton from '@/components/HomeButton';
-import Link from 'next/link';
 import { getSessionUser } from '@/utils/getSessionUser';
 import RecipeNotFound from '@/components/RecipeNotFound';
 import mongoose from 'mongoose';
