@@ -58,47 +58,55 @@ export default async function addRecipe(formData) {
 	//  Normalize ingredients
 	const ingredients = (
 		await Promise.all(
-			ingredientsArray.map(async (ingredientObj) => {
-				const name = ingredientObj.ingredient?.trim().toLowerCase();
-				if (!name) return null; // skip empty ingredient rows (client validation should prevent this)
+			ingredientsArray.map(async (ingredientObj, idx) => {
+				const nameRaw = String(ingredientObj?.ingredient ?? '').trim();
+				const name = nameRaw.toLowerCase();
+
+				const rawUnit = String(ingredientObj?.unit ?? '').trim();
+				const customUnit = String(ingredientObj?.customUnit ?? '').trim();
+				const unit = rawUnit === 'other' ? customUnit : rawUnit;
+
+				const q = ingredientObj?.quantity;
+				const quantity = q === '' || q == null ? undefined : Number(q);
+
+				const hasAnyData =
+					nameRaw.length > 0 ||
+					rawUnit.length > 0 ||
+					customUnit.length > 0 ||
+					quantity != null;
+
+				// skip totally empty rows
+				if (!hasAnyData) return null;
+
+				// if they started filling the row, enforce name
+				if (!name) {
+					throw new Error(`Ingredient name missing (row ${idx + 1})`);
+				}
+
+				// if they chose "other" but didn't type it
+				if (rawUnit === 'other' && !customUnit) {
+					throw new Error(`Custom unit required (row ${idx + 1})`);
+				}
+
+				// if you want to enforce unit when quantity exists
+				// (optional: tweak to your preference)
+				if (quantity != null && !unit) {
+					throw new Error(`Unit required (row ${idx + 1})`);
+				}
 
 				let ingredient = await Ingredient.findOne({ name });
 				if (!ingredient) {
-					ingredient = new Ingredient({ name });
-					await ingredient.save();
+					ingredient = await Ingredient.create({ name });
 				}
 
-				const rawUnit = (ingredientObj.unit ?? '').toString().trim();
-				const customUnit = (ingredientObj.customUnit ?? '').toString().trim();
-
-				const unit = rawUnit === 'other' ? customUnit : rawUnit;
-
-				const q = ingredientObj.quantity;
-				const quantity = q === '' || q == null ? undefined : Number(q);
-				
 				return {
 					ingredient: ingredient._id,
-					quantity: ingredientObj.quantity,
+					quantity,
 					unit: unit || undefined,
 				};
 			})
 		)
 	).filter(Boolean);
-
-	if (!ingredients.length) {
-		throw new Error('Please add at least one ingredient.');
-	}
-
-	let stepsArray = [];
-	try {
-		const rawSteps = formData.get('steps');
-		if (typeof rawSteps === 'string') {
-			stepsArray = JSON.parse(rawSteps);
-		}
-	} catch (err) {
-		console.error('Error parsing steps:', err);
-		throw new Error('Invalid steps format');
-	}
 
 	// extract and sanitize other fields
 	const recipeData = {
