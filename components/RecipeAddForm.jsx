@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import StepsInputRow from './StepsInputRow';
+import { toast } from 'react-toastify';
 
 
 export default function RecipeAddForm({ categories }) {
@@ -57,23 +58,82 @@ export default function RecipeAddForm({ categories }) {
         setSteps((prev) => prev.filter((_, i) => i !== index));
     };
 
-    const handleFormSubmit = () => {
-        const processed = ingredients.map((ingredient) => {
-            const quantity =
-                typeof ingredient.quantity === 'string' && ingredient.quantity.includes('/')
-                    ? fractionToDecimal(ingredient.quantity)
-                    : ingredient.quantity;
+    const handleFormSubmit = (e) => {
+        // --- Client-side validation to avoid ugly server crashes ---
+        // Remove completely empty rows
+        const cleaned = ingredients
+            .map((row) => {
+                const rawName = row?.ingredient?.name ?? row?.ingredient ?? '';
+                const ingredientName = String(rawName).trim();
 
-            const unit = ingredient.unit === 'other'
-                ? (ingredient.customUnit ?? '').trim()
-                : (ingredient.unit ?? '').trim();
+                const rawQty = row?.quantity ?? '';
+                const qtyStr = String(rawQty).trim();
 
-            return {
-                ...ingredient,
-                quantity,
-                unit,
-            };
+                const qty =
+                    typeof rawQty === 'string' && rawQty.includes('/')
+                        ? fractionToDecimal(rawQty)
+                        : rawQty;
+
+                const unitRaw = String(row?.unit ?? '').trim();
+                const customUnit = String(row?.customUnit ?? '').trim();
+                const unit = unitRaw === 'other' ? customUnit : unitRaw;
+
+                return {
+                    ...row,
+                    ingredient: ingredientName,
+                    quantity: qty,
+                    unit,
+                    customUnit,
+                    _meta: { ingredientName, qtyStr, unitRaw, customUnit },
+                };
+            })
+            .filter((row) => {
+                const { ingredientName, qtyStr, unitRaw, customUnit } = row._meta;
+                // Consider row empty if all fields are empty
+                return ingredientName || qtyStr || unitRaw || customUnit;
+            });
+
+        // If they added a row but left the ingredient blank
+        const firstMissingName = cleaned.find((row) => {
+            const { ingredientName } = row._meta;
+            return !ingredientName;
         });
+        if (firstMissingName) {
+            e?.preventDefault?.();
+            toast.error('Please enter an ingredient name (or delete the empty row).');
+            return;
+        }
+
+        // If quantity is provided, require a unit (or custom unit when Other)
+        const firstMissingUnit = cleaned.find((row) => {
+            const { qtyStr, unitRaw, customUnit } = row._meta;
+            const hasQty = qtyStr.length > 0;
+            if (!hasQty) return false;
+            if (!unitRaw) return true;
+            if (unitRaw === 'other' && !customUnit) return true;
+            return false;
+        });
+        if (firstMissingUnit) {
+            e?.preventDefault?.();
+            toast.error('If you add a quantity, please choose a unit (or fill in the custom unit).');
+            return;
+        }
+
+        // If unit is provided, require quantity (keeps the pair consistent)
+        const firstMissingQty = cleaned.find((row) => {
+            const { qtyStr, unitRaw } = row._meta;
+            const hasUnit = unitRaw.length > 0;
+            if (!hasUnit) return false;
+            return qtyStr.length === 0;
+        });
+        if (firstMissingQty) {
+            e?.preventDefault?.();
+            toast.error('If you choose a unit, please enter a quantity.');
+            return;
+        }
+
+        // Strip _meta before submit
+        const processed = cleaned.map(({ _meta, ...row }) => row);
 
         if (ingredientsRef.current) {
             ingredientsRef.current.value = JSON.stringify(processed);

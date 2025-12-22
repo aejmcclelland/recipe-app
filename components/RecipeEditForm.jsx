@@ -19,7 +19,7 @@ import AddIcon from '@mui/icons-material/Add';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-
+import { UNIT_OPTIONS } from '@/utils/measurements';
 import updateRecipe from '@/app/actions/editRecipe';
 import IngredientInputRow from './IngredientInputRow';
 import StepsInputRow from './StepsInputRow';
@@ -52,13 +52,29 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 	const [cookTime, setCookTime] = useState(recipe?.cookTime ?? '');
 	const [serves, setServes] = useState(recipe?.serves ?? '');
 
-	// Ingredients are edited client-side and submitted as JSON
-	const [ingredients, setIngredients] = useState(recipe?.ingredients ?? []);
-
 	// Steps as editable rows (same UX as Add form)
 	const [steps, setSteps] = useState(initialSteps);
 	const stepsRef = useRef(null);
 
+	const allowedUnits = new Set(UNIT_OPTIONS.map(u => u.value));
+
+	const [ingredients, setIngredients] = useState(() =>
+		(recipe.ingredients ?? []).map((ing) => {
+			const unit = String(ing.unit ?? '');
+
+			if (!unit) return ing;
+
+			if (!allowedUnits.has(unit) && unit !== 'other') {
+				return {
+					...ing,
+					unit: 'other',
+					customUnit: ing.customUnit || unit,
+				};
+			}
+
+			return ing;
+		})
+	);
 	const handleCategoryChange = (event) => {
 		setSelectedCategory(event.target.value);
 	};
@@ -152,7 +168,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 			<form onSubmit={updateRecipeById}>
 				<Stack spacing={4}>
 					<Stack spacing={1}>
-						
+
 
 						<Typography
 							variant="subtitle2"

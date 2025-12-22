@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useMemo } from 'react';
 import { Box, IconButton, TextField, MenuItem } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { UNIT_OPTIONS } from '../utils/measurements';
@@ -10,22 +11,47 @@ export default function IngredientInputRow({
   handleIngredientChange,
   handleRemoveIngredient,
 }) {
+  // Normalise options to an array of { value, label }
+  const unitOptions = useMemo(() => {
+    return (UNIT_OPTIONS ?? [])
+      .map((u) => {
+        if (typeof u === 'string') return { value: u, label: u };
+        if (u && typeof u === 'object') {
+          const value = String(u.value ?? '').trim();
+          const label = String(u.label ?? value).trim();
+          return value ? { value, label } : null;
+        }
+        return null;
+      })
+      .filter(Boolean);
+  }, []);
+
+  const allowedUnitValues = useMemo(() => {
+    const set = new Set(unitOptions.map((o) => o.value));
+    set.add('');
+    set.add('other');
+    return set;
+  }, [unitOptions]);
+
   // Always keep the Unit field controlled by a string
-  const unitValue = String(ingredient.unit ?? '');
+  const rawUnitValue = String(ingredient.unit ?? '').trim();
+  const unitValue = allowedUnitValues.has(rawUnitValue) ? rawUnitValue : 'other';
   const isOther = unitValue === 'other';
 
-  // Normalise options to an array of { value, label }
-  const unitOptions = (UNIT_OPTIONS ?? [])
-    .map((u) => {
-      if (typeof u === 'string') return { value: u, label: u };
-      if (u && typeof u === 'object') {
-        const value = String(u.value ?? '').trim();
-        const label = String(u.label ?? value).trim();
-        return value ? { value, label } : null;
-      }
-      return null;
-    })
-    .filter(Boolean);
+  // If we loaded a recipe that has a free-text unit (e.g. "half", "handful"),
+  // automatically move it into customUnit and switch the select to "Other".
+  useEffect(() => {
+    const hasUnknownUnit = rawUnitValue && !allowedUnitValues.has(rawUnitValue);
+    if (!hasUnknownUnit) return;
+
+    // Only auto-migrate once; don't overwrite if customUnit already exists.
+    if (!ingredient.customUnit) {
+      handleIngredientChange(index, 'customUnit', rawUnitValue);
+    }
+    if (ingredient.unit !== 'other') {
+      handleIngredientChange(index, 'unit', 'other');
+    }
+  }, [rawUnitValue, allowedUnitValues, ingredient.customUnit, ingredient.unit, handleIngredientChange, index]);
 
   return (
     <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -83,6 +109,7 @@ export default function IngredientInputRow({
             onChange={(e) => {
               const next = String(e.target.value ?? '');
               handleIngredientChange(index, 'unit', next);
+
               if (next !== 'other') {
                 handleIngredientChange(index, 'customUnit', '');
               }

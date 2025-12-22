@@ -56,24 +56,38 @@ export default async function addRecipe(formData) {
 	}
 
 	//  Normalize ingredients
-	const ingredients = await Promise.all(
-		ingredientsArray.map(async (ingredientObj) => {
-			const name = ingredientObj.ingredient?.trim().toLowerCase();
-			if (!name) throw new Error('Ingredient name missing');
+	const ingredients = (
+		await Promise.all(
+			ingredientsArray.map(async (ingredientObj) => {
+				const name = ingredientObj.ingredient?.trim().toLowerCase();
+				if (!name) return null; // skip empty ingredient rows (client validation should prevent this)
 
-			let ingredient = await Ingredient.findOne({ name });
-			if (!ingredient) {
-				ingredient = new Ingredient({ name });
-				await ingredient.save();
-			}
+				let ingredient = await Ingredient.findOne({ name });
+				if (!ingredient) {
+					ingredient = new Ingredient({ name });
+					await ingredient.save();
+				}
 
-			return {
-				ingredient: ingredient._id,
-				quantity: ingredientObj.quantity,
-				unit: ingredientObj.unit,
-			};
-		})
-	);
+				const rawUnit = (ingredientObj.unit ?? '').toString().trim();
+				const customUnit = (ingredientObj.customUnit ?? '').toString().trim();
+
+				const unit = rawUnit === 'other' ? customUnit : rawUnit;
+
+				const q = ingredientObj.quantity;
+				const quantity = q === '' || q == null ? undefined : Number(q);
+				
+				return {
+					ingredient: ingredient._id,
+					quantity: ingredientObj.quantity,
+					unit: unit || undefined,
+				};
+			})
+		)
+	).filter(Boolean);
+
+	if (!ingredients.length) {
+		throw new Error('Please add at least one ingredient.');
+	}
 
 	let stepsArray = [];
 	try {
