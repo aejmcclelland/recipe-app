@@ -2,7 +2,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Box, Typography, CircularProgress } from '@mui/material';
+import { Box, Typography, CircularProgress, Container } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 import { searchRecipes } from '@/app/actions/searchRecipes';
 
@@ -25,18 +26,33 @@ const SearchResultsClient = ({ searchQuery, ingredients, category }) => {
     }, [searchQuery, ingredients, category]);
 
     return (
-        <Box sx={{ padding: 2 }}>
+        <Container maxWidth="lg" sx={{ py: 2 }}>
             <Typography variant="h4" gutterBottom>Search Results</Typography>
             {loading ? (
-                <CircularProgress />
+                <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+                    <CircularProgress />
+                </Box>
             ) : searchResults.length > 0 ? (
-                searchResults.map((recipe) => (
-                    <RecipeOverviewCard key={recipe._id} recipe={recipe} />
-                ))
+
+                <Grid container spacing={2} justifyContent="center">
+                    {searchResults.map((recipe) => (
+                        <Grid
+                            key={recipe._id}
+                            xs={12}
+                            sm={6}
+                            md={4}
+                            sx={{ display: 'flex' }}
+                        >
+                            <Box sx={{ width: 1 }}>
+                                <RecipeOverviewCard recipe={recipe} />
+                            </Box>
+                        </Grid>
+                    ))}
+                </Grid>
             ) : (
                 <Typography>No recipes found.</Typography>
             )}
-        </Box>
+        </Container>
     );
 };
 
