@@ -17,12 +17,23 @@ export default async function addRecipe(formData) {
 
 	const userId = sessionUser.id;
 
-	const categoryName = formData.get('category');
-	const category = await Category.findOne({
-		name: { $regex: new RegExp(categoryName, 'i') },
-	});
+	const categoryValue = String(formData.get('category') || '').trim();
 
-	if (!category) throw new Error('Category not found');
+	// Support both: sending a Category _id (preferred) OR the category name (legacy)
+	let category = null;
+	const isObjectId = /^[a-fA-F0-9]{24}$/.test(categoryValue);
+
+	if (isObjectId) {
+		category = await Category.findById(categoryValue);
+	} else if (categoryValue) {
+		category = await Category.findOne({
+			name: { $regex: new RegExp(`^${categoryValue}$`, 'i') },
+		});
+	}
+
+	if (!category) {
+		throw new Error(`Category not found: "${categoryValue}"`);
+	}
 
 	// Handle image upload (always use imageFile)
 	let imageUrl;

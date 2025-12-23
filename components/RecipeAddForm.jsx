@@ -1,5 +1,6 @@
 // components/RecipeAddForm.jsx
 'use client';
+
 import { useState, useRef } from 'react';
 import addRecipe from '@/app/actions/addRecipe';
 import { fractionToDecimal } from '@/utils/fractionToDecimal';
@@ -13,43 +14,41 @@ import {
     FormControl,
     InputLabel,
     Select,
-    MenuItem
+    MenuItem,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import StepsInputRow from './StepsInputRow';
 import { validateAndCleanRecipeForm } from '@/utils/recipeFormValidation';
 import { toast } from 'react-toastify';
 
-
-export default function RecipeAddForm({ categories }) {
+export default function RecipeAddForm({ categories = [] }) {
     const [ingredients, setIngredients] = useState([]);
     const [ingredientErrors, setIngredientErrors] = useState([]);
     const ingredientsRef = useRef(null);
+
     const [selectedImage, setSelectedImage] = useState(null);
+
     const [steps, setSteps] = useState([]);
     const stepsRef = useRef(null);
 
-
     const handleAddIngredient = () => {
         setIngredients((prev) => [
-            ...prev,
+            ...(prev || []),
             { ingredient: '', quantity: '', unit: '', customUnit: '' },
         ]);
-        setIngredientErrors((prev) => [...prev, {}]);
+        setIngredientErrors((prev) => [...(prev || []), {}]);
     };
 
     const handleIngredientChange = (index, field, value) => {
-        setIngredients((prev) => {
-            const next = prev.map((ing, i) => (i === index ? { ...ing, [field]: value } : ing));
-            return next;
-        });
+        setIngredients((prev) =>
+            (prev || []).map((ing, i) => (i === index ? { ...ing, [field]: value } : ing))
+        );
 
         // Clear field-level errors as the user edits
         setIngredientErrors((prev) => {
             const next = [...(prev || [])];
             const rowErr = { ...(next[index] || {}) };
 
-            // Clear the specific field error
             delete rowErr[field];
 
             // If unit changes away from 'other', also clear customUnit error
@@ -62,22 +61,23 @@ export default function RecipeAddForm({ categories }) {
         });
     };
 
-    const handleAddStep = () => {
-        setSteps((prev) => [...prev, '']);
+    const handleRemoveIngredient = (index) => {
+        setIngredients((prev) => (prev || []).filter((_, i) => i !== index));
+        setIngredientErrors((prev) => (prev || []).filter((_, i) => i !== index));
     };
 
-    // Change step
+    const handleAddStep = () => setSteps((prev) => [...(prev || []), '']);
+
     const handleStepChange = (index, value) => {
         setSteps((prev) => {
-            const updated = [...prev];
+            const updated = [...(prev || [])];
             updated[index] = value;
             return updated;
         });
     };
 
-    // Remove step
     const handleRemoveStep = (index) => {
-        setSteps((prev) => prev.filter((_, i) => i !== index));
+        setSteps((prev) => (prev || []).filter((_, i) => i !== index));
     };
 
     const handleFormSubmit = (e) => {
@@ -89,14 +89,17 @@ export default function RecipeAddForm({ categories }) {
 
         if (!result.ok) {
             e.preventDefault();
-            // If your validator can return per-row errors later, you can set them here.
+
+            // ✅ Apply per-row ingredient errors so the UI can highlight fields
+            setIngredientErrors(result.ingredientErrors || []);
+
             toast.error(result.message);
             return;
         }
 
         const { cleanedIngredients, cleanedSteps } = result;
 
-        // Clear any previous inline errors if the overall validation passed
+        // Clear any previous inline errors
         setIngredientErrors([]);
 
         // Persist cleaned payloads into the hidden inputs for the server action
@@ -116,12 +119,12 @@ export default function RecipeAddForm({ categories }) {
                         <Typography variant="h4" align="center">
                             Add a Recipe
                         </Typography>
-                        <Typography variant="subtitle2" color="text.secondary" align="center" >
+                        <Typography variant="subtitle2" color="text.secondary" align="center">
                             Fill in the details to add your recipe
                         </Typography>
                     </Stack>
 
-                    <Stack spacing={2} >
+                    <Stack spacing={2}>
                         <Typography variant="h6" align="left" sx={{ mb: 0 }}>
                             Recipe Name
                         </Typography>
@@ -134,14 +137,12 @@ export default function RecipeAddForm({ categories }) {
                             sx={{
                                 fontWeight: 600,
                                 fontSize: '1.1rem',
-                                '& .MuiInputBase-root': {
-                                    height: 48,
-                                },
+                                '& .MuiInputBase-root': { height: 48 },
                             }}
                         />
                     </Stack>
 
-                    <Stack spacing={2} sx={{ width: '100%' }}>
+                    <Stack spacing={2}>
                         <Button
                             component="label"
                             variant="contained"
@@ -164,11 +165,10 @@ export default function RecipeAddForm({ categories }) {
                                 accept="image/*"
                                 type="file"
                                 name="imageFile"
-                                onChange={e => {
-                                    setSelectedImage(e.target.files[0]?.name || null);
-                                }}
+                                onChange={(e) => setSelectedImage(e.target.files?.[0]?.name || null)}
                             />
                         </Button>
+
                         {selectedImage && (
                             <Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
                                 Selected: {selectedImage}
@@ -180,19 +180,22 @@ export default function RecipeAddForm({ categories }) {
                         <Typography variant="body2" align="left">
                             Select a Category
                         </Typography>
+
                         <FormControl fullWidth required>
                             <InputLabel id="category-label">Category</InputLabel>
-                            <Select
-                                labelId="category-label"
-                                label="Category"
-                                name="category"
-                                defaultValue=""
-                            >
-                                {categories.map((category) => (
-                                    <MenuItem key={category._id} value={category.name}>
-                                        {category.name}
+                            <Select labelId="category-label" label="Category" name="category" defaultValue="">
+                                {Array.isArray(categories) && categories.length > 0 ? (
+                                    categories.map((category) => (
+                                        // ✅ Use _id to match Edit form + backend expectations
+                                        <MenuItem key={category._id} value={category._id}>
+                                            {category.name}
+                                        </MenuItem>
+                                    ))
+                                ) : (
+                                    <MenuItem value="" disabled>
+                                        No categories available
                                     </MenuItem>
-                                ))}
+                                )}
                             </Select>
                         </FormControl>
                     </Stack>
@@ -238,12 +241,10 @@ export default function RecipeAddForm({ categories }) {
                                 ingredient={ingredient}
                                 errors={ingredientErrors?.[index]}
                                 handleIngredientChange={handleIngredientChange}
-                                handleRemoveIngredient={() => {
-                                    setIngredients((prev) => prev.filter((_, i) => i !== index));
-                                    setIngredientErrors((prev) => (prev || []).filter((_, i) => i !== index));
-                                }}
+                                handleRemoveIngredient={() => handleRemoveIngredient(index)}
                             />
                         ))}
+
                         <Button
                             variant="contained"
                             onClick={handleAddIngredient}
@@ -269,6 +270,7 @@ export default function RecipeAddForm({ categories }) {
                                 handleRemoveStep={handleRemoveStep}
                             />
                         ))}
+
                         <Button
                             variant="contained"
                             onClick={handleAddStep}
@@ -277,6 +279,7 @@ export default function RecipeAddForm({ categories }) {
                         >
                             + Add Step
                         </Button>
+
                         <input type="hidden" name="steps" ref={stepsRef} />
                     </Stack>
                 </Stack>
