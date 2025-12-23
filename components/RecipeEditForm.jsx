@@ -1,7 +1,7 @@
 // components/RecipeEditForm.jsx
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
 	Box,
 	Button,
@@ -19,10 +19,11 @@ import AddIcon from '@mui/icons-material/Add';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { UNIT_OPTIONS } from '@/utils/measurements';
 import updateRecipe from '@/app/actions/editRecipe';
 import IngredientInputRow from './IngredientInputRow';
 import StepsInputRow from './StepsInputRow';
+import { fractionToDecimal } from '@/utils/fractionToDecimal';
+import { validateAndCleanRecipeForm } from '@/utils/recipeFormValidation';
 
 const DEFAULT_IMAGE =
 	'https://res.cloudinary.com/dqeszgo28/image/upload/v1728739432/300_bebabf.png';
@@ -30,9 +31,8 @@ const DEFAULT_IMAGE =
 export default function RecipeEditForm({ recipe, categories = [] }) {
 	const router = useRouter();
 
-	// Normalise initial values
+	// recipe.category might be an id OR a populated object
 	const initialCategoryId = useMemo(() => {
-		// recipe.category might be an id OR a populated object
 		if (!recipe?.category) return '';
 		if (typeof recipe.category === 'string') return recipe.category;
 		return recipe.category._id ?? '';
@@ -52,45 +52,22 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 	const [cookTime, setCookTime] = useState(recipe?.cookTime ?? '');
 	const [serves, setServes] = useState(recipe?.serves ?? '');
 
-	// Steps as editable rows (same UX as Add form)
 	const [steps, setSteps] = useState(initialSteps);
-	const stepsRef = useRef(null);
+	const [ingredients, setIngredients] = useState(recipe?.ingredients ?? []);
+	const [ingredientErrors, setIngredientErrors] = useState([]);
 
-	const allowedUnits = new Set(UNIT_OPTIONS.map(u => u.value));
-
-	const [ingredients, setIngredients] = useState(() =>
-		(recipe.ingredients ?? []).map((ing) => {
-			const unit = String(ing.unit ?? '');
-
-			if (!unit) return ing;
-
-			if (!allowedUnits.has(unit) && unit !== 'other') {
-				return {
-					...ing,
-					unit: 'other',
-					customUnit: ing.customUnit || unit,
-				};
-			}
-
-			return ing;
-		})
-	);
-	const handleCategoryChange = (event) => {
-		setSelectedCategory(event.target.value);
-	};
+	const handleCategoryChange = (event) => setSelectedCategory(event.target.value);
 
 	const handleImageChange = (event) => {
 		const file = event.target.files?.[0] ?? null;
 		setImageFile(file);
 		setSelectedImageName(file?.name ?? null);
-		// If they upload a new image, assume they don't want to delete
 		if (file) setDeleteImage(false);
 	};
 
 	const handleDeleteImageChange = (event) => {
 		const checked = event.target.checked;
 		setDeleteImage(checked);
-		// If they choose delete, clear any selected upload
 		if (checked) {
 			setImageFile(null);
 			setSelectedImageName(null);
@@ -98,40 +75,54 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 	};
 
 	const handleIngredientChange = (index, field, value) => {
-		const updatedIngredients = ingredients.map((ingredient, i) =>
-			i === index ? { ...ingredient, [field]: value } : ingredient
+		setIngredients((prev) =>
+			(prev || []).map((ing, i) => (i === index ? { ...ing, [field]: value } : ing))
 		);
-		setIngredients(updatedIngredients);
+
+		// clear field error as they edit
+		setIngredientErrors((prev) => {
+			const next = [...(prev || [])];
+			const rowErr = { ...(next[index] || {}) };
+
+			delete rowErr[field];
+			if (field === 'unit' && String(value ?? '') !== 'other') {
+				delete rowErr.customUnit;
+			}
+
+			next[index] = rowErr;
+			return next;
+		});
 	};
 
 	const handleAddIngredient = () => {
-		setIngredients([
-			...ingredients,
-			{ ingredient: '', quantity: '', unit: '' },
+		setIngredients((prev) => [
+			...(prev || []),
+			{ ingredient: '', quantity: '', unit: '', customUnit: '' },
 		]);
+		setIngredientErrors((prev) => [...(prev || []), {}]);
 	};
 
 	const handleRemoveIngredient = (index) => {
-		setIngredients(ingredients.filter((_, i) => i !== index));
+		setIngredients((prev) => (prev || []).filter((_, i) => i !== index));
+		setIngredientErrors((prev) => (prev || []).filter((_, i) => i !== index));
 	};
 
-	const handleAddStep = () => {
-		setSteps([...steps, '']);
-	};
+	const handleAddStep = () => setSteps((prev) => [...(prev || []), '']);
 
 	const handleStepChange = (index, value) => {
-		const updated = [...steps];
-		updated[index] = value;
-		setSteps(updated);
+		setSteps((prev) => {
+			const updated = [...(prev || [])];
+			updated[index] = value;
+			return updated;
+		});
 	};
 
 	const handleRemoveStep = (index) => {
-		setSteps(steps.filter((_, i) => i !== index));
+		setSteps((prev) => (prev || []).filter((_, i) => i !== index));
 	};
 
 	const updateRecipeById = async (event) => {
 		event.preventDefault();
-
 		const formData = new FormData(event.target);
 
 		// Persist controlled values
@@ -140,14 +131,21 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 		formData.set('cookTime', String(cookTime));
 		formData.set('serves', String(serves));
 
-		// Add ingredients + steps as JSON
-		formData.set('ingredients', JSON.stringify(ingredients));
-		if (stepsRef.current) {
-			stepsRef.current.value = JSON.stringify(steps);
-			formData.set('steps', stepsRef.current.value);
-		} else {
-			formData.set('steps', JSON.stringify(steps));
+		const result = validateAndCleanRecipeForm({
+			ingredients,
+			steps,
+			fractionToDecimal,
+		});
+
+		if (!result.ok) {
+			setIngredientErrors(result.ingredientErrors || []);
+			toast.error(result.message);
+			return;
 		}
+
+		setIngredientErrors([]);
+		formData.set('ingredients', JSON.stringify(result.cleanedIngredients));
+		formData.set('steps', JSON.stringify(result.cleanedSteps));
 
 		// Image flags
 		if (imageFile) formData.set('imageFile', imageFile);
@@ -168,13 +166,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 			<form onSubmit={updateRecipeById}>
 				<Stack spacing={4}>
 					<Stack spacing={1}>
-
-
-						<Typography
-							variant="subtitle2"
-							color="text.secondary"
-							align="center"
-						>
+						<Typography variant="subtitle2" color="text.secondary" align="center">
 							Update your recipe details below
 						</Typography>
 					</Stack>
@@ -208,12 +200,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 							}}
 						>
 							Upload New Image (optional)
-							<input
-								hidden
-								accept="image/*"
-								type="file"
-								onChange={handleImageChange}
-							/>
+							<input hidden accept="image/*" type="file" onChange={handleImageChange} />
 						</Button>
 
 						{selectedImageName && (
@@ -223,21 +210,14 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 						)}
 
 						<FormControlLabel
-							control={
-								<Checkbox
-									checked={deleteImage}
-									onChange={handleDeleteImageChange}
-								/>
-							}
+							control={<Checkbox checked={deleteImage} onChange={handleDeleteImageChange} />}
 							label="Delete current image and use default image"
 						/>
 					</Stack>
 
 					{/* Name */}
 					<Stack spacing={2}>
-						<Typography variant="h6" align="left">
-							Recipe Name
-						</Typography>
+						<Typography variant="h6" align="left">Recipe Name</Typography>
 						<TextField
 							name="name"
 							placeholder="e.g. Classic Lasagna"
@@ -248,18 +228,14 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 							sx={{
 								fontWeight: 600,
 								fontSize: '1.1rem',
-								'& .MuiInputBase-root': {
-									height: 48,
-								},
+								'& .MuiInputBase-root': { height: 48 },
 							}}
 						/>
 					</Stack>
 
 					{/* Category */}
 					<Stack spacing={2} sx={{ width: '100%' }}>
-						<Typography variant="body2" align="left">
-							Select a Category
-						</Typography>
+						<Typography variant="body2" align="left">Select a Category</Typography>
 						<FormControl fullWidth required>
 							<InputLabel id="category-label">Category</InputLabel>
 							<Select
@@ -330,6 +306,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 									key={index}
 									index={index}
 									ingredient={ingredient}
+									errors={ingredientErrors?.[index]}
 									handleIngredientChange={handleIngredientChange}
 									handleRemoveIngredient={() => handleRemoveIngredient(index)}
 								/>
@@ -367,7 +344,6 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 							>
 								+ Add Step
 							</Button>
-							<input type="hidden" name="steps" ref={stepsRef} />
 						</Stack>
 					</Stack>
 

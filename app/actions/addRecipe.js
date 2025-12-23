@@ -108,6 +108,21 @@ export default async function addRecipe(formData) {
 		)
 	).filter(Boolean);
 
+	// Steps array (safe parse)
+	let stepsArray = [];
+	try {
+		const rawSteps = formData.get('steps');
+		if (typeof rawSteps === 'string' && rawSteps.trim().length > 0) {
+			const parsed = JSON.parse(rawSteps);
+			stepsArray = Array.isArray(parsed)
+				? parsed.map((s) => String(s ?? '').trim()).filter(Boolean)
+				: [String(parsed ?? '').trim()].filter(Boolean);
+		}
+	} catch (err) {
+		console.error('Error parsing steps:', err);
+		throw new Error('Invalid steps format');
+	}
+
 	// extract and sanitize other fields
 	const recipeData = {
 		name: (formData.get('name') || '').toString(),

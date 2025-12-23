@@ -17,25 +17,47 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import StepsInputRow from './StepsInputRow';
+import { validateAndCleanRecipeForm } from '@/utils/recipeFormValidation';
 import { toast } from 'react-toastify';
 
 
 export default function RecipeAddForm({ categories }) {
     const [ingredients, setIngredients] = useState([]);
+    const [ingredientErrors, setIngredientErrors] = useState([]);
     const ingredientsRef = useRef(null);
     const [selectedImage, setSelectedImage] = useState(null);
-
     const [steps, setSteps] = useState([]);
     const stepsRef = useRef(null);
 
 
     const handleAddIngredient = () => {
-        setIngredients((prev) => [...prev, { ingredient: '', quantity: '', unit: '', customUnit: '' }]);
+        setIngredients((prev) => [
+            ...prev,
+            { ingredient: '', quantity: '', unit: '', customUnit: '' },
+        ]);
+        setIngredientErrors((prev) => [...prev, {}]);
     };
 
     const handleIngredientChange = (index, field, value) => {
         setIngredients((prev) => {
             const next = prev.map((ing, i) => (i === index ? { ...ing, [field]: value } : ing));
+            return next;
+        });
+
+        // Clear field-level errors as the user edits
+        setIngredientErrors((prev) => {
+            const next = [...(prev || [])];
+            const rowErr = { ...(next[index] || {}) };
+
+            // Clear the specific field error
+            delete rowErr[field];
+
+            // If unit changes away from 'other', also clear customUnit error
+            if (field === 'unit' && String(value ?? '') !== 'other') {
+                delete rowErr.customUnit;
+            }
+
+            next[index] = rowErr;
             return next;
         });
     };
@@ -59,87 +81,30 @@ export default function RecipeAddForm({ categories }) {
     };
 
     const handleFormSubmit = (e) => {
-        // --- Client-side validation to avoid ugly server crashes ---
-        // Remove completely empty rows
-        const cleaned = ingredients
-            .map((row) => {
-                const rawName = row?.ingredient?.name ?? row?.ingredient ?? '';
-                const ingredientName = String(rawName).trim();
-
-                const rawQty = row?.quantity ?? '';
-                const qtyStr = String(rawQty).trim();
-
-                const qty =
-                    typeof rawQty === 'string' && rawQty.includes('/')
-                        ? fractionToDecimal(rawQty)
-                        : rawQty;
-
-                const unitRaw = String(row?.unit ?? '').trim();
-                const customUnit = String(row?.customUnit ?? '').trim();
-                const unit = unitRaw === 'other' ? customUnit : unitRaw;
-
-                return {
-                    ...row,
-                    ingredient: ingredientName,
-                    quantity: qty,
-                    unit,
-                    customUnit,
-                    _meta: { ingredientName, qtyStr, unitRaw, customUnit },
-                };
-            })
-            .filter((row) => {
-                const { ingredientName, qtyStr, unitRaw, customUnit } = row._meta;
-                // Consider row empty if all fields are empty
-                return ingredientName || qtyStr || unitRaw || customUnit;
-            });
-
-        // If they added a row but left the ingredient blank
-        const firstMissingName = cleaned.find((row) => {
-            const { ingredientName } = row._meta;
-            return !ingredientName;
+        const result = validateAndCleanRecipeForm({
+            ingredients,
+            steps,
+            fractionToDecimal,
         });
-        if (firstMissingName) {
-            e?.preventDefault?.();
-            toast.error('Please enter an ingredient name (or delete the empty row).');
+
+        if (!result.ok) {
+            e.preventDefault();
+            // If your validator can return per-row errors later, you can set them here.
+            toast.error(result.message);
             return;
         }
 
-        // If quantity is provided, require a unit (or custom unit when Other)
-        const firstMissingUnit = cleaned.find((row) => {
-            const { qtyStr, unitRaw, customUnit } = row._meta;
-            const hasQty = qtyStr.length > 0;
-            if (!hasQty) return false;
-            if (!unitRaw) return true;
-            if (unitRaw === 'other' && !customUnit) return true;
-            return false;
-        });
-        if (firstMissingUnit) {
-            e?.preventDefault?.();
-            toast.error('If you add a quantity, please choose a unit (or fill in the custom unit).');
-            return;
-        }
+        const { cleanedIngredients, cleanedSteps } = result;
 
-        // If unit is provided, require quantity (keeps the pair consistent)
-        const firstMissingQty = cleaned.find((row) => {
-            const { qtyStr, unitRaw } = row._meta;
-            const hasUnit = unitRaw.length > 0;
-            if (!hasUnit) return false;
-            return qtyStr.length === 0;
-        });
-        if (firstMissingQty) {
-            e?.preventDefault?.();
-            toast.error('If you choose a unit, please enter a quantity.');
-            return;
-        }
+        // Clear any previous inline errors if the overall validation passed
+        setIngredientErrors([]);
 
-        // Strip _meta before submit
-        const processed = cleaned.map(({ _meta, ...row }) => row);
-
+        // Persist cleaned payloads into the hidden inputs for the server action
         if (ingredientsRef.current) {
-            ingredientsRef.current.value = JSON.stringify(processed);
+            ingredientsRef.current.value = JSON.stringify(cleanedIngredients);
         }
         if (stepsRef.current) {
-            stepsRef.current.value = JSON.stringify(steps);
+            stepsRef.current.value = JSON.stringify(cleanedSteps);
         }
     };
 
@@ -271,9 +236,11 @@ export default function RecipeAddForm({ categories }) {
                                 key={index}
                                 index={index}
                                 ingredient={ingredient}
+                                errors={ingredientErrors?.[index]}
                                 handleIngredientChange={handleIngredientChange}
                                 handleRemoveIngredient={() => {
                                     setIngredients((prev) => prev.filter((_, i) => i !== index));
+                                    setIngredientErrors((prev) => (prev || []).filter((_, i) => i !== index));
                                 }}
                             />
                         ))}

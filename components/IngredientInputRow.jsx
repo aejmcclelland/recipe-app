@@ -1,3 +1,4 @@
+// components/IngredientsInputRow.jsx
 'use client';
 
 import { useEffect, useMemo } from 'react';
@@ -8,6 +9,7 @@ import { UNIT_OPTIONS } from '../utils/measurements';
 export default function IngredientInputRow({
   index,
   ingredient,
+  errors,
   handleIngredientChange,
   handleRemoveIngredient,
 }) {
@@ -53,6 +55,11 @@ export default function IngredientInputRow({
     }
   }, [rawUnitValue, allowedUnitValues, ingredient.customUnit, ingredient.unit, handleIngredientChange, index]);
 
+  const fieldError = (key) => {
+    const msg = errors?.[key];
+    return typeof msg === 'string' && msg.trim().length ? msg : undefined;
+  };
+
   return (
     <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
       {/* Row 1: Ingredient (full width always) */}
@@ -61,6 +68,8 @@ export default function IngredientInputRow({
         value={ingredient.ingredient?.name ?? ingredient.ingredient ?? ''}
         onChange={(e) => handleIngredientChange(index, 'ingredient', e.target.value)}
         fullWidth
+        error={!!fieldError('ingredient')}
+        helperText={fieldError('ingredient')}
         sx={{ minWidth: 0 }}
       />
 
@@ -97,6 +106,8 @@ export default function IngredientInputRow({
             onChange={(e) => handleIngredientChange(index, 'quantity', e.target.value)}
             slotProps={{ input: { inputMode: 'decimal' } }}
             fullWidth
+            error={!!fieldError('quantity')}
+            helperText={fieldError('quantity')}
           />
         </Box>
 
@@ -115,6 +126,8 @@ export default function IngredientInputRow({
               }
             }}
             fullWidth
+            error={!!fieldError('unit')}
+            helperText={fieldError('unit')}
           >
             <MenuItem value="">
               <em>Select unit</em>
@@ -142,6 +155,8 @@ export default function IngredientInputRow({
                 if (e.key === 'Enter') e.preventDefault();
               }}
               fullWidth
+              error={!!fieldError('customUnit')}
+              helperText={fieldError('customUnit')}
             />
           )}
         </Box>
