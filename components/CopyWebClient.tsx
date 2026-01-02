@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Box, Container, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import { RecipeResult } from '@/types/recipe';
 import CategorySelect from '@/components/CategorySelect';
 import RecipeForm from '@/components/RecipeForm';

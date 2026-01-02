@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { Box, Typography, CircularProgress, Container } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 import { searchRecipes } from '@/app/actions/searchRecipes';
 

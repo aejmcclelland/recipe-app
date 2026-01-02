@@ -4,7 +4,7 @@
 import { useFilter } from '@/context/FilterContext';
 import { useMemo } from 'react';
 import { Box, Container, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 
 export default function HomeClient({ recipes = [], user }) {

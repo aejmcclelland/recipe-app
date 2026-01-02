@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 import { useFilter } from '@/context/FilterContext';
 
