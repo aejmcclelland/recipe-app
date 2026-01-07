@@ -3,22 +3,22 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Avatar, Tooltip, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { toast } from 'react-toastify';
 import { useSession } from 'next-auth/react';
 import updateProfileImage from '@/app/actions/updateProfileImage';
 
-export default function ProfileImageUpload({ user, onImageUpdated }) {
+export default function ProfileImageUpload({ user, onImageUpdated, fallbackIcon = null }) {
     const { data: session, update } = useSession();
 
-    const fallbackImage = '/images/default-profile.png';
-    const initialImage = user?.image || session?.user?.image || fallbackImage;
+    const initialImage = user?.image || session?.user?.image || null;
 
     const [imagePreview, setImagePreview] = useState(initialImage);
     const [uploading, setUploading] = useState(false);
 
     // If parent/user updates later, keep preview in sync
     useEffect(() => {
-        setImagePreview(user?.image || session?.user?.image || fallbackImage);
+        setImagePreview(user?.image || session?.user?.image || null);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user?.image, session?.user?.image]);
 
@@ -75,9 +75,14 @@ export default function ProfileImageUpload({ user, onImageUpdated }) {
             }}
         >
             <Avatar
-                src={imagePreview}
+                src={imagePreview || undefined}
                 alt={user?.name || 'User Avatar'}
-               
+                slotProps={{
+                    img: {
+                        referrerPolicy: 'no-referrer',
+                    },
+                }}
+                onError={() => setImagePreview(null)}
                 sx={{
                     width: 100,
                     height: 100,
@@ -85,8 +90,9 @@ export default function ProfileImageUpload({ user, onImageUpdated }) {
                     objectFit: 'cover',
                     boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
                 }}
-            
-            />
+            >
+                {fallbackIcon ?? <AccountCircleIcon fontSize="large" />}
+            </Avatar>
 
             <Tooltip title="Change profile picture">
                 <IconButton

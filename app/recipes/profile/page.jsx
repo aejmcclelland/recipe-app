@@ -7,7 +7,6 @@ import Recipe from '@/models/Recipe';
 import User from '@/models/User';
 import { getSessionUser } from '@/utils/getSessionUser';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
-import defaultProfile from '@/public/images/default-profile.png';
 import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 import { serializeBookmarks } from '@/utils/serializeBookmarks';
 import BookmarkRecipeCard from '@/components/BookmarkRecipeCard';
@@ -52,7 +51,7 @@ const ProfilePage = async () => {
             lastName: userDoc.lastName || '',
             email: userDoc.email || '',
             emailVerified: !!userDoc.emailVerified,
-            image: sessionUser.image || userDoc.image || defaultProfile?.src || defaultProfile,
+            image: sessionUser.image || userDoc.image || null,
         };
 
         // Fetch user's bookmarked recipes
