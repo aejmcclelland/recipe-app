@@ -61,11 +61,7 @@ UserSchema.methods.comparePassword = async function (
 	return await bcrypt.compare(candidatePassword, this.password!);
 };
 
-// In Next.js dev (hot reload), Mongoose may keep an old compiled model (including old middleware).
-// When we change schema middleware, we need to drop the cached model so the new hooks take effect.
-if (process.env.NODE_ENV !== 'production' && mongoose.models.User) {
-	delete mongoose.models.User;
-}
+const User: Model<IUser> =
+	(mongoose.models.User as Model<IUser>) || mongoose.model<IUser>('User', UserSchema);
 
-const User: Model<IUser> = mongoose.model<IUser>('User', UserSchema);
 export default User;
