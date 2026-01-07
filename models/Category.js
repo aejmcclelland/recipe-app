@@ -1,5 +1,5 @@
-import pkg from 'mongoose'; // Import the entire mongoose package
-const { Schema, model, models } = pkg;
+import mongoose from 'mongoose';
+const { Schema, model, models } = mongoose;
 
 const CategorySchema = new Schema({
 	name: {

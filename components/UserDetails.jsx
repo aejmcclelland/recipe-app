@@ -2,11 +2,12 @@
 
 import React, { useMemo, useState } from 'react';
 import { Box, Typography, Stack, Divider } from '@mui/material';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ProfileImageUpload from './ProfileImageUpload';
 import ProfileDetailsForm from './ProfileDetailsForm';
 
 export default function UserDetails({ user, onDetailsUpdated }) {
-	const [userImage, setUserImage] = useState(user?.image || '/default-profile.png');
+	const [userImage, setUserImage] = useState(user?.image || null);
 
 	const fullName = useMemo(() => {
 		const first = (user?.firstName || '').trim();
@@ -44,7 +45,11 @@ export default function UserDetails({ user, onDetailsUpdated }) {
 			}}
 		>
 			{/* Avatar */}
-			<ProfileImageUpload user={profileUser} onImageUpdated={handleImageUpdate} />
+			<ProfileImageUpload
+				user={profileUser}
+				onImageUpdated={handleImageUpdate}
+				fallbackIcon={<AccountCircleIcon fontSize="large" />}
+			/>
 
 			{/* Header */}
 			<Typography variant="h5" sx={{ mt: 1 }}>

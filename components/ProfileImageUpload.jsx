@@ -76,7 +76,8 @@ export default function ProfileImageUpload({ user, onImageUpdated }) {
         >
             <Avatar
                 src={imagePreview}
-                alt={user.name || 'User Avatar'}
+                alt={user?.name || 'User Avatar'}
+               
                 sx={{
                     width: 100,
                     height: 100,
@@ -84,6 +85,7 @@ export default function ProfileImageUpload({ user, onImageUpdated }) {
                     objectFit: 'cover',
                     boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
                 }}
+            
             />
 
             <Tooltip title="Change profile picture">

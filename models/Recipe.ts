@@ -1,5 +1,9 @@
 // models/Recipe.ts
 import mongoose, { Schema, model, models, type Model, type Document } from 'mongoose';
+// Ensure referenced models are registered before any populate() calls
+import './Category';
+import './Ingredient';
+import './User';
 
 export type RecipeIngredientItem = {
 	ingredient: mongoose.Types.ObjectId;
