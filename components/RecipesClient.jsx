@@ -21,7 +21,7 @@ export default function RecipesClient({ recipes, user }) {
             <Grid container spacing={4} justifyContent="center">
                 {filteredRecipes.length > 0 ? (
                     filteredRecipes.map((recipe) => (
-                        <Grid key={recipe._id.toString()} xs={12} sm={6} md={4}>
+                        <Grid key={recipe._id.toString()} size={{ xs: 12, sm: 6, md: 4 }}>
                             <RecipeOverviewCard
                                 recipe={recipe}
                                 user={user}

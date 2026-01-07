@@ -14,7 +14,7 @@ export default function Hero() {
                 Get started with your personal recipe collection
             </Typography>
             <Grid container spacing={4} justifyContent="center" mt={2}>
-                <Grid item xs={12} sm={6} md={4}>
+                <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                     <Card sx={{ textAlign: 'center' }}>
                         <CardContent>
                             <Typography variant="h6">Copy & Paste from the Web</Typography>
@@ -27,7 +27,7 @@ export default function Hero() {
                         </CardContent>
                     </Card>
                 </Grid>
-                <Grid item xs={12} sm={6} md={4}>
+                <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                     <Card sx={{ textAlign: 'center' }}>
                         <CardContent>
                             <Typography variant="h6">Add Manually</Typography>

@@ -41,7 +41,7 @@ export default function HomeClient({ recipes = [], user }) {
 			<Grid container spacing={4} justifyContent="center">
 				{filteredRecipes.length > 0 ? (
 					filteredRecipes.map((recipe) => (
-						<Grid xs={12} sm={6} md={4} key={recipe._id}>
+						<Grid size={{ xs: 12, sm: 6, md: 4 }} key={recipe._id}>
 							<RecipeOverviewCard
 								recipe={recipe}
 								user={user}

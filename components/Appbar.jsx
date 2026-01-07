@@ -21,7 +21,7 @@ import { shadowsIntoLight } from '@/app/fonts/fonts';
 
 export default function SearchAppBar() {
 	const theme = useTheme();
-	const isMobile = useMediaQuery(theme.breakpoints.down('tablet'));
+	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 	const pathname = usePathname();
 	const isDetailPage =
 		pathname.startsWith('/recipes/') && pathname.split('/').length === 3;
@@ -30,53 +30,69 @@ export default function SearchAppBar() {
 	return (
 		<Box sx={{ flexGrow: 1 }}>
 			<AppBar className="no-print" position='static'>
-				<Toolbar>
-					<Link href='/' passHref>
-						<Box
+				<Toolbar
+					sx={{
+						display: 'flex',
+						alignItems: 'center',
+						px: isMobile ? 1 : 2,
+						gap: isMobile ? 0.5 : 1,
+						minWidth: 0,
+					}}>
+					<Box
+						component={Link}
+						href='/'
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							flex: '1 1 auto',
+							minWidth: 0,
+							justifyContent: isMobile ? 'flex-start' : 'center',
+							overflow: 'hidden',
+							textDecoration: 'none',
+							color: 'inherit',
+						}}>
+						<RestaurantOutlinedIcon
+							sx={{ fontSize: isMobile ? '1.7rem' : '2rem', mr: isMobile ? 0.5 : 1 }}
+						/>
+						<Typography
+							variant='h6'
+							noWrap
 							sx={{
-								display: 'flex',
-								alignItems: 'center',
-								flexGrow: 1,
-								justifyContent: 'center',
+								fontSize: isMobile ? '1.1rem' : '1.5rem',
+								mr: isMobile ? 0 : 0.5,
 							}}>
-							<RestaurantOutlinedIcon sx={{ fontSize: '2rem', mr: 1 }} />
-							<Typography
-								variant='h6'
-								sx={{
-									fontSize: isMobile ? '1.2rem' : '1.5rem',
-									mr: isMobile ? 0 : 0.5,
-								}}>
-								Rebekah&#39;s
-							</Typography>
-							<Typography
-								variant='h6'
-								sx={{
-									fontFamily: shadowsIntoLight.style.fontFamily,
-									fontSize: isMobile ? '1.2rem' : '1.5rem',
-								}}>
-								Recipes
-							</Typography>
-						</Box>
-					</Link>
+							Rebekah&#39;s
+						</Typography>
+						<Typography
+							variant='h6'
+							noWrap
+							sx={{
+								fontFamily: shadowsIntoLight.style.fontFamily,
+								fontSize: isMobile ? '1.1rem' : '1.5rem',
+							}}>
+							Recipes
+						</Typography>
+					</Box>
 
 					<Box
 						sx={{
 							display: 'flex',
 							alignItems: 'center',
+							flexShrink: 0,
 							ml: 'auto',
 						}}>
 						{session && (
 							<>
 								<Tooltip title='Add a Recipe' placement='bottom'>
 									<Link href='/recipes/add' passHref>
-										<IconButton color='inherit' sx={{ mr: 2 }}>
+										<IconButton color='inherit' sx={{ mr: isMobile ? 0.5 : 2 }}>
 											<AddCircleIcon sx={{ fontSize: '2rem' }} />
 										</IconButton>
 									</Link>
 								</Tooltip>
 								<Tooltip title='Import from Web' placement='bottom'>
 									<Link href='/recipes/copyWeb' passHref>
-										<IconButton color='inherit' sx={{ mr: 2 }}>
+										<IconButton color='inherit' sx={{ mr: isMobile ? 0.5 : 2 }}>
 											<LanguageIcon sx={{ fontSize: '2rem' }} />
 										</IconButton>
 									</Link>

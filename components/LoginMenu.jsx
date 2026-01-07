@@ -1,9 +1,10 @@
 // components/LoginMenu.jsx
 'use client';
 
-import React, { useState } from 'react';
-import { Avatar, Menu, MenuItem, IconButton, Typography, Tooltip } from '@mui/material';
-import { AccountCircle as AccountCircleIcon } from '@mui/icons-material';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Menu, MenuItem, IconButton, Typography, Tooltip } from '@mui/material';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Avatar from '@mui/material/Avatar';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
@@ -15,37 +16,43 @@ export default function LoginMenu() {
     const handleOpenMenu = (event) => setAnchorEl(event.currentTarget);
     const handleCloseMenu = () => setAnchorEl(null);
 
-    const avatarSrc = React.useMemo(() => {
+    const avatarUrl = useMemo(() => {
         const img = session?.user?.image;
 
-        // If we have a real URL (Cloudinary / Google / etc.), use it.
         if (img && typeof img === 'string' && img.trim() && !img.includes('default-profile')) {
-            // Cache-bust only when the image value changes (not every render)
             const url = img.trim();
             const sep = url.includes('?') ? '&' : '?';
             return `${url}${sep}v=${encodeURIComponent(url)}`;
         }
 
-        // Next.js public assets must be referenced from the web root
-        return '/images/default-profile.png';
+        // No custom avatar available
+        return null;
     }, [session?.user?.image]);
+
+    const [avatarImgError, setAvatarImgError] = useState(false);
+
+    // If the user changes their avatar URL, allow the image to try loading again
+    useEffect(() => {
+        setAvatarImgError(false);
+    }, [avatarUrl]);
 
     return (
         <>
             <Tooltip title={session?.user ? 'Account' : 'Sign In'}>
                 <IconButton onClick={handleOpenMenu} sx={{ p: 0 }}>
                     <Avatar
-                        src={avatarSrc}
+                        src={avatarUrl && !avatarImgError ? avatarUrl : undefined}
                         alt={session?.user?.name || 'User Avatar'}
-                        imgProps={{
-                            referrerPolicy: 'no-referrer',
+                        sx={{ width: 32, height: 32, bgcolor: 'transparent', color: 'inherit' }}
+                        slotProps={{
+                            image: {
+                                referrerPolicy: 'no-referrer',
+                            },
                         }}
-                        onError={(e) => {
-                            // Fallback if the remote image fails to load
-                            const img = e.currentTarget.querySelector('img');
-                            if (img) img.src = '/images/default-profile.png';
-                        }}
-                    />
+                        onError={() => setAvatarImgError(true)}
+                    >
+                        <AccountCircleIcon fontSize='large' />
+                    </Avatar>
                 </IconButton>
             </Tooltip>
 
@@ -88,9 +95,11 @@ export default function LoginMenu() {
                         </MenuItem>,
                         <MenuItem
                             key="logout"
-                            onClick={() => {
+                            onClick={async () => {
                                 handleCloseMenu();
-                                signOut();
+                                await signOut({ redirect: false });
+                                router.push('/recipes/signin');
+                                router.refresh();
                             }}
                         >
                             <Typography textAlign="center">Logout</Typography>

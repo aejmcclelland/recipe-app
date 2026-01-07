@@ -42,16 +42,15 @@ const UserSchema = new Schema<IUser>(
 );
 
 // Hash the password before saving
-UserSchema.pre<IUser>('save', async function (next: (err?: Error) => void) {
-	if (!this.isModified('password')) return next();
+UserSchema.pre<IUser>('save', async function () {
+	// Only hash when password is created/changed
+	if (!this.isModified('password')) return;
 
-	try {
-		const salt = await bcrypt.genSalt(10);
-		this.password = await bcrypt.hash(this.password!, salt);
-		next();
-	} catch (err) {
-		next(err as Error);
-	}
+	// OAuth users may not have a password
+	if (!this.password) return;
+
+	const salt = await bcrypt.genSalt(10);
+	this.password = await bcrypt.hash(this.password, salt);
 });
 
 // Compare password steps
@@ -62,6 +61,11 @@ UserSchema.methods.comparePassword = async function (
 	return await bcrypt.compare(candidatePassword, this.password!);
 };
 
-const User: Model<IUser> =
-	mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
+// In Next.js dev (hot reload), Mongoose may keep an old compiled model (including old middleware).
+// When we change schema middleware, we need to drop the cached model so the new hooks take effect.
+if (process.env.NODE_ENV !== 'production' && mongoose.models.User) {
+	delete mongoose.models.User;
+}
+
+const User: Model<IUser> = mongoose.model<IUser>('User', UserSchema);
 export default User;

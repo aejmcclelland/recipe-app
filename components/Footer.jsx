@@ -24,7 +24,7 @@ const Footer = () => {
                     }}
                 >
                     {/* Brand Section */}
-                    <Grid item xs={12} sm={4}>
+                    <Grid size={{ xs: 12, sm: 4 }}>
                         <Box display="flex" alignItems="center" justifyContent={{ xs: 'center', sm: 'flex-start' }}>
                             <IconButton edge="start" aria-label="restaurant-icon">
                                 <RestaurantOutlinedIcon sx={{ fontSize: '2rem', color: '#ffffff' }} />
@@ -39,7 +39,7 @@ const Footer = () => {
                     </Grid>
 
                     {/* Legal Section */}
-                    <Grid item xs={12} sm={4}>
+                    <Grid size={{ xs: 12, sm: 4 }}>
                         <Typography variant="subtitle1" gutterBottom>
                             Legal
                         </Typography>
@@ -54,7 +54,7 @@ const Footer = () => {
                     </Grid>
 
                     {/* Contact Section */}
-                    <Grid item xs={12} sm={4}>
+                    <Grid size={{ xs: 12, sm: 4 }}>
                         <Typography variant="subtitle1" gutterBottom>
                             Contact Us
                         </Typography>
