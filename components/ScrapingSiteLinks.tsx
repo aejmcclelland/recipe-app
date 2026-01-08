@@ -1,3 +1,4 @@
+'use client';
 import { Box, Button, Stack } from '@mui/material';
 import Link from 'next/link';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -11,32 +12,36 @@ export default function ScrapingSiteLinks() {
 	return (
 		<Box
 			sx={{
-				mb: 3,
+				mb: 6,
 				width: '100%',
-				maxWidth: { mobile: '100%', laptop: 500 },
+				maxWidth: 500,
 				mx: 'auto',
+				px: { xs: 2, sm: 0 },
 			}}>
 			<Stack
-				direction={{ mobile: 'column', laptop: 'row' }}
-				spacing={2}
-				sx={{ width: '100%', maxWidth: 500, mx: 'auto' }}>
+				direction={{ xs: 'column', sm: 'row' }}
+				spacing={{ xs: 2, sm: 3 }}
+				sx={{ width: '100%' }}>
 				{sites.map((site) => (
-					<Box key={site.name} sx={{ width: '100%' }}>
+					<Box key={site.name} sx={{ width: '100%', flex: 1 }}>
 						<Link
 							href={site.url}
-							target='_blank'
-							rel='noopener noreferrer'
+							target="_blank"
+							rel="noopener noreferrer"
 							style={{
 								textDecoration: 'none',
 								width: '100%',
 								display: 'block',
 							}}>
 							<Button
-								endIcon={<OpenInNewIcon />}
-								variant='contained'
 								fullWidth
+								endIcon={<OpenInNewIcon />}
+								variant="contained"
+								color="secondary"
 								sx={{
 									borderRadius: '12px',
+									py: 1.25,
+									textTransform: 'none',
 								}}>
 								{site.name}
 							</Button>

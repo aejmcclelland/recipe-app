@@ -44,9 +44,8 @@ export default function SearchAppBar() {
 						sx={{
 							display: 'flex',
 							alignItems: 'center',
-							flex: '1 1 auto',
 							minWidth: 0,
-							justifyContent: isMobile ? 'flex-start' : 'center',
+							justifyContent: 'flex-start',
 							overflow: 'hidden',
 							textDecoration: 'none',
 							color: 'inherit',
