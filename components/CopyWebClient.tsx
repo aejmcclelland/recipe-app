@@ -24,10 +24,21 @@ const CopyWebClient: React.FC<CopyWebClientProps> = ({ categories }) => {
 	const router = useRouter();
 
 	useEffect(() => {
+		console.log('CopyWebClient mounted');
+	}, []);
+
+	useEffect(() => {
 		const persistRecipe = async () => {
 			if (save && data && selectedCategoryId) {
 				try {
+					console.log(
+						'ABOUT TO SAVE:',
+						data.image,
+						data.title,
+						selectedCategoryId,
+					);
 					const newRecipe = await saveScrapedRecipe(data, selectedCategoryId);
+					console.log('CLIENT RECEIVED:', newRecipe.image, newRecipe.title);
 					toast.success('Recipe saved!');
 					router.push(`/recipes/${newRecipe._id}`);
 				} catch (error) {
@@ -66,6 +77,9 @@ const CopyWebClient: React.FC<CopyWebClientProps> = ({ categories }) => {
 				</Typography>
 				<ScrapingSiteLinks />
 				<RecipeForm url={url} setUrl={setUrl} setData={setData} />
+				<Typography variant='caption' sx={{ mt: 2, opacity: 0.8 }}>
+					Status: {data ? `Loaded: ${data.title}` : 'No recipe loaded yet'}
+				</Typography>
 			</Box>
 
 			{data && (

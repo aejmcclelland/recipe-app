@@ -5,7 +5,6 @@ import { Box, IconButton, Tooltip } from '@mui/material';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import PrintIcon from '@mui/icons-material/Print';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
-import SaveRecipeButton from './SaveRecipeButton';
 import SaveIcon from '@mui/icons-material/Save';
 import { toast } from 'react-toastify';
 
@@ -59,8 +58,8 @@ const ButtonToolbar: React.FC<ButtonToolbarProps> = ({
 			sx={{
 				position: 'fixed',
 				bottom: {
-					mobile: 230,
-					laptop: 150,
+					xs: 230,
+					md: 150,
 				},
 				left: '50%',
 				transform: 'translateX(-50%)',
@@ -121,7 +120,9 @@ const ButtonToolbar: React.FC<ButtonToolbarProps> = ({
 			</Tooltip>
 			<Tooltip title='Save Recipe'>
 				<IconButton
+					disabled={!!save}
 					onClick={() => {
+						if (save) return;
 						if (!categoryId) {
 							toast.error('Please select a category before saving');
 							return;
@@ -134,6 +135,7 @@ const ButtonToolbar: React.FC<ButtonToolbarProps> = ({
 						width: 64,
 						height: 64,
 						color: 'white',
+						opacity: save ? 0.6 : 1,
 						'&:hover': { backgroundColor: '#b71c1c' },
 					}}>
 					<SaveIcon fontSize='medium' />
