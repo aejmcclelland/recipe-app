@@ -9,6 +9,8 @@ import { convertToSerializeableObject } from '@/utils/convertToObject';
 export async function searchRecipes({ searchQuery, ingredients, category }) {
 	await connectDB();
 
+	const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 	const orFilters = [];
 	const andFilters = [];
 
@@ -17,18 +19,22 @@ export async function searchRecipes({ searchQuery, ingredients, category }) {
 
 	// 1) Name-based search
 	if (nameTerm) {
-		orFilters.push({ name: { $regex: nameTerm, $options: 'i' } });
+		orFilters.push({ name: { $regex: escapeRegex(nameTerm), $options: 'i' } });
 	}
 
-	// 2. Ingredient-based search
+	// 2) Ingredient-based search
 	const ingredientSearch = ingredientTerm || nameTerm;
 	if (ingredientSearch) {
-		// Find ingredient IDs that match the search term
 		const matchedIngredients = await Ingredient.find({
-			name: { $regex: ingredientSearch, $options: 'i' },
+			name: { $regex: escapeRegex(ingredientSearch), $options: 'i' },
 		}).select('_id');
 
-		//check if user is doing an ingredient search and if nothing matches return empty array
+		// If the user explicitly typed something into the ingredient field and nothing matches,
+		// return no results rather than falling back to category/all.
+		if (ingredientTerm && matchedIngredients.length === 0) {
+			return [];
+		}
+
 		if (matchedIngredients.length > 0) {
 			orFilters.push({
 				'ingredients.ingredient': {
