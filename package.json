@@ -7,7 +7,10 @@
     "dev": "next dev --webpack",
     "build": "NODE_OPTIONS=--trace-deprecation next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -35,6 +38,7 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.1",
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^25.2.0",
     "@types/react": "19.2.11",
