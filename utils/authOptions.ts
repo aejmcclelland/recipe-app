@@ -6,6 +6,13 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import connectDB from '@/config/database';
 import User from '@/models/User';
 
+type TokenUser = {
+	id: string;
+	email?: string | null;
+	name?: string | null;
+	image?: string | null;
+};
+
 export const authOptions: AuthOptions = {
 	providers: [
 		GoogleProvider({
@@ -115,30 +122,38 @@ export const authOptions: AuthOptions = {
 		async jwt({ token, user, trigger, session }) {
 			// Initial sign-in
 			if (user && (user as any).id) {
-				token.user = {
+				(token as any).user = {
 					id: (user as any).id,
 					email: user.email,
 					name: user.name,
 					image: user.image,
-				};
+				} satisfies TokenUser;
 			}
 
 			// ✅ Allow client-side `useSession().update()` to refresh token values
-			if (trigger === 'update' && session?.user && token.user) {
-				token.user.name = session.user.name ?? token.user.name;
-				token.user.email = session.user.email ?? token.user.email;
-				token.user.image = session.user.image ?? token.user.image;
+			const tokenUser = (token as any).user as TokenUser | undefined;
+			const sessionUser = (session as any)?.user as
+				| Pick<TokenUser, 'name' | 'email' | 'image'>
+				| undefined;
+
+			if (trigger === 'update' && sessionUser && tokenUser) {
+				tokenUser.name = sessionUser.name ?? tokenUser.name;
+				tokenUser.email = sessionUser.email ?? tokenUser.email;
+				tokenUser.image = sessionUser.image ?? tokenUser.image;
+				(token as any).user = tokenUser;
 			}
 
 			return token;
 		},
 
 		async session({ session, token }) {
-			if (session.user && token?.user) {
-				session.user.id = token.user.id;
-				session.user.email = token.user.email;
-				session.user.name = token.user.name;
-				session.user.image = token.user.image;
+			const tokenUser = (token as any).user as TokenUser | undefined;
+
+			if (session.user && tokenUser) {
+				session.user.id = tokenUser.id;
+				session.user.email = tokenUser.email ?? undefined;
+				session.user.name = tokenUser.name ?? undefined;
+				session.user.image = tokenUser.image ?? undefined;
 			}
 
 			return session;

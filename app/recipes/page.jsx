@@ -1,4 +1,4 @@
-
+// app/recipes/page.jsx
 import connectDB from '@/config/database';
 import Recipe from '../../models/Recipe';
 import { Container } from '@mui/material';
@@ -16,11 +16,13 @@ export default async function RecipesPage() {
     if (!sessionUser) {
         redirect('/recipes/signin');
     }
-    const user = sessionUser?.user || null;
+    const user = { id: sessionUser.id, ...sessionUser };
     try {
         await connectDB();
 
-        const recipes = await Recipe.find().populate('category').lean();
+        const recipes = await Recipe.find({ user: sessionUser.id })
+            .populate('category')
+            .lean();
         const recipesWithIds = convertToSerializeableObject(recipes);
 
         // Fetch user data
@@ -29,7 +31,7 @@ export default async function RecipesPage() {
 
 
         return (
-            <Container>
+            <Container data-testid="recipes-page">
                 <RecipeSearchForm />
                 <RecipesClient recipes={recipesWithIds} user={user} />
                 <BackToHomeButton />
@@ -38,10 +40,9 @@ export default async function RecipesPage() {
     } catch (error) {
         console.error('Error loading RecipesPage:', error.message);
         return (
-            <Container>
+            <Container data-testid="recipes-page">
                 <p>Something went wrong while loading the recipes. Please try again later.</p>
             </Container>
         );
     }
 }
-

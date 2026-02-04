@@ -121,7 +121,10 @@ export default function SignInForm() {
 	};
 
 	return (
-		<Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 4 }}>
+		<Box
+			data-testid="signin-page"
+			sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 4 }}
+		>
 			<Paper sx={{ p: 4, width: '100%', maxWidth: 420, textAlign: 'center' }}>
 				<Typography variant="h4" gutterBottom>
 					Sign in to Rebekah’s Recipes
@@ -171,6 +174,7 @@ export default function SignInForm() {
 											setNeedsVerification(false);
 										}}
 										autoComplete="email"
+										inputProps={{ 'data-testid': 'signin-email' }}
 										slotProps={{
 											input: {
 												startAdornment: (
@@ -182,7 +186,7 @@ export default function SignInForm() {
 										}}
 									/>
 
-									<Button
+									<Button data-testid="signin-continue"
 										variant="contained"
 										type="submit"
 										fullWidth
@@ -212,6 +216,7 @@ export default function SignInForm() {
 										value={password}
 										onChange={(e) => setPassword(e.target.value)}
 										autoComplete="current-password"
+										inputProps={{ 'data-testid': 'signin-password' }}
 										slotProps={{
 											input: {
 												startAdornment: (
@@ -229,7 +234,7 @@ export default function SignInForm() {
 										</MuiLink>
 									</Stack>
 									{needsVerification && (
-										<Button
+										<Button data-testid="signin-resend-verification"
 											variant="outlined"
 											disabled={isLoading || !canContinue}
 											onClick={async () => {
@@ -246,7 +251,7 @@ export default function SignInForm() {
 											Resend verification email
 										</Button>
 									)}
-									<Button
+									<Button data-testid="signin-submit"
 										variant="contained"
 										type="submit"
 										fullWidth
