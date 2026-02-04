@@ -9,24 +9,28 @@ import { convertToSerializeableObject } from '@/utils/convertToObject';
 export async function searchRecipes({ searchQuery, ingredients, category }) {
 	await connectDB();
 
-	const filters = [];
+	const orFilters = [];
+	const andFilters = [];
 
-	// 1. Recipe name-based search
-	if (searchQuery) {
-		filters.push({ name: { $regex: searchQuery, $options: 'i' } });
+	const nameTerm = (searchQuery || '').trim();
+	const ingredientTerm = (ingredients || '').trim();
+
+	// 1) Name-based search
+	if (nameTerm) {
+		orFilters.push({ name: { $regex: nameTerm, $options: 'i' } });
 	}
 
 	// 2. Ingredient-based search
-	if (ingredients || searchQuery) {
-		const ingredientSearch = ingredients || searchQuery;
-
+	const ingredientSearch = ingredientTerm || nameTerm;
+	if (ingredientSearch) {
 		// Find ingredient IDs that match the search term
 		const matchedIngredients = await Ingredient.find({
 			name: { $regex: ingredientSearch, $options: 'i' },
 		}).select('_id');
 
+		//check if user is doing an ingredient search and if nothing matches return empty array
 		if (matchedIngredients.length > 0) {
-			filters.push({
+			orFilters.push({
 				'ingredients.ingredient': {
 					$in: matchedIngredients.map((ing) => ing._id),
 				},
@@ -36,21 +40,15 @@ export async function searchRecipes({ searchQuery, ingredients, category }) {
 
 	// 3. Category-based search
 	if (category) {
-		filters.push({ category });
+		andFilters.push({ category });
 	}
+	//Build final Query
+	if (orFilters.length > 0) andFilters.push({ $or: orFilters });
+	const query = andFilters.length > 0 ? { $and: andFilters } : {};
 
-	// Combine filters with $or to allow name or ingredient matching
-	const query = filters.length > 0 ? { $or: filters } : {};
-
-	try {
-		const recipes = await Recipe.find(query)
-			.populate('ingredients.ingredient') // Populate ingredient details for display
-			.lean();
-
-		console.log('Recipes found:', recipes);
-		return convertToSerializeableObject(recipes);
-	} catch (error) {
-		console.error('Error in searchRecipes:', error);
-		throw new Error('Error fetching recipes');
-	}
+	// Execute the query
+	const recipes = await Recipe.find(query)
+		.populate('ingredients.ingredient')
+		.lean();
+	return convertToSerializeableObject(recipes);
 }
