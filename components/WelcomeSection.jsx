@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export default function WelcomeSection() {
     return (
-        <Box sx={{ py: 8, textAlign: 'center' }}>
+        <Box data-testid="welcome-section"  sx={{ py: 8, textAlign: 'center' }}>
             <Typography variant="h3" gutterBottom>
                 Start building your Recipe Collection
             </Typography>
