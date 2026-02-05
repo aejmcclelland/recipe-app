@@ -72,7 +72,6 @@ export default async function updateProfileImage(imageFile) {
 			throw new Error('Image upload failed');
 		}
 	} catch (err) {
-		// Avoid noisy logs in production, but keep debugging help locally.
 		if (process.env.NODE_ENV === 'development') {
 			console.error('Failed to upload profile image:', err);
 		}

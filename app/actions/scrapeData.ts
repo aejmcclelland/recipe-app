@@ -21,15 +21,7 @@ export async function scrapeData(formData: FormData) {
 		throw new Error('This site is not supported yet');
 	}
 
-	// Helpful server-side debug
-	console.log('SCRAPED:', {
-		title: data?.title,
-		image: data?.image,
-		ingredientsCount: data?.ingredients?.length,
-		stepsCount: data?.steps?.length,
-	});
-
-	// Fail loudly so the client doesn’t see a silent "success"
+	// Fail clearly so the client doesn’t see a silent "success"
 	if (!data?.title) throw new Error('Scrape failed: missing title');
 	if (!data?.ingredients?.length) throw new Error('Scrape failed: missing ingredients');
 	if (!data?.steps?.length) throw new Error('Scrape failed: missing steps');

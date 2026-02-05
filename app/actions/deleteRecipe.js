@@ -1,10 +1,11 @@
+// This action deletes a recipe by its ID, including the associated image from Cloudinary if it exists and is not the default placeholder image. After deletion, it redirects the user back to the recipes page.
 'use server';
 
 import cloudinary from '@/config/cloudinary';
 import connectDB from '@/config/database';
 import Recipe from '@/models/Recipe';
-import { revalidatePath } from 'next/cache';
-import mongoose from 'mongoose';
+// import { revalidatePath } from 'next/cache';
+// import mongoose from 'mongoose';
 import { redirect } from 'next/navigation';
 
 async function deleteRecipe(recipeId) {

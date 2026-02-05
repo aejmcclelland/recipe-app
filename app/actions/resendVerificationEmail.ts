@@ -25,8 +25,8 @@ export async function resendVerificationEmail(
 	if (user.emailVerified) return { ok: true };
 
 	if (!process.env.JWT_SECRET) {
-		// Avoid breaking the flow if env is misconfigured (especially in production).
-		// We still return ok to prevent account enumeration.
+		// Avoid breaking the flow if env is misconfigured 
+		//  return ok to prevent account enumeration.
 		console.error('JWT_SECRET is not configured');
 		return { ok: true };
 	}

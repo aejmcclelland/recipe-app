@@ -17,7 +17,7 @@ export async function deleteAccount() {
 
 	const userId = sessionUser.id;
 
-	// Optional: cascade delete user-owned data
+	// cascade delete user-owned data
 	await Recipe.deleteMany({ user: userId });
 	await Bookmark.deleteMany({ user: userId });
 

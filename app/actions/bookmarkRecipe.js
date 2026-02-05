@@ -9,7 +9,7 @@ async function bookmarkRecipe(recipeId, recipeName) {
 	try {
 		await connectDB();
 
-		// 🔍 Debug: Log session before checking
+		//  Debug: Log session before checking
 		const sessionUser = await getSessionUser();
 
 		// Ensure sessionUser is valid
@@ -18,7 +18,7 @@ async function bookmarkRecipe(recipeId, recipeName) {
 			throw new Error('You must be logged in to bookmark a recipe');
 		}
 
-		const userId = sessionUser.id; // ✅ Fix: Directly use `userId`
+		const userId = sessionUser.id; //  Directly use `userId`
 
 		// Validate recipeId
 		if (!recipeId || typeof recipeId !== 'string') {
