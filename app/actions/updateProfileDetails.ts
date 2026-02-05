@@ -31,7 +31,6 @@ const normalizeName = (value: unknown): string => (value ?? '').toString().trim(
 /**
  * Updates the logged-in user's profile.
  * If the email address changes, the user is required to verify the new email again
- * (Netlify-style behaviour).
  */
 export default async function updateProfileDetails(
   { email, firstName, lastName }: UpdateProfileDetailsInput
@@ -95,7 +94,7 @@ export default async function updateProfileDetails(
 
   const saved = await user.save();
 
-  // Fire-and-forget-ish email (don’t block the profile update if it fails)
+  // email (don’t block the profile update if it fails)
   if (emailChanged) {
     try {
       await resendVerificationEmail(nextEmail);
