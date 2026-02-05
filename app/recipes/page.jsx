@@ -1,4 +1,6 @@
 // app/recipes/page.jsx
+export const dynamic = 'force-dynamic';
+
 import connectDB from '@/config/database';
 import Recipe from '../../models/Recipe';
 import { Container } from '@mui/material';
@@ -9,7 +11,6 @@ import RecipesClient from '@/components/RecipesClient';
 import { getSessionUser } from '@/utils/getSessionUser';
 import { redirect } from 'next/navigation';
 
-export const dynamic = 'force-dynamic';
 
 export default async function RecipesPage() {
     const sessionUser = await getSessionUser();
