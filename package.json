@@ -31,7 +31,7 @@
     "next": "16.1.6",
     "next-auth": "^4.24.13",
     "next-cloudinary": "^6.17.5",
-    "nodemailer": "^8.0.0",
+    "nodemailer": "^8.0.4",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-toastify": "^11.0.5",
