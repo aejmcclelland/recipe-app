@@ -28,7 +28,7 @@
     "jspdf": "^4.2.1",
     "mongodb": "^7.1.0",
     "mongoose": "^9.1.6",
-    "next": "16.1.6",
+    "next": "16.2.3",
     "next-auth": "^4.24.13",
     "next-cloudinary": "^6.17.5",
     "nodemailer": "^8.0.0",
