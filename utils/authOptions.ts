@@ -62,7 +62,7 @@ export const authOptions: AuthOptions = {
 				// Block sign-in until the user's email is verified.
 				// Do this after password validation to avoid leaking account state.
 				if (!user.emailVerified) {
-					return Promise.reject(new Error('EMAIL_NOT_VERIFIED'));
+					throw new Error('EMAIL_NOT_VERIFIED');
 				}
 
 				return {
