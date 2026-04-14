@@ -113,7 +113,7 @@ export const authOptions: AuthOptions = {
 					await existingUser.save();
 				}
 
-				(user as any).id = existingUser._id.toString();
+				(user as any).id = existingUser._id?.toString();
 			}
 
 			return true;
