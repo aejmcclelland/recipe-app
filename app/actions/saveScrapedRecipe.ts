@@ -69,8 +69,21 @@ export async function saveScrapedRecipe(data: unknown, categoryId: string) {
 	await connectDB();
 	const user = await getSessionUser();
 
-	if (!user?.id || !categoryId) {
-		throw new Error('Unauthorized or missing category');
+	const userId = (user as any)?.id ?? (user as any)?.userId;
+	const safeCategoryId = typeof categoryId === 'string' ? categoryId.trim() : '';
+
+	// Helpful debug while diagnosing intermittent auth/category issues
+	console.log('saveScrapedRecipe auth check:', {
+		hasUser: !!user,
+		userId,
+		safeCategoryId,
+	});
+
+	if (!userId) {
+		throw new Error('Unauthorized: missing session user');
+	}
+	if (!safeCategoryId) {
+		throw new Error('Missing category');
 	}
 	if (!isRawScrapedRecipe(data)) {
 		throw new Error('Invalid scraped recipe data');
@@ -83,14 +96,14 @@ export async function saveScrapedRecipe(data: unknown, categoryId: string) {
 
 	const newRecipe = new Recipe({
 		...parsed,
-		category: categoryId,
+		category: safeCategoryId,
 		prepTime: 10,
 		cookTime: 20,
 		serves: 2,
 		image:
 			getImageUrl(data) ??
 			'https://res.cloudinary.com/dqeszgo28/image/upload/v1744456700/recipes/placeholder-food.jpg',
-		user: user.id,
+		user: userId,
 	});
 	await newRecipe.save();
 

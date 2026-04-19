@@ -90,7 +90,7 @@ export default function RecipeAddForm({ categories = [] }) {
         if (!result.ok) {
             e.preventDefault();
 
-            // ✅ Apply per-row ingredient errors so the UI can highlight fields
+            // Apply per-row ingredient errors so the UI can highlight fields
             setIngredientErrors(result.ingredientErrors || []);
 
             toast.error(result.message);

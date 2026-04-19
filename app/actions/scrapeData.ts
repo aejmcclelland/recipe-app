@@ -5,7 +5,7 @@ import { scrapeJamieOliver } from '@/library/scrapers/jamieOliver';
 import { scrapeBBCFood } from '@/library/scrapers/bbcFood';
 
 export async function scrapeData(formData: FormData) {
-	const url = formData.get('url')?.toString().trim();
+	const url = (formData.get('url') as string | null)?.trim();
 	if (!url) throw new Error('Invalid URL');
 
 	// Pick the correct scraper once, then run it once.
@@ -20,6 +20,14 @@ export async function scrapeData(formData: FormData) {
 	} else {
 		throw new Error('This site is not supported yet');
 	}
+
+	console.log('SCRAPE_DATA returning:', {
+		url,
+		title: data?.title,
+		image: data?.image,
+		ingredientsCount: Array.isArray(data?.ingredients) ? data.ingredients.length : 0,
+		stepsCount: Array.isArray(data?.steps) ? data.steps.length : 0,
+	});
 
 	// Fail clearly so the client doesn’t see a silent "success"
 	if (!data?.title) throw new Error('Scrape failed: missing title');
