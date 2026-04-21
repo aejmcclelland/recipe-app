@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import updateProfileDetails from '@/app/actions/updateProfileDetails';
 import { DeleteAccountSection } from '@/components/DeleteAccount';
 import { useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import InputAdornment from '@mui/material/InputAdornment';
 
@@ -56,9 +57,16 @@ export default function ProfileDetailsForm({
 				toast.info(
 					'Your email was updated. Please verify your new email address before signing in again.'
 				);
-			} else {
-				toast.success('Profile updated!');
+
+				await signOut({
+					callbackUrl: `/recipes/verify/check-email?email=${encodeURIComponent(
+						result.user.email
+					)}`,
+				});
+				return;
 			}
+
+			toast.success('Profile updated!');
 
 			router.refresh();
 

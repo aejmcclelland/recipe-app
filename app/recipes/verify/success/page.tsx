@@ -1,6 +1,3 @@
-// app/recipes/verify/success/page.tsx
-'use client';
-
 import { Box, Typography, Button } from '@mui/material';
 import Link from 'next/link';
 

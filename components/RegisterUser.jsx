@@ -57,16 +57,31 @@ const RegisterForm = () => {
                 return; // IMPORTANT: do not redirect on failure
             }
 
-            toast.success('Account created — please verify your email before signing in. We’ve sent you a verification link.', {
-                position: 'top-right',
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
+            const emailSent = response?.emailSent !== false;
 
-            router.push('/recipes/signin?registered=1&verify=1');
+            toast[emailSent ? 'success' : 'info'](
+                emailSent
+                    ? 'Account created — please verify your email before signing in. We’ve sent you a verification link.'
+                    : 'Your account was created. We could not send the verification email just yet, but you can resend it on the next screen.',
+                {
+                    position: 'top-right',
+                    autoClose: emailSent ? 3000 : 4000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                }
+            );
+
+            const verificationEmail = encodeURIComponent(
+                response?.email || formData.email.trim().toLowerCase()
+            );
+
+            router.push(
+                `/recipes/verify/check-email?email=${verificationEmail}${
+                    response?.emailSent === false ? '&sent=0' : ''
+                }`
+            );
         } catch (error) {
             toast.error(error.message || "Error registering user.", {
                 position: "top-right",
