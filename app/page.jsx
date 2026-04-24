@@ -29,53 +29,63 @@ export default async function Home() {
 	let userRecipes = [];
 
 	if (sessionUser) {
-		const recipeDocs = await Recipe.find({ user: sessionUser.id }).populate('category').lean();
+		const recipeDocs = await Recipe.find({ user: sessionUser.id })
+			.populate('category')
+			.lean();
 		userRecipes = convertToSerializeableObject(recipeDocs);
 	}
 
 	const firstNameRaw = sessionUser?.name?.split(' ')[0] ?? '';
-	const firstName = firstNameRaw.charAt(0).toUpperCase() + firstNameRaw.slice(1).toLowerCase();
+	const firstName =
+		firstNameRaw.charAt(0).toUpperCase() + firstNameRaw.slice(1).toLowerCase();
 
 	return (
 		<>
-			<Typography variant="h2" align="center" gutterBottom>
+			<Typography variant='h2' align='center' gutterBottom>
 				Welcome to Rebekah&#39;s Recipes!
 			</Typography>
 
-			{!sessionUser ? (
-				<WelcomeSection />
-			) : userRecipes.length === 0 && !isNewUser ? (
-				<>
-					<Typography variant="h5" align="center" gutterBottom>
-						Hello, {firstName}!
-					</Typography>
-					<Typography variant="body1" align="center" gutterBottom>
-						Add your own recipes, or better still add your favourite recipes from the web!
-					</Typography>
-					<Hero />
-				</>
-			) : userRecipes.length === 0 && isNewUser ? (
-				<>
-					<Typography variant="h5" align="center" gutterBottom>
-						Hello, {firstName}!
-					</Typography>
-					<Typography variant="body1" align="center" gutterBottom>
-						Let’s get started by adding or importing your first recipe.
-					</Typography>
-					<Hero />
-				</>
+			{sessionUser ? (
+				userRecipes.length === 0 && !isNewUser ? (
+					<>
+						<Typography variant='h5' align='center' gutterBottom>
+							Hello, {firstName}!
+						</Typography>
+						<Typography variant='body1' align='center' gutterBottom>
+							Add your own recipes, or better still add your favourite recipes
+							from the web!
+						</Typography>
+						<Hero />
+					</>
+				) : userRecipes.length === 0 && isNewUser ? (
+					<>
+						<Typography variant='h5' align='center' gutterBottom>
+							Hello, {firstName}!
+						</Typography>
+						<Typography variant='body1' align='center' gutterBottom>
+							Let’s get started by adding or importing your first recipe.
+						</Typography>
+						<Hero />
+					</>
+				) : (
+					<>
+						<Typography variant='h5' align='center' gutterBottom>
+							Hello, {firstName}!
+						</Typography>
+						<Typography variant='body1' align='center' gutterBottom>
+							Add your own recipes, or better still add your favourite recipes
+							from the web!
+						</Typography>
+						<SearchBar />
+						<CategoryFilterSection categories={categoriesWithIds} />
+						<HomeClient
+							recipes={userRecipes}
+							user={{ id: sessionUser.id, ...sessionUser }}
+						/>
+					</>
+				)
 			) : (
-				<>
-					<Typography variant="h5" align="center" gutterBottom>
-						Hello, {firstName}!
-					</Typography>
-					<Typography variant="body1" align="center" gutterBottom>
-						Add your own recipes, or better still add your favourite recipes from the web!
-					</Typography>
-					<SearchBar />
-					<CategoryFilterSection categories={categoriesWithIds} />
-					<HomeClient recipes={userRecipes} user={{ id: sessionUser.id, ...sessionUser }} />
-				</>
+				<WelcomeSection />
 			)}
 		</>
 	);
