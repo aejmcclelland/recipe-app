@@ -19,13 +19,20 @@ export async function parseScrapedRecipe(rawData: {
 		rawData.ingredients.map(async (item) => {
 			const name = item.trim().toLowerCase();
 
-			const existing = await Ingredient.findOne({ name }).exec();
-			const ingredientDoc = existing
-				? existing
-				: await new Ingredient({ name }).save();
+			const ingredientDoc = await Ingredient.findOneAndUpdate(
+				{ name },
+				{ $setOnInsert: { name } },
+				{
+					upsert: true,
+					returnDocument: 'after',
+					setDefaultsOnInsert: true,
+				}
+			)
+				.select('_id')
+				.exec();
 
 			return {
-				ingredient: ingredientDoc._id as mongoose.Types.ObjectId
+				ingredient: ingredientDoc._id as mongoose.Types.ObjectId,
 			};
 		})
 	);

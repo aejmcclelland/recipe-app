@@ -4,32 +4,40 @@
 import cloudinary from '@/config/cloudinary';
 import connectDB from '@/config/database';
 import Recipe from '@/models/Recipe';
-// import { revalidatePath } from 'next/cache';
-// import mongoose from 'mongoose';
+import mongoose from 'mongoose';
 import { redirect } from 'next/navigation';
+import { getSessionUser } from '@/utils/getSessionUser';
 
 async function deleteRecipe(recipeId) {
 	await connectDB();
 
-	const recipe = await Recipe.findById(recipeId);
+	const sessionUser = await getSessionUser();
+	if (!sessionUser?.id) {
+		throw new Error('You must be logged in to delete a recipe');
+	}
+
+	if (!mongoose.Types.ObjectId.isValid(recipeId)) {
+		throw new Error('Recipe not found');
+	}
+
+	const recipe = await Recipe.findOne({ _id: recipeId, user: sessionUser.id });
 
 	if (!recipe) {
 		throw new Error('Recipe not found');
 	}
 
 	// Extract public id from image url in DB
-	const imageUrl = recipe.image;
+	const imageUrl = recipe.image || '';
 	const parts = imageUrl.split('/');
-	const publicId = parts.at(-1).split('.').at(0); // Extract public ID
+	const publicId = parts.at(-1)?.split('.').at(0); // Extract public ID
 
 	// Delete image from Cloudinary if a valid publicId exists and it's not the default image
 	if (publicId && publicId !== 'placeholder-food') {
-		await cloudinary.uploader.destroy('recipes/' + publicId);
+		await cloudinary.uploader.destroy(`recipes/${publicId}`);
 	}
 
 	// Delete the recipe from the database
-	await Recipe.findByIdAndDelete(recipeId);
-	console.log('Recipe deleted successfully');
+	await Recipe.findOneAndDelete({ _id: recipeId, user: sessionUser.id });
 	redirect('/recipes');
 }
 

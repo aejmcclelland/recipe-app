@@ -5,32 +5,39 @@ import Recipe from '@/models/Recipe';
 import Category from '@/models/Category';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import { Container, Typography, Box } from '@mui/material';
+import { getSessionUser } from '@/utils/getSessionUser';
+import RecipeNotFound from '@/components/RecipeNotFound';
+import mongoose from 'mongoose';
 
-const RecipeEditPage = async (pageProps) => {
+const RecipeEditPage = async ({ params }) => {
 	await connectDB();
 
-	const routeParams = await pageProps.params;
-	const { id: recipeId } = routeParams;
-	
-	const recipeDoc = await Recipe.findById(recipeId)
+	const resolvedParams = await params;
+	const recipeId = resolvedParams?.id;
+	const sessionUser = await getSessionUser();
+
+	if (!recipeId) {
+		console.error('Missing recipe ID from route params:', resolvedParams);
+		return <RecipeNotFound />;
+	}
+
+	if (!sessionUser?.id || !mongoose.Types.ObjectId.isValid(recipeId)) {
+		return <RecipeNotFound />;
+	}
+
+	const recipeDoc = await Recipe.findOne({ _id: recipeId, user: sessionUser.id })
 		.populate('ingredients.ingredient')
 		.lean();
+
+	if (!recipeDoc) {
+		return <RecipeNotFound />;
+	}
 
 	const recipe = convertToSerializeableObject(recipeDoc);
 
 	// Fetch all categories to pass to the form
 	const categories = await Category.find({}).lean();
 	const serializedCategories = convertToSerializeableObject(categories);
-
-	if (!recipe) {
-		return (
-			<Container maxWidth='md'>
-				<Typography variant='h4' align='center' gutterBottom>
-					Recipe Not Found
-				</Typography>
-			</Container>
-		);
-	}
 
 	return (
 		<Container
@@ -53,6 +60,5 @@ const RecipeEditPage = async (pageProps) => {
 		</Container>
 	);
 };
-
 
 export default RecipeEditPage;

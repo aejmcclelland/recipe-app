@@ -12,6 +12,10 @@ type RawScrapedRecipe = {
 	ingredients: string[];
 	steps: string[];
 	image?: unknown;
+	sourceUrl?: unknown;
+	prepTime?: unknown;
+	cookTime?: unknown;
+	serves?: unknown;
 };
 
 function isStringArray(value: unknown): value is string[] {
@@ -47,6 +51,28 @@ function getImageUrl(input: unknown): string | undefined {
 	return typeof img === 'string' && img.trim() ? img : undefined;
 }
 
+function getOptionalString(input: unknown, key: string): string | undefined {
+	if (!isRecord(input)) return undefined;
+	const value = input[key];
+	return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+}
+
+function getOptionalPositiveNumber(input: unknown, key: string): number | undefined {
+	if (!isRecord(input)) return undefined;
+
+	const value = input[key];
+	if (typeof value === 'number') {
+		return Number.isFinite(value) && value > 0 ? value : undefined;
+	}
+
+	if (typeof value === 'string' && value.trim()) {
+		const parsed = Number(value.trim());
+		return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
+	}
+
+	return undefined;
+}
+
 function normaliseSteps(steps: unknown): string[] {
 	if (typeof steps === 'string') {
 		return steps
@@ -67,19 +93,10 @@ function normaliseSteps(steps: unknown): string[] {
 
 export async function saveScrapedRecipe(data: unknown, categoryId: string) {
 	await connectDB();
-	const user = await getSessionUser();
-
-	const userId = (user as any)?.id ?? (user as any)?.userId;
+	const sessionUser = await getSessionUser();
 	const safeCategoryId = typeof categoryId === 'string' ? categoryId.trim() : '';
 
-	// Helpful debug while diagnosing intermittent auth/category issues
-	console.log('saveScrapedRecipe auth check:', {
-		hasUser: !!user,
-		userId,
-		safeCategoryId,
-	});
-
-	if (!userId) {
+	if (!sessionUser?.id) {
 		throw new Error('Unauthorized: missing session user');
 	}
 	if (!safeCategoryId) {
@@ -97,13 +114,14 @@ export async function saveScrapedRecipe(data: unknown, categoryId: string) {
 	const newRecipe = new Recipe({
 		...parsed,
 		category: safeCategoryId,
-		prepTime: 10,
-		cookTime: 20,
-		serves: 2,
+		prepTime: getOptionalPositiveNumber(data, 'prepTime') ?? 10,
+		cookTime: getOptionalPositiveNumber(data, 'cookTime') ?? 20,
+		serves: getOptionalPositiveNumber(data, 'serves') ?? 2,
 		image:
 			getImageUrl(data) ??
 			'https://res.cloudinary.com/dqeszgo28/image/upload/v1744456700/recipes/placeholder-food.jpg',
-		user: userId,
+		sourceUrl: getOptionalString(data, 'sourceUrl'),
+		user: sessionUser.id,
 	});
 	await newRecipe.save();
 

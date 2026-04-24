@@ -5,8 +5,14 @@ import connectDB from '@/config/database';
 import Recipe from '@/models/Recipe';
 import Ingredient from '@/models/Ingredient';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
+import { getSessionUser } from '@/utils/getSessionUser';
 
 export async function searchRecipes({ searchQuery, ingredients, category }) {
+	const sessionUser = await getSessionUser();
+	if (!sessionUser?.id) {
+		return [];
+	}
+
 	await connectDB();
 
 	const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -48,9 +54,13 @@ export async function searchRecipes({ searchQuery, ingredients, category }) {
 	if (category) {
 		andFilters.push({ category });
 	}
-	//Build final Query
+
+	// Build final query
 	if (orFilters.length > 0) andFilters.push({ $or: orFilters });
-	const query = andFilters.length > 0 ? { $and: andFilters } : {};
+	const query = { user: sessionUser.id };
+	if (andFilters.length > 0) {
+		query.$and = andFilters;
+	}
 
 	// Execute the query
 	const recipes = await Recipe.find(query)

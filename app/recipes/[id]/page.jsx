@@ -12,18 +12,22 @@ import EditRecipeButton from '@/components/EditRecipeButton';
 import DeleteRecipeButton from '@/components/DeleteRecipeButton';
 import BookmarkButton from '@/components/BookmarkButton';
 
-export default async function RecipeDetailPage(params) {
-	// Destructure recipeId directly from params
-	const recipeParams = await params; // Await `params` if it's asynchronous
-	const recipeId = recipeParams?.id;
+export default async function RecipeDetailPage({ params }) {
+	// Connect to DB
+	await connectDB();
+	const resolvedParams = await params;
+	const recipeId = resolvedParams?.id;
+
+	if (!recipeId) {
+		console.error('Missing recipe ID from route params:', resolvedParams);
+		return <RecipeNotFound />;
+	}
+
 	// Fetch session user
 	const sessionUser = await getSessionUser();
 
-	// Connect to DB
-	await connectDB();
-
 	// Validate and handle invalid recipeId
-	if (!recipeId || !mongoose.Types.ObjectId.isValid(recipeId)) {
+	if (!mongoose.Types.ObjectId.isValid(recipeId)) {
 		console.error(`Invalid recipe ID: ${recipeId}`);
 		return <RecipeNotFound />;
 	}

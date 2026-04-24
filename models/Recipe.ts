@@ -19,6 +19,7 @@ export interface IRecipe extends Document {
 	cookTime: number;
 	serves: number;
 	image: string;
+	sourceUrl?: string;
 	category: mongoose.Types.ObjectId;
 	user: mongoose.Types.ObjectId;
 }
@@ -66,6 +67,10 @@ const recipeSchema = new Schema<IRecipe>({
 		required: true,
 		default:
 			'https://res.cloudinary.com/dqeszgo28/image/upload/v1728739432/300_bebabf.png',
+	},
+	sourceUrl: {
+		type: String,
+		required: false,
 	},
 	category: {
 		type: Schema.Types.ObjectId,

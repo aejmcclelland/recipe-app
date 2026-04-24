@@ -1,5 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const PLAYWRIGHT_PORT = Number(process.env.PLAYWRIGHT_PORT || 3100);
+const PLAYWRIGHT_BASE_URL =
+	process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${PLAYWRIGHT_PORT}`;
+const REUSE_EXISTING_SERVER =
+	process.env.PLAYWRIGHT_REUSE_SERVER === 'true' && !process.env.CI;
+
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -26,7 +32,7 @@ export default defineConfig({
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	use: {
 		/* Base URL to use in actions like `await page.goto('')`. */
-		baseURL: process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000',
+		baseURL: PLAYWRIGHT_BASE_URL,
 
 		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
 		trace: 'on-first-retry',
@@ -74,9 +80,9 @@ export default defineConfig({
 
 	/* Run your local dev server before starting the tests */
 	webServer: {
-		command: 'pnpm dev',
-		url: 'http://localhost:3000',
-		reuseExistingServer: !process.env.CI,
+		command: `pnpm dev -- --port ${PLAYWRIGHT_PORT}`,
+		url: PLAYWRIGHT_BASE_URL,
+		reuseExistingServer: REUSE_EXISTING_SERVER,
 		timeout: 120_000,
 	},
 });
