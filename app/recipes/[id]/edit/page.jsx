@@ -5,13 +5,13 @@ import Recipe from '@/models/Recipe';
 import Category from '@/models/Category';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import { Container, Typography, Box } from '@mui/material';
-import PropTypes from 'prop-types';
 
-const RecipeEditPage = async (props) => {
+const RecipeEditPage = async (pageProps) => {
 	await connectDB();
 
-	const { id: recipeId } = await props.params;
-
+	const routeParams = await pageProps.params;
+	const { id: recipeId } = routeParams;
+	
 	const recipeDoc = await Recipe.findById(recipeId)
 		.populate('ingredients.ingredient')
 		.lean();
@@ -54,8 +54,5 @@ const RecipeEditPage = async (props) => {
 	);
 };
 
-RecipeEditPage.propTypes = {
-	params: PropTypes.object.isRequired,
-};
 
 export default RecipeEditPage;
