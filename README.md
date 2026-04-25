@@ -1,5 +1,7 @@
 # Rebekah's Recipes
 
+[![Playwright Tests](https://github.com/aejmcclelland/recipe-app/actions/workflows/playwright.yml/badge.svg)](https://github.com/aejmcclelland/recipe-app/actions/workflows/playwright.yml)
+
 Rebekah's Recipes is a family-focused recipe web application built using **Next.js** and **MongoDB**. The app allows users to browse and search for recipes, as well as filter by food categories such as Beef, Chicken, Pasta, and more. The site is designed with a modern and responsive UI using **Material UI** and integrates recipe data from a **MongoDB Atlas** database.
 
 ## Features
