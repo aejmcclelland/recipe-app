@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const PLAYWRIGHT_PORT = Number(process.env.PLAYWRIGHT_PORT || 3100);
+const PLAYWRIGHT_PORT = Number(process.env.PLAYWRIGHT_PORT || 3000);
 const PLAYWRIGHT_BASE_URL =
 	process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${PLAYWRIGHT_PORT}`;
 const REUSE_EXISTING_SERVER =
@@ -81,7 +81,7 @@ export default defineConfig({
 	/* Run your local dev server before starting the tests */
 	webServer: {
 		command: 'pnpm dev:test',
-		url: 'http://127.0.0.1:3000',
+		url: PLAYWRIGHT_BASE_URL,
 		reuseExistingServer: !process.env.CI,
 		timeout: 120 * 1000,
 	},
