@@ -8,6 +8,7 @@
     "build": "NODE_OPTIONS=--trace-deprecation next build",
     "start": "next start",
     "lint": "next lint",
+    "dev:test": "next dev --webpack --port 3000",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report"
