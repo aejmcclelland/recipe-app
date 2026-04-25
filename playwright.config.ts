@@ -80,7 +80,7 @@ export default defineConfig({
 
 	/* Run your local dev server before starting the tests */
 	webServer: {
-		command: `pnpm dev -- -p ${PLAYWRIGHT_PORT}`,
+		command: `pnpm exec next dev -p ${PLAYWRIGHT_PORT}`,
 		url: PLAYWRIGHT_BASE_URL,
 		reuseExistingServer: REUSE_EXISTING_SERVER,
 		timeout: 120_000,
