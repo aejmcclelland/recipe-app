@@ -1,6 +1,13 @@
 // app/recipes/page.jsx
 export const dynamic = 'force-dynamic';
 
+export const metadata = {
+	robots: {
+		index: false,
+		follow: false,
+	},
+};
+
 import connectDB from '@/config/database';
 import Recipe from '../../models/Recipe';
 import { Container } from '@mui/material';

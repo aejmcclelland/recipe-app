@@ -14,6 +14,50 @@ import Hero from '@/components/Hero';
 import WelcomeSection from '@/components/WelcomeSection';
 import { headers } from 'next/headers';
 
+const homepageDescription =
+	'Build your own digital recipe book. Save personal recipes, import from supported recipe websites, and edit ingredients and methods to suit how you cook.';
+
+export const metadata = {
+	title: 'Personal Recipe Manager',
+	description: homepageDescription,
+	alternates: {
+		canonical: '/',
+	},
+	openGraph: {
+		title: "Personal Recipe Manager | Rebekah's Recipes",
+		description: homepageDescription,
+		url: '/',
+	},
+	twitter: {
+		card: 'summary',
+		title: "Personal Recipe Manager | Rebekah's Recipes",
+		description: homepageDescription,
+	},
+};
+
+const webApplicationJsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'WebApplication',
+	name: "Rebekah's Recipes",
+	url: 'https://www.rebekahsrecipes.com',
+	applicationCategory: 'LifestyleApplication',
+	operatingSystem: 'Web',
+	description:
+		'A personal recipe manager for saving your own recipes, importing recipes from supported websites, and editing them to suit your taste.',
+	featureList: [
+		'Save your own recipes online',
+		'Import recipes from supported recipe websites',
+		'Edit ingredients and methods',
+		'Organise recipes by category',
+		'Bookmark favourite recipes',
+	],
+	offers: {
+		'@type': 'Offer',
+		price: '0',
+		priceCurrency: 'GBP',
+	},
+};
+
 export default async function Home() {
 	await connectDB();
 
@@ -41,6 +85,12 @@ export default async function Home() {
 
 	return (
 		<>
+			<script
+				type='application/ld+json'
+				dangerouslySetInnerHTML={{
+					__html: JSON.stringify(webApplicationJsonLd),
+				}}
+			/>
 			<Typography variant='h2' align='center' gutterBottom>
 				Welcome to Rebekah&#39;s Recipes!
 			</Typography>

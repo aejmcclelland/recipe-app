@@ -10,5 +10,5 @@
         "**/*.js",
         "**/*.jsx",
         "models/Recipe.ts"
-    ]
+, "app/layout.tsx"    ]
 }

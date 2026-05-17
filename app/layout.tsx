@@ -12,33 +12,45 @@ import ThemeRegistry from './ThemeRegistry';
 import '../assets/globals.css';
 import '../assets/google-button.css';
 
+const siteUrl = 'https://www.rebekahsrecipes.com';
+const siteDescription =
+	'Save your own recipes, import recipes from supported sites like BBC Good Food and Jamie Oliver, and edit them to build your own digital recipe collection.';
+
 export const metadata = {
-	title: " Welcome to Rebekah's Recipes!",
-	description: 'A collection of family recipes for easy access.',
+	metadataBase: new URL(siteUrl),
+	applicationName: "Rebekah's Recipes",
+	title: {
+		default: "Rebekah's Recipes | Personal Recipe Manager",
+		template: "%s | Rebekah's Recipes",
+	},
+	description: siteDescription,
+	openGraph: {
+		title: "Rebekah's Recipes | Personal Recipe Manager",
+		description: siteDescription,
+		url: siteUrl,
+		siteName: "Rebekah's Recipes",
+		type: 'website',
+		locale: 'en_GB',
+	},
+	twitter: {
+		card: 'summary',
+		title: "Rebekah's Recipes | Personal Recipe Manager",
+		description: siteDescription,
+	},
+	robots: {
+		index: true,
+		follow: true,
+	},
+};
+
+export const viewport = {
+	width: 'device-width',
+	initialScale: 1,
 };
 
 export default function RootLayout({ children }) {
 	return (
 		<html lang='en' className={archivo.className}>
-			<head>
-				<meta charSet='UTF-8' />
-				<meta name='viewport' content='width=device-width, initial-scale=1.0' />
-				<link rel='canonical' href='https://rebekahsrecipes.com/' />
-				<meta property='og:url' content='https://rebekahsrecipes.com/' />
-				<meta property='og:title' content='Rebekah’s Recipes' />
-				<meta
-					property='og:description'
-					content='Recipe-sharing app with Google auth, bookmarking and Cloudinary uploads.'
-				/>
-				<meta
-					property='og:image'
-					content='https://rebekahsrecipes.com/og-image.jpg'
-				/>
-				<meta property='og:image:width' content='1200' />
-				<meta property='og:image:height' content='627' />
-				<meta name='description' content={metadata.description} />
-				<title>{metadata.title}</title>
-			</head>
 			<body className={archivo.className}>
 				<ThemeRegistry>
 					<AuthProvider>

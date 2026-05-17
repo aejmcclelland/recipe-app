@@ -12,6 +12,13 @@ import EditRecipeButton from '@/components/EditRecipeButton';
 import DeleteRecipeButton from '@/components/DeleteRecipeButton';
 import BookmarkButton from '@/components/BookmarkButton';
 
+export const metadata = {
+	robots: {
+		index: false,
+		follow: false,
+	},
+};
+
 export default async function RecipeDetailPage({ params }) {
 	// Connect to DB
 	await connectDB();
