@@ -8,6 +8,5 @@ export default function robots() {
 			disallow: ['/api/', '/recipes', '/recipes/'],
 		},
 		sitemap: `${baseUrl}/sitemap.xml`,
-		host: baseUrl,
 	};
 }

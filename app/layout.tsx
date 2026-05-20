@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/next';
 import ThemeRegistry from './ThemeRegistry';
+import type { ReactNode } from 'react';
 import '../assets/globals.css';
 import '../assets/google-button.css';
 
@@ -24,6 +25,9 @@ export const metadata = {
 		template: "%s | Rebekah's Recipes",
 	},
 	description: siteDescription,
+	alternates: {
+		canonical: '/',
+	},
 	openGraph: {
 		title: "Rebekah's Recipes | Personal Recipe Manager",
 		description: siteDescription,
@@ -48,7 +52,11 @@ export const viewport = {
 	initialScale: 1,
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({
+	children,
+}: Readonly<{
+	children: ReactNode;
+}>) {
 	return (
 		<html lang='en' className={archivo.className}>
 			<body className={archivo.className}>

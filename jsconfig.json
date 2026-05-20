@@ -9,6 +9,8 @@
     "include": [
         "**/*.js",
         "**/*.jsx",
-        "models/Recipe.ts"
-, "app/layout.tsx"    ]
+        "models/Recipe.ts",
+        "app/layout.tsx",
+        "app/page.jsx"
+    ]
 }

@@ -1,5 +1,3 @@
-// app/page.jsx
-
 export const dynamic = 'force-dynamic';
 import connectDB from '@/config/database';
 import Recipe from '../models/Recipe';
@@ -15,7 +13,7 @@ import WelcomeSection from '@/components/WelcomeSection';
 import { headers } from 'next/headers';
 
 const homepageDescription =
-	'Build your own digital recipe book. Save personal recipes, import from supported recipe websites, and edit ingredients and methods to suit how you cook.';
+	"Rebekah's Recipes is a family recipe organiser for saving, importing, editing, scraping, bookmarking, and printing your favourite recipes.";
 
 export const metadata = {
 	title: 'Personal Recipe Manager',
@@ -43,10 +41,10 @@ const webApplicationJsonLd = {
 	applicationCategory: 'LifestyleApplication',
 	operatingSystem: 'Web',
 	description:
-		'A personal recipe manager for saving your own recipes, importing recipes from supported websites, and editing them to suit your taste.',
+		'A family recipe organiser for storing your own recipes, scraping and importing recipes from supported websites, editing ingredients and methods, and saving everything in one account.',
 	featureList: [
 		'Save your own recipes online',
-		'Import recipes from supported recipe websites',
+		'Scrape and import recipes from supported recipe websites',
 		'Edit ingredients and methods',
 		'Organise recipes by category',
 		'Bookmark favourite recipes',
@@ -82,6 +80,47 @@ export default async function Home() {
 	const firstNameRaw = sessionUser?.name?.split(' ')[0] ?? '';
 	const firstName =
 		firstNameRaw.charAt(0).toUpperCase() + firstNameRaw.slice(1).toLowerCase();
+	const hasRecipes = userRecipes.length > 0;
+
+	function renderHomeContent() {
+		if (!sessionUser) {
+			return <WelcomeSection />;
+		}
+
+		if (!hasRecipes) {
+			return (
+				<>
+					<Typography variant='h5' align='center' gutterBottom>
+						Hello, {firstName}!
+					</Typography>
+					<Typography variant='body1' align='center' gutterBottom>
+						{isNewUser
+							? 'Let’s get started by adding or importing your first recipe.'
+							: 'Add your own recipes, or better still add your favourite recipes from the web!'}
+					</Typography>
+					<Hero />
+				</>
+			);
+		}
+
+		return (
+			<>
+				<Typography variant='h5' align='center' gutterBottom>
+					Hello, {firstName}!
+				</Typography>
+				<Typography variant='body1' align='center' gutterBottom>
+					Add your own recipes, or better still add your favourite recipes from
+					the web!
+				</Typography>
+				<SearchBar />
+				<CategoryFilterSection categories={categoriesWithIds} />
+				<HomeClient
+					recipes={userRecipes}
+					user={{ id: sessionUser.id, ...sessionUser }}
+				/>
+			</>
+		);
+	}
 
 	return (
 		<>
@@ -95,48 +134,17 @@ export default async function Home() {
 				Welcome to Rebekah&#39;s Recipes!
 			</Typography>
 
-			{sessionUser ? (
-				userRecipes.length === 0 && !isNewUser ? (
-					<>
-						<Typography variant='h5' align='center' gutterBottom>
-							Hello, {firstName}!
-						</Typography>
-						<Typography variant='body1' align='center' gutterBottom>
-							Add your own recipes, or better still add your favourite recipes
-							from the web!
-						</Typography>
-						<Hero />
-					</>
-				) : userRecipes.length === 0 && isNewUser ? (
-					<>
-						<Typography variant='h5' align='center' gutterBottom>
-							Hello, {firstName}!
-						</Typography>
-						<Typography variant='body1' align='center' gutterBottom>
-							Let’s get started by adding or importing your first recipe.
-						</Typography>
-						<Hero />
-					</>
-				) : (
-					<>
-						<Typography variant='h5' align='center' gutterBottom>
-							Hello, {firstName}!
-						</Typography>
-						<Typography variant='body1' align='center' gutterBottom>
-							Add your own recipes, or better still add your favourite recipes
-							from the web!
-						</Typography>
-						<SearchBar />
-						<CategoryFilterSection categories={categoriesWithIds} />
-						<HomeClient
-							recipes={userRecipes}
-							user={{ id: sessionUser.id, ...sessionUser }}
-						/>
-					</>
-				)
-			) : (
-				<WelcomeSection />
-			)}
+			<Typography
+				variant='body1'
+				align='center'
+				gutterBottom
+				sx={{ maxWidth: 760, mx: 'auto', mb: 3 }}>
+				Rebekah&#39;s Recipes, or RebekahsRecipes for short, is a family recipe
+				organiser that helps anyone register, save, scrape, import, edit,
+				bookmark, and print their favourite recipes.
+			</Typography>
+
+			{renderHomeContent()}
 		</>
 	);
 }

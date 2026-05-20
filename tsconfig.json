@@ -36,7 +36,9 @@
     "**/*.tsx",
     ".next/dev/types/**/*.ts",
     "types/**/*.d.ts",
-    "models/Recipe.ts"
+    "models/Recipe.ts",
+    "app/page.jsx",
+    "app/page.jsx"
   ],
   "exclude": [
     "node_modules"
