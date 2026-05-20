@@ -5,21 +5,49 @@ import { Card, CardContent, Typography, Box } from '@mui/material';
 import Image from 'next/image';
 import { pluraliseUnit } from '@/utils/pluraliseUnit';
 
+function normaliseStepText(value) {
+    if (typeof value === 'string') {
+        return value
+            .split(/\r?\n/)
+            .map((step) => step.replace(/\s+/g, ' ').trim())
+            .filter(Boolean);
+    }
+
+    if (Array.isArray(value)) {
+        return value.flatMap(normaliseStepText);
+    }
+
+    return [];
+}
+
+function getDisplaySteps(recipe) {
+    return [
+        recipe?.steps,
+        recipe?.method,
+        recipe?.methods,
+        recipe?.instructions,
+        recipe?.directions,
+    ].flatMap(normaliseStepText);
+}
+
 export default function RecipeCard({ recipe }) {
     if (!recipe) {
         return <Typography variant="h6">No Recipe Found</Typography>;
     }
 
+    const displaySteps = getDisplaySteps(recipe);
+
     return (
         <Card
             sx={{
+                width: '100%',
                 maxWidth: '100%',
                 marginBottom: 2,
                 boxShadow: '4px 4px 20px 0px rgba(0, 0, 0, 0.2)', // Increased and softened shadow
             }}
         >
             <CardContent>
-                <Box display="flex" flexDirection={{ mobile: 'column', laptop: 'row' }} gap={2}>
+                <Box display="flex" flexDirection={{ xs: 'column', md: 'row' }} gap={2}>
                     {/* Left Section: Image and Ingredients */}
                     <Box flex={1}>
                         {/* Recipe Image */}
@@ -81,9 +109,9 @@ export default function RecipeCard({ recipe }) {
                         <Typography variant="h6" gutterBottom>
                             Steps:
                         </Typography>
-                        {Array.isArray(recipe.steps) ? (
+                        {displaySteps.length > 0 ? (
                             <Box component="ol" sx={{ pl: 3 }}>
-                                {recipe.steps.map((step, index) => (
+                                {displaySteps.map((step, index) => (
                                     <li key={index}>
                                         {step}
                                     </li>
