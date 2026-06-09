@@ -1,5 +1,5 @@
-import crypto from 'node:crypto';
 import type { Types } from 'mongoose';
+import crypto from 'node:crypto';
 
 import EmailVerificationToken from '@/models/EmailVerificationToken';
 import User from '@/models/User';
@@ -23,7 +23,21 @@ type VerifyEmailTokenResult = {
 };
 
 export function normalizeEmail(value: unknown): string {
-	return (value ?? '').toString().trim().toLowerCase();
+	if (value == null) return '';
+
+	const t = typeof value;
+	if (t === 'string' || t === 'number' || t === 'boolean') {
+		return String(value).trim().toLowerCase();
+	}
+
+	// If value is an object with a custom toString (e.g. ObjectId), use that
+	// instead of Object.prototype.toString which yields '[object Object]'.
+	if (value && typeof (value as any).toString === 'function' && (value as any).toString !== Object.prototype.toString) {
+		return String((value as any).toString()).trim().toLowerCase();
+	}
+
+	// For symbols, functions, plain objects, etc., return empty string.
+	return '';
 }
 
 export function hashVerificationToken(token: string): string {
