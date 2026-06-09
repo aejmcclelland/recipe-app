@@ -5,6 +5,8 @@ import Recipe from '@/models/Recipe';
 import { getSessionUser } from '@/utils/getSessionUser';
 import { parseScrapedRecipe } from '@/utils/parseScrapedRecipes';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
+import { requireVerifiedEmail } from '@/utils/requireVerifiedEmail';
+import { enforceRateLimit } from '@/utils/rateLimit';
 
 // Treat scraped input as untrusted external data.
 type RawScrapedRecipe = {
@@ -93,12 +95,10 @@ function normaliseSteps(steps: unknown): string[] {
 
 export async function saveScrapedRecipe(data: unknown, categoryId: string) {
 	await connectDB();
-	const sessionUser = await getSessionUser();
+	const sessionUser = await requireVerifiedEmail(await getSessionUser());
+	await enforceRateLimit('recipe-import', `${sessionUser.id}:import`);
 	const safeCategoryId = typeof categoryId === 'string' ? categoryId.trim() : '';
 
-	if (!sessionUser?.id) {
-		throw new Error('Unauthorized: missing session user');
-	}
 	if (!safeCategoryId) {
 		throw new Error('Missing category');
 	}

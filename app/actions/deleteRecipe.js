@@ -7,6 +7,7 @@ import Recipe from '@/models/Recipe';
 import mongoose from 'mongoose';
 import { redirect } from 'next/navigation';
 import { getSessionUser } from '@/utils/getSessionUser';
+import { requireVerifiedEmail } from '@/utils/requireVerifiedEmail';
 
 async function deleteRecipe(recipeId) {
 	await connectDB();
@@ -25,6 +26,8 @@ async function deleteRecipe(recipeId) {
 	if (!recipe) {
 		throw new Error('Recipe not found');
 	}
+
+	await requireVerifiedEmail(sessionUser);
 
 	// Extract public id from image url in DB
 	const imageUrl = recipe.image || '';

@@ -4,6 +4,10 @@ import connectDB from '@/config/database';
 import User from '@/models/User';
 import Recipe from '@/models/Recipe';
 import { getSessionUser } from '@/utils/getSessionUser';
+import {
+	EmailVerificationRequiredError,
+	requireVerifiedEmail,
+} from '@/utils/requireVerifiedEmail';
 
 async function saveRecipe(recipeId) {
 	try {
@@ -12,11 +16,12 @@ async function saveRecipe(recipeId) {
 		// Get the user's session
 		const sessionUser = await getSessionUser();
 
-		if (!sessionUser || !sessionUser?.user.id) {
+		if (!sessionUser?.id) {
 			throw new Error('You must be logged in to save a recipe');
 		}
+		await requireVerifiedEmail(sessionUser);
 		console.log('Bookmark RecipeId:', recipeId);
-		const userId = sessionUser.user.id;
+		const userId = sessionUser.id;
 
 		// Validate recipe existence
 		const recipeExists = await Recipe.exists({ _id: recipeId });
@@ -47,6 +52,7 @@ async function saveRecipe(recipeId) {
 		};
 	} catch (error) {
 		console.error('Error saving recipe:', error.message);
+		if (error instanceof EmailVerificationRequiredError) throw error;
 		throw new Error('Failed to save the recipe. Please try again.');
 	}
 }

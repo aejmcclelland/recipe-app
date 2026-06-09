@@ -111,6 +111,16 @@ export default function SignInForm() {
 			return;
 		}
 
+		if (res?.status === 429) {
+			setLoginError('Too many sign-in attempts. Please try again later.');
+			return;
+		}
+
+		if (res?.status === 503) {
+			setLoginError('Sign-in is temporarily unavailable. Please try again later.');
+			return;
+		}
+
 		if (res?.error === 'EMAIL_NOT_VERIFIED') {
 			setNeedsVerification(true);
 			setLoginError('Please verify your email before signing in. You can resend the verification link below.');

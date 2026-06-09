@@ -4,6 +4,10 @@ import connectDB from '@/config/database';
 import User from '@/models/User';
 import { getSessionUser } from '@/utils/getSessionUser';
 import mongoose from 'mongoose';
+import {
+	EmailVerificationRequiredError,
+	requireVerifiedEmail,
+} from '@/utils/requireVerifiedEmail';
 
 async function deleteBookmark(recipeId) {
 	try {
@@ -18,6 +22,8 @@ async function deleteBookmark(recipeId) {
 		if (!sessionUser?.id) {
 			throw new Error('You must be logged in to remove a bookmark');
 		}
+
+		await requireVerifiedEmail(sessionUser);
 
 		const user = await User.findById(sessionUser.id);
 		if (!user) {
@@ -34,6 +40,7 @@ async function deleteBookmark(recipeId) {
 		return { success: true, message: 'Bookmark removed successfully' };
 	} catch (error) {
 		console.error('Error in deleteBookmark:', error.message);
+		if (error instanceof EmailVerificationRequiredError) throw error;
 		throw new Error('Failed to remove bookmark. Please try again.');
 	}
 }

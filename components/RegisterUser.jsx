@@ -15,6 +15,7 @@ const RegisterForm = () => {
         email: '',
         password: '',
         confirmPassword: '',
+        website: '',
     });
     const [error, setError] = useState(null);
     const [passwordStrength, setPasswordStrength] = useState(null);
@@ -119,6 +120,16 @@ const RegisterForm = () => {
                 )}
                 <form onSubmit={handleSubmit} style={{ width: '100%' }}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                        <input
+                            type="text"
+                            name="website"
+                            value={formData.website}
+                            onChange={handleChange}
+                            tabIndex={-1}
+                            autoComplete="off"
+                            aria-hidden="true"
+                            style={{ position: 'absolute', left: '-10000px' }}
+                        />
                         <TextField label="First Name" name="firstName" required value={formData.firstName} onChange={handleChange} margin="normal" fullWidth />
                         <TextField label="Last Name" name="lastName" required value={formData.lastName} onChange={handleChange} margin="normal" fullWidth />
                         <TextField label="Email" name="email" type="email" required value={formData.email} onChange={handleChange} margin="normal" fullWidth />

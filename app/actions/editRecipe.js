@@ -7,6 +7,7 @@ import cloudinary from '@/config/cloudinary';
 import { revalidatePath } from 'next/cache';
 import connectDB from '@/config/database';
 import { getSessionUser } from '@/utils/getSessionUser';
+import { requireVerifiedEmail } from '@/utils/requireVerifiedEmail';
 
 async function updateRecipe(recipeId, formData) {
 	await connectDB();
@@ -38,6 +39,8 @@ async function updateRecipe(recipeId, formData) {
 	if (existingRecipe.user.toString() !== userId) {
 		throw new Error('You are not authorized to edit this recipe');
 	}
+
+	await requireVerifiedEmail(sessionUser);
 
 	let imageUrl = existingRecipe.image;
 

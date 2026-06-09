@@ -4,6 +4,10 @@ import  connectDB  from '@/config/database';
 import User from '@/models/User';
 import { getSessionUser } from '@/utils/getSessionUser';
 import mongoose from 'mongoose';
+import {
+	EmailVerificationRequiredError,
+	requireVerifiedEmail,
+} from '@/utils/requireVerifiedEmail';
 
 async function addBookmark(recipeId) {
 	try {
@@ -19,6 +23,8 @@ async function addBookmark(recipeId) {
 		if (!sessionUser?.id) {
 			throw new Error('You must be logged in to add a bookmark');
 		}
+
+		await requireVerifiedEmail(sessionUser);
 
 		const user = await User.findById(sessionUser.id);
 		if (!user) {
@@ -36,6 +42,7 @@ async function addBookmark(recipeId) {
 		return { success: true, isBookmarked: true };
 	} catch (error) {
 		console.error('Error in addBookmark:', error.message);
+		if (error instanceof EmailVerificationRequiredError) throw error;
 		throw new Error('Failed to add bookmark. Please try again.');
 	}
 }

@@ -4,12 +4,15 @@ import crypto from 'crypto';
 import connectDB from '@/config/database';
 import User from '@/models/User';
 import { sendMail } from '@/utils/mailer';
+import { enforceRateLimit, getRequestIp } from '@/utils/rateLimit';
 
 function sha256(input: string) {
 	return crypto.createHash('sha256').update(input).digest('hex');
 }
 
 export async function requestPasswordReset(emailRaw: string) {
+	await enforceRateLimit('password-reset', await getRequestIp());
+
 	const email = (emailRaw || '').trim().toLowerCase();
 
 	// Always return success (avoid account enumeration)
