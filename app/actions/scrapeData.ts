@@ -7,8 +7,14 @@ import {
 	resolveSupportedScrapeTarget,
 	SUPPORTED_SCRAPE_SITES,
 } from '@/utils/scrapeUrlValidation';
+import { getSessionUser } from '@/utils/getSessionUser';
+import { requireVerifiedEmail } from '@/utils/requireVerifiedEmail';
+import { enforceRateLimit } from '@/utils/rateLimit';
 
 export async function scrapeData(formData: FormData) {
+	const sessionUser = await requireVerifiedEmail(await getSessionUser());
+	await enforceRateLimit('recipe-import', `${sessionUser.id}:scrape`);
+
 	const url = (formData.get('url') as string | null)?.trim();
 	if (!url) throw new Error('Invalid URL');
 

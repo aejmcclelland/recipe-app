@@ -7,6 +7,8 @@ import cloudinary from '@/config/cloudinary';
 import Recipe from '@/models/Recipe';
 import Ingredient from '@/models/Ingredient';
 import { getSessionUser } from '@/utils/getSessionUser';
+import { requireVerifiedEmail } from '@/utils/requireVerifiedEmail';
+import { enforceRateLimit } from '@/utils/rateLimit';
 
 export default async function addRecipe(formData) {
 	await connectDB();
@@ -14,6 +16,8 @@ export default async function addRecipe(formData) {
 	const sessionUser = await getSessionUser();
 	if (!sessionUser?.id)
 		throw new Error('You must be logged in to add a recipe');
+	await requireVerifiedEmail(sessionUser);
+	await enforceRateLimit('recipe-create', sessionUser.id);
 
 	const userId = sessionUser.id;
 

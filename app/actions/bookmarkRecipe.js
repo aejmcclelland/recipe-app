@@ -4,6 +4,10 @@ import connectDB from '@/config/database';
 import User from '@/models/User';
 import { getSessionUser } from '@/utils/getSessionUser';
 import { revalidatePath } from 'next/cache';
+import {
+	EmailVerificationRequiredError,
+	requireVerifiedEmail,
+} from '@/utils/requireVerifiedEmail';
 
 async function bookmarkRecipe(recipeId, recipeName) {
 	try {
@@ -17,6 +21,8 @@ async function bookmarkRecipe(recipeId, recipeName) {
 			console.error('Error: You must be logged in to bookmark a recipe');
 			throw new Error('You must be logged in to bookmark a recipe');
 		}
+
+		await requireVerifiedEmail(sessionUser);
 
 		const userId = sessionUser.id; //  Directly use `userId`
 
@@ -68,6 +74,7 @@ async function bookmarkRecipe(recipeId, recipeName) {
 		};
 	} catch (error) {
 		console.error('Error in bookmarkRecipe:', error.message);
+		if (error instanceof EmailVerificationRequiredError) throw error;
 		throw new Error('Failed to bookmark recipe. Please try again.');
 	}
 }

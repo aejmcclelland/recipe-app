@@ -6,12 +6,25 @@ import {
 	normalizeEmail,
 	sendVerificationEmail,
 } from '@/utils/emailVerification';
+import {
+	enforceRateLimit,
+	getRequestIp,
+} from '@/utils/rateLimit';
 
 export default async function registerUser(formData) {
-	await connectDB();
-
 	try {
-		const { firstName, lastName, email, password } = formData;
+		await enforceRateLimit('auth', await getRequestIp());
+
+		const { firstName, lastName, email, password, website } = formData;
+
+		if (website != null && String(website).trim()) {
+			return {
+				success: false,
+				message: 'Unable to register. Please try again.',
+			};
+		}
+
+		await connectDB();
 
 		const trimmedFirstName = firstName?.trim();
 		const trimmedLastName = lastName?.trim();

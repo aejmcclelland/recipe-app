@@ -3,6 +3,7 @@
 import crypto from 'crypto';
 import connectDB from '@/config/database';
 import User from '@/models/User';
+import { enforceRateLimit, getRequestIp } from '@/utils/rateLimit';
 
 function sha256(input: string) {
 	return crypto.createHash('sha256').update(input).digest('hex');
@@ -13,6 +14,8 @@ export async function resetPassword(params: {
 	token: string;
 	password: string;
 }) {
+	await enforceRateLimit('password-reset', await getRequestIp());
+
 	const email = (params.email || '').trim().toLowerCase();
 	const token = (params.token || '').trim();
 	const password = params.password || '';

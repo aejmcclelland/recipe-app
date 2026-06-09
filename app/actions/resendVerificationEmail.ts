@@ -4,6 +4,7 @@
 import connectDB from '@/config/database';
 import User from '@/models/User';
 import { normalizeEmail, sendVerificationEmail } from '@/utils/emailVerification';
+import { enforceRateLimit, getRequestIp } from '@/utils/rateLimit';
 
 type ResendVerificationResult = {
 	ok: true;
@@ -12,6 +13,8 @@ type ResendVerificationResult = {
 export async function resendVerificationEmail(
 	emailRaw: unknown
 ): Promise<ResendVerificationResult> {
+	await enforceRateLimit('password-reset', await getRequestIp());
+
 	await connectDB();
 
 	const email = normalizeEmail(emailRaw);

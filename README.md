@@ -48,7 +48,13 @@ To run this project locally, you’ll need:
    - Add the following environment variables:
      ```plaintext
      MONGODB_URI=<Your MongoDB Atlas connection string>
+     UPSTASH_REDIS_REST_URL=<Your Upstash Redis REST URL>
+     UPSTASH_REDIS_REST_TOKEN=<Your Upstash Redis REST token>
      ```
+
+   The Upstash variables provide shared rate limiting across Vercel serverless
+   instances. Add the same values to the Vercel project environment settings.
+   Local development uses an in-memory fallback when they are absent.
 
 4. Seed the MongoDB database with the sample data:
     ```bash
