@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { redirect } from 'next/navigation';
 import connectDB from '@/config/database';
-import { normalizeEmail, verifyEmailToken } from '@/utils/emailVerification';
+import { sanitiseEmail, verifyEmailToken } from '@/utils/emailVerification';
 
 type VerifyPageProps = {
 	searchParams: Promise<{
@@ -15,7 +15,7 @@ export default async function VerifyPage({ searchParams }: VerifyPageProps) {
 	const sp = await searchParams;
 	const emailParam = sp?.email;
 	const tokenParam = sp?.token;
-	const email = normalizeEmail(Array.isArray(emailParam) ? emailParam[0] : emailParam);
+	const email = sanitiseEmail(Array.isArray(emailParam) ? emailParam[0] : emailParam);
 	const token = Array.isArray(tokenParam) ? tokenParam[0] : tokenParam;
 
 	const invalidRedirect = email

@@ -2,7 +2,7 @@ import { Box, Button, Stack, Typography } from '@mui/material';
 import Link from 'next/link';
 
 import ResendVerificationForm from '@/components/ResendVerificationForm';
-import { normalizeEmail } from '@/utils/emailVerification';
+import { sanitiseEmail } from '@/utils/emailVerification';
 
 type CheckEmailPageProps = Readonly<{
 	searchParams?: Readonly<{
@@ -15,7 +15,7 @@ export default function CheckEmailPage({ searchParams }: CheckEmailPageProps) {
 	const emailParam = searchParams?.email;
 	const sentParam = searchParams?.sent;
 
-	const email = normalizeEmail(
+	const email = sanitiseEmail(
 		Array.isArray(emailParam) ? emailParam[0] : emailParam,
 	);
 	const emailSent =

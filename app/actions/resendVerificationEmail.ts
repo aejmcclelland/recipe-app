@@ -3,7 +3,7 @@
 
 import connectDB from '@/config/database';
 import User from '@/models/User';
-import { normalizeEmail, sendVerificationEmail } from '@/utils/emailVerification';
+import { sanitiseEmail, sendVerificationEmail } from '@/utils/emailVerification';
 import { enforceRateLimit, getRequestIp } from '@/utils/rateLimit';
 
 type ResendVerificationResult = {
@@ -17,7 +17,7 @@ export async function resendVerificationEmail(
 
 	await connectDB();
 
-	const email = normalizeEmail(emailRaw);
+	const email = sanitiseEmail(emailRaw);
 
 	// Always return ok (prevents account enumeration)
 	if (!email || !email.includes('@')) return { ok: true };
