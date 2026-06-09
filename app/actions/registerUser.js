@@ -3,7 +3,7 @@
 import User from '@/models/User';
 import connectDB from '@/config/database';
 import {
-	normalizeEmail,
+	sanitiseEmail,
 	sendVerificationEmail,
 } from '@/utils/emailVerification';
 import {
@@ -28,14 +28,14 @@ export default async function registerUser(formData) {
 
 		const trimmedFirstName = firstName?.trim();
 		const trimmedLastName = lastName?.trim();
-		const sanitizedEmail = normalizeEmail(email);
+		const sanitisedEmail = sanitiseEmail(email);
 
 		if (!trimmedFirstName || !trimmedLastName) {
 			throw new Error('First name and last name are required.');
 		}
 
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		if (!emailRegex.test(sanitizedEmail)) {
+		if (!emailRegex.test(sanitisedEmail)) {
 			throw new Error('Invalid email format.');
 		}
 
@@ -49,7 +49,7 @@ export default async function registerUser(formData) {
 		const formattedFirstName = formatName(trimmedFirstName);
 		const formattedLastName = formatName(trimmedLastName);
 
-		const existingUser = await User.findOne({ email: sanitizedEmail });
+		const existingUser = await User.findOne({ email: sanitisedEmail });
 		if (existingUser) {
 			return {
 				success: false,
@@ -61,7 +61,7 @@ export default async function registerUser(formData) {
 		const newUser = new User({
 			firstName: formattedFirstName,
 			lastName: formattedLastName,
-			email: sanitizedEmail,
+			email: sanitisedEmail,
 			emailVerified: null,
 			password,
 		});
@@ -74,7 +74,7 @@ export default async function registerUser(formData) {
 			await sendVerificationEmail({
 				userId: newUser._id,
 				firstName: formattedFirstName,
-				email: sanitizedEmail,
+				email: sanitisedEmail,
 			});
 		} catch (emailError) {
 			emailSent = false;
@@ -83,7 +83,7 @@ export default async function registerUser(formData) {
 
 		return {
 			success: true,
-			email: sanitizedEmail,
+			email: sanitisedEmail,
 			emailSent,
 			requiresEmailVerification: true,
 		};

@@ -20,15 +20,15 @@ export const getSessionUser = async (): Promise<SessionUser | null> => {
 
 		await connectDB();
 
-		const normalizedEmail = email.toLowerCase().trim();
-		const userDoc = await User.findOne({ email: normalizedEmail })
+		const sanitisedEmail = email.toLowerCase().trim();
+		const userDoc = await User.findOne({ email: sanitisedEmail })
 			.select('_id firstName lastName email image')
 			.lean();
 
 		if (!userDoc) return null;
 
 		return {
-			id: userDoc._id.toString(),
+			id: userDoc._id.toHexString(),
 			name: session.user?.name ?? `${userDoc.firstName} ${userDoc.lastName}`,
 			email: userDoc.email,
 			image: session.user?.image ?? userDoc.image ?? null,

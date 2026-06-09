@@ -23,8 +23,8 @@ export type UpdateProfileDetailsResult = {
   requiresEmailVerification: boolean;
 };
 
-const normalizeEmail = (value: unknown): string =>
-  (value ?? '').toString().trim().toLowerCase();
+const sanitiseEmail = (value: unknown): string =>
+  typeof value === 'string' ? value.trim().toLowerCase() : '';
 
 const normalizeName = (value: unknown): string => (value ?? '').toString().trim();
 
@@ -48,7 +48,7 @@ export default async function updateProfileDetails(
   }
 
   // Normalise inputs
-  const nextEmail = normalizeEmail(email);
+  const nextEmail = sanitiseEmail(email);
   const nextFirstName = normalizeName(firstName);
   const nextLastName = normalizeName(lastName);
 
@@ -64,7 +64,7 @@ export default async function updateProfileDetails(
     throw new Error('Please enter your first and last name.');
   }
 
-  const currentEmail = normalizeEmail(user.email);
+  const currentEmail = sanitiseEmail(user.email);
   const emailChanged = nextEmail !== currentEmail;
 
   // Prevent duplicates if user is changing email

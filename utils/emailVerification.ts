@@ -1,5 +1,5 @@
-import crypto from 'node:crypto';
 import type { Types } from 'mongoose';
+import crypto from 'node:crypto';
 
 import EmailVerificationToken from '@/models/EmailVerificationToken';
 import User from '@/models/User';
@@ -22,8 +22,10 @@ type VerifyEmailTokenResult = {
 	status: 'verified' | 'already_verified' | 'invalid';
 };
 
-export function normalizeEmail(value: unknown): string {
-	return (value ?? '').toString().trim().toLowerCase();
+// Only trims/lowercases for the verification-email flow. Future canonical
+// duplicate-account lookup should use a separate sanitiseEmailForLookup helper.
+export function sanitiseEmail(value: unknown): string {
+	return typeof value === 'string' ? value.trim().toLowerCase() : '';
 }
 
 export function hashVerificationToken(token: string): string {
@@ -131,11 +133,11 @@ function getRecipesAppUrl(): string {
 }
 
 export function buildVerificationUrl(email: string, token: string): string {
-	const normalizedEmail = normalizeEmail(email);
+	const sanitisedEmail = sanitiseEmail(email);
 	const recipesAppUrl = getRecipesAppUrl();
 
 	return `${recipesAppUrl}/verify?email=${encodeURIComponent(
-		normalizedEmail,
+		sanitisedEmail,
 	)}&token=${encodeURIComponent(token)}`;
 }
 
@@ -143,18 +145,18 @@ export async function createEmailVerificationToken({
 	userId,
 	email,
 }: Pick<VerificationEmailInput, 'userId' | 'email'>) {
-	const normalizedEmail = normalizeEmail(email);
+	const sanitisedEmail = sanitiseEmail(email);
 	const rawToken = crypto.randomBytes(32).toString('hex');
 	const tokenHash = hashVerificationToken(rawToken);
 	const expiresAt = new Date(Date.now() + EMAIL_VERIFICATION_TTL_MS);
 
 	await EmailVerificationToken.deleteMany({
-		$or: [{ user: userId }, { email: normalizedEmail }],
+		$or: [{ user: userId }, { email: sanitisedEmail }],
 	});
 
 	await EmailVerificationToken.create({
 		user: userId,
-		email: normalizedEmail,
+		email: sanitisedEmail,
 		tokenHash,
 		expiresAt,
 	});
@@ -170,21 +172,21 @@ export async function sendVerificationEmail({
 	firstName,
 	email,
 }: VerificationEmailInput) {
-	const normalizedEmail = normalizeEmail(email);
+	const sanitisedEmail = sanitiseEmail(email);
 	const { token, expiresAt } = await createEmailVerificationToken({
 		userId,
-		email: normalizedEmail,
+		email: sanitisedEmail,
 	});
 
-	const verificationUrl = buildVerificationUrl(normalizedEmail, token);
+	const verificationUrl = buildVerificationUrl(sanitisedEmail, token);
 	const emailContent = buildVerificationEmail({
 		firstName: firstName?.trim() || 'there',
-		email: normalizedEmail,
+		email: sanitisedEmail,
 		verificationUrl,
 	});
 
 	await sendMail({
-		to: normalizedEmail,
+		to: sanitisedEmail,
 		subject: emailContent.subject,
 		text: emailContent.text,
 		html: emailContent.html,
@@ -200,15 +202,15 @@ export async function verifyEmailToken({
 	email,
 	token,
 }: VerifyEmailTokenInput): Promise<VerifyEmailTokenResult> {
-	const normalizedEmail = normalizeEmail(email);
+	const sanitisedEmail = sanitiseEmail(email);
 	const rawToken = token.trim();
 	const now = new Date();
 
-	if (!normalizedEmail || !rawToken) {
+	if (!sanitisedEmail || !rawToken) {
 		return { status: 'invalid' };
 	}
 
-	const user = await User.findOne({ email: normalizedEmail });
+	const user = await User.findOne({ email: sanitisedEmail });
 	if (!user) {
 		return { status: 'invalid' };
 	}
@@ -222,7 +224,7 @@ export async function verifyEmailToken({
 
 	const verificationToken = await EmailVerificationToken.findOne({
 		user: user._id,
-		email: normalizedEmail,
+		email: sanitisedEmail,
 		tokenHash,
 		expiresAt: { $gt: now },
 	});

@@ -1,7 +1,7 @@
 import { Box, Button, Stack, Typography } from '@mui/material';
 import Link from 'next/link';
 import ResendVerificationForm from '@/components/ResendVerificationForm';
-import { normalizeEmail } from '@/utils/emailVerification';
+import { sanitiseEmail } from '@/utils/emailVerification';
 
 type VerifyInvalidPageProps = {
 	searchParams: Promise<{ email?: string | string[] }>;
@@ -12,7 +12,7 @@ export default async function VerifyInvalidPage({
 }: VerifyInvalidPageProps) {
 	const sp = await searchParams;
 	const emailParam = sp?.email;
-	const email = normalizeEmail(Array.isArray(emailParam) ? emailParam[0] : emailParam);
+	const email = sanitiseEmail(Array.isArray(emailParam) ? emailParam[0] : emailParam);
 
 	return (
 		<Box data-testid='verify-invalid' sx={{ mt: 10, textAlign: 'center' }}>
