@@ -35,7 +35,7 @@
     "next": "16.2.6",
     "next-auth": "^4.24.14",
     "next-cloudinary": "^6.17.5",
-    "nodemailer": "^8.0.7",
+    "nodemailer": "^9.0.1",
     "prop-types": "^15.8.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
