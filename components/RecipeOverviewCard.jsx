@@ -2,7 +2,7 @@
 
 'use client';
 
-import { Card, CardContent, Typography, Box } from '@mui/material';
+import { Card, CardContent, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Image from 'next/image';
 import Link from 'next/link';

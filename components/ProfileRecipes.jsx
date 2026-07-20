@@ -4,19 +4,9 @@ import { Box, Container, Button, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
 import deleteRecipe from '@/app/actions/deleteRecipe';
 
 function ProfileRecipes({ recipes }) {
-    const [likedRecipes, setLikedRecipes] = useState({});
-
-    const handleLike = (recipeId) => {
-        setLikedRecipes((prev) => ({
-            ...prev,
-            [recipeId]: !prev[recipeId],
-        }));
-    };
-
     const handleDelete = async (recipeId) => {
         await deleteRecipe(recipeId);
     };

@@ -12,7 +12,6 @@ import {
 import LanguageIcon from '@mui/icons-material/Language';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RestaurantOutlinedIcon from '@mui/icons-material/RestaurantOutlined';
-import { usePathname } from 'next/navigation';
 import LoginMenu from '../components/LoginMenu';
 import Link from 'next/link';
 import { useTheme } from '@mui/material/styles';
@@ -22,9 +21,6 @@ import { shadowsIntoLight } from '@/app/fonts/fonts';
 export default function SearchAppBar() {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-	const pathname = usePathname();
-	const isDetailPage =
-		pathname.startsWith('/recipes/') && pathname.split('/').length === 3;
 	const { data: session } = useSession(); // Access session data
 
 	return (

@@ -3,13 +3,11 @@
 import { useTransition } from 'react';
 import { deleteAccount } from '@/app/actions/deleteAccount';
 import { signOut } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { Box, Button } from '@mui/material';
 
 export function DeleteAccountSection() {
 	const [isPending, startTransition] = useTransition();
-	const router = useRouter();
 
 	const handleDelete = () => {
 		const confirmed = window.confirm(

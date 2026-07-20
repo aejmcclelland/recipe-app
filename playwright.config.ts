@@ -3,8 +3,6 @@ import { defineConfig, devices } from '@playwright/test';
 const PLAYWRIGHT_PORT = Number(process.env.PLAYWRIGHT_PORT || 3000);
 const PLAYWRIGHT_BASE_URL =
 	process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${PLAYWRIGHT_PORT}`;
-const REUSE_EXISTING_SERVER =
-	process.env.PLAYWRIGHT_REUSE_SERVER === 'true' && !process.env.CI;
 
 /**
  * Read environment variables from file.

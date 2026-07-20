@@ -11,7 +11,7 @@ function RecipeDeleteForm({ recipe }) {
     const [isDeleting, setIsDeleting] = useState(false);
     const router = useRouter();
 
-    const handleDeleteRecipe = async (recipeId) => {
+    const handleDeleteRecipe = async () => {
         const confirmed = window.confirm('Are you sure you want to delete this recipe?');
         if (!confirmed) return;
 

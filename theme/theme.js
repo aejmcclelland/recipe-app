@@ -1,15 +1,9 @@
 'use client';
 import { createTheme, alpha } from '@mui/material/styles';
-import { Archivo, Shadows_Into_Light } from 'next/font/google';
+import { Archivo } from 'next/font/google';
 
 const archivo = Archivo({
 	weight: ['100', '400', '700'],
-	subsets: ['latin'],
-	display: 'swap',
-});
-
-const shadowsIntoLight = Shadows_Into_Light({
-	weight: '400',
 	subsets: ['latin'],
 	display: 'swap',
 });

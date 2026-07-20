@@ -61,7 +61,9 @@ export default async function RecipeDetailPage({ params }) {
 				if (!isLegacyDefault) return ing;
 
 				// Remove the placeholder values so the UI can render just the ingredient name/text
-				const { quantity, unit, ...rest } = ing;
+				const rest = { ...ing };
+				delete rest.quantity;
+				delete rest.unit;
 				return rest;
 			});
 		}

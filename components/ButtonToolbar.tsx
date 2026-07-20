@@ -43,7 +43,7 @@ const ButtonToolbar: React.FC<ButtonToolbarProps> = ({
 			doc.text(`- ${item}`, 10, 40 + index * 8);
 		});
 
-		let stepsStartY = 40 + ingredients.length * 8 + 10;
+		const stepsStartY = 40 + ingredients.length * 8 + 10;
 		doc.text('Steps:', 10, stepsStartY);
 		steps.forEach((step, index) => {
 			doc.text(`${index + 1}. ${step}`, 10, stepsStartY + 10 + index * 8);

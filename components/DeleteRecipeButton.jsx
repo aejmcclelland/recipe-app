@@ -7,7 +7,7 @@ import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined
 import deleteRecipe from '@/app/actions/deleteRecipe';
 
 const DeleteRecipeButton = ({ recipeId }) => {
-    const [deleting, setDeleting] = useState(false);
+    const [, setDeleting] = useState(false);
     const router = useRouter();
 
     const handleDelete = async () => {

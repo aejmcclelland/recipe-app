@@ -1,6 +1,6 @@
 // app/recipes/signin/page.jsx
 import SignInForm from '@/components/SignInForm';
-import { Box, Container, Stack, Typography } from '@mui/material';
+import { Box, Container, Stack } from '@mui/material';
 import { Suspense } from 'react';
 
 const SignInPage = () => {

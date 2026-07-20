@@ -17,7 +17,7 @@ const RegisterForm = () => {
         confirmPassword: '',
         website: '',
     });
-    const [error, setError] = useState(null);
+    const [error] = useState(null);
     const [passwordStrength, setPasswordStrength] = useState(null);
     const [passwordError, setPasswordError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
