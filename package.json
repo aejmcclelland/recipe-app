@@ -7,7 +7,7 @@
     "dev": "next dev --webpack",
     "build": "NODE_OPTIONS=--trace-deprecation next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "report:email-normalisation": "node --import tsx scripts/report-email-normalisation.ts",
     "dev:test": "next dev --webpack --port 3000",
     "test:e2e": "playwright test",
@@ -33,13 +33,13 @@
     "jspdf": "^4.2.1",
     "mongodb": "^7.1.1",
     "mongoose": "^9.4.1",
-    "next": "16.2.6",
+    "next": "16.2.10",
     "next-auth": "^4.24.14",
     "next-cloudinary": "^6.17.5",
-    "nodemailer": "^8.0.7",
+    "nodemailer": "^9.0.3",
     "prop-types": "^15.8.1",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "react-toastify": "^11.1.0",
     "zxcvbn": "^4.4.2"
   },
@@ -47,14 +47,14 @@
     "@playwright/test": "^1.59.1",
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^25.6.0",
-    "@types/react": "19.2.11",
+    "@types/react": "19.2.17",
     "eslint": "^9.39.4",
-    "eslint-config-next": "^16.2.6",
-    "tsx": "^4.22.4",
+    "eslint-config-next": "^16.2.10",
+    "tsx": "^4.23.1",
     "typescript": "^5.9.3"
   },
   "engines": {
     "node": ">=22.13.0 <25"
   },
-  "packageManager": "pnpm@11.5.1+sha512.93f7b57422ea7068257235b4c16eb60762eb68e1dc23723199cc739043ea9be2c4143274a399d8c6defa2b1176226d9ca1c4b63482d6200c1a8fbaa78c1d1485"
+  "packageManager": "pnpm@11.15.1+sha512.81350b07e53c9538a02f1f2303b4290fa2d7be04e56e2a970c4cc4b417dc761de196edabd49d55c7dc9580db81007c44143e4e3d7e462b3000d23c255122d065"
 }
