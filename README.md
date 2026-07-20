@@ -2,87 +2,266 @@
 
 [![Playwright Tests](https://github.com/aejmcclelland/recipe-app/actions/workflows/playwright.yml/badge.svg)](https://github.com/aejmcclelland/recipe-app/actions/workflows/playwright.yml)
 
-Rebekah's Recipes is a family-focused recipe web application built using **Next.js** and **MongoDB**. The app allows users to browse and search for recipes, as well as filter by food categories such as Beef, Chicken, Pasta, and more. The site is designed with a modern and responsive UI using **Material UI** and integrates recipe data from a **MongoDB Atlas** database.
+Rebekah's Recipes is a full-stack recipe management application built with **Next.js 16**, **React 19**, **TypeScript**, and **MongoDB Atlas**. It enables users to discover, create, manage and import recipes through a modern responsive interface while demonstrating production-ready authentication, security and deployment practices.
+
+## Why I Built This
+
+I originally built Rebekah's Recipes when my daughter went away to university and had to cook for herself for the first time. Although she enjoys cooking and baking, she would often phone or text home asking for recipes we'd cooked together over the years. Many of these were family favourites, while others had been adapted from websites such as BBC Good Food.
+
+My original goal was simply to create a place where family members could share recipes with one another. During development, however, I realised that most of the recipes we actually used already existed online. That shifted the focus of the project towards solving a different problem.
+
+Modern recipe websites often contain large amounts of advertising and lengthy content before you reach the ingredients and cooking method. I wanted a way to save those recipes in a clean, distraction-free format while still being able to organise them into a personal collection.
+
+The application now allows users to import recipes directly from supported websites, store them in their own account, edit them, bookmark them, print them and manage them alongside their own recipes. What began as a simple family project has evolved into a full-stack application demonstrating modern web development, secure authentication, web scraping and cloud deployment.
+
+---
 
 ## Features
 
-- **Recipe Categories**: Browse and filter recipes by category (Beef, Chicken, Pasta, etc.).
-- **Search Functionality**: Easily search for specific recipes using the search bar.
-- **Responsive Design**: Mobile-first design with a responsive layout using Material UI components.
-- **Dynamic Filtering**: Use a dynamic category filter in the Drawer component to filter recipes.
-- **Drawer Navigation**: Mobile-friendly navigation with a Material UI drawer component.
+### Authentication & User Accounts
 
-## Technologies Used
+- Secure authentication with **NextAuth**
+- Google OAuth sign in
+- Email/password authentication
+- Email verification workflow
+- Password reset via secure email tokens
+- JWT session management
+- Password hashing using **bcrypt**
+- Password strength validation
+- Protection against account enumeration attacks
 
-- **Next.js 14**: Framework for server-side rendering and building modern React apps.
-- **MongoDB Atlas**: Cloud-based NoSQL database to store recipes and ingredients.
-- **Mongoose**: ORM used for interacting with the MongoDB database.
-- **Material UI**: Modern UI component library for React, used for building responsive layouts and components.
-- **Cloudinary** (Planned): Image hosting solution to store and display recipe images.
+---
+
+### Recipe Management
+
+- Create, read, update and delete recipes
+- Dynamic ingredients and preparation steps
+- Cooking times and serving sizes
+- Recipe categories
+- Recipe bookmarking
+- Ownership validation so users can only edit or delete their own recipes
+- Cloudinary image uploads
+
+---
+
+### Recipe Import
+
+Import recipes directly from supported cooking websites.
+
+Current supported sites include:
+
+- BBC Good Food
+- BBC Food
+- Jamie Oliver
+
+The import pipeline includes:
+
+- URL validation
+- Domain allow-listing
+- Structured recipe extraction
+- Automatic ingredient and instruction parsing
+
+---
+
+### Security
+
+The application has been designed with security in mind and includes:
+
+- Upstash Redis distributed rate limiting
+- Sliding-window rate limiting
+- Secure in-memory fallback for local development
+- Protected server actions
+- Protected API routes
+- Email verification before privileged actions
+- Secure password reset tokens
+- Input validation
+- Ownership checks
+- Production-safe defaults
+
+Rate limiting currently protects:
+
+- Registration
+- Login
+- Password reset
+- Recipe creation
+- Website recipe imports
+
+---
+
+### User Experience
+
+- Responsive Material UI interface
+- Mobile-first layout
+- Search functionality
+- Category filtering
+- Responsive navigation drawer
+- Server Components
+- Server Actions
+- Optimised loading experience
+
+---
+
+### SEO
+
+Built using modern SEO practices including:
+
+- Dynamic metadata
+- Open Graph metadata
+- Twitter Cards
+- JSON-LD structured data
+- Dynamic sitemap generation
+- robots.txt generation
+
+---
+
+### Testing & Quality
+
+- Playwright end-to-end tests
+- GitHub Actions CI
+- TypeScript
+- Production builds verified before deployment
+
+---
+
+### Analytics
+
+- Vercel Analytics
+- Vercel Speed Insights
+
+---
+
+## Technology Stack
+
+### Frontend
+
+- Next.js 16
+- React 19
+- TypeScript
+- Material UI
+
+### Backend
+
+- Next.js App Router
+- Server Components
+- Server Actions
+- NextAuth
+
+### Database
+
+- MongoDB Atlas
+- Mongoose
+
+### Cloud Services
+
+- Cloudinary
+- Upstash Redis
+- Maileroo
+- Vercel
+
+### Testing
+
+- Playwright
+
+---
 
 ## Getting Started
 
 ### Prerequisites
 
-To run this project locally, you’ll need:
+To run the project locally you'll need:
 
-- Node.js v22 or higher
-- MongoDB Atlas account (or local MongoDB setup)
+- Node.js 22 or later
+- npm
+- MongoDB Atlas account (or local MongoDB)
 - Git
+
+---
 
 ### Installation
 
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/aejmcclelland/recipe-app.git
-    cd recipe-app
-    ```
+Clone the repository:
 
-2. Install the dependencies:
-    ```bash
-    npm install
-    ```
+```bash
+git clone https://github.com/aejmcclelland/recipe-app.git
+cd recipe-app
+```
 
-3. Set up your environment variables:
-   - Create a `.env` file in the root of the project.
-   - Add the following environment variables:
-     ```plaintext
-     MONGODB_URI=<Your MongoDB Atlas connection string>
-     UPSTASH_REDIS_REST_URL=<Your Upstash Redis REST URL>
-     UPSTASH_REDIS_REST_TOKEN=<Your Upstash Redis REST token>
-     ```
+Install dependencies:
 
-   The Upstash variables provide shared rate limiting across Vercel serverless
-   instances. Add the same values to the Vercel project environment settings.
-   Local development uses an in-memory fallback when they are absent.
+```bash
+npm install
+```
 
-4. Seed the MongoDB database with the sample data:
-    ```bash
-    node seedDB.js
-    ```
+Create a `.env` file and configure the required environment variables.
 
-### Running the App
+These include:
 
-1. Start the development server:
-    ```bash
-    npm run dev
-    ```
+- MongoDB connection
+- NextAuth configuration
+- Google OAuth credentials
+- Cloudinary credentials
+- Upstash Redis credentials
+- Maileroo credentials
 
-2. Open the app in your browser:
-    ```
-    http://localhost:3000
-    ```
+Run the development server:
+
+```bash
+npm run dev
+```
+
+Open:
+
+```
+http://localhost:3000
+```
+
+---
+
 ## Deployment
 
-To deploy this application, consider using:
+The application is designed for deployment on **Vercel**.
 
-- **Vercel**: Deploy your Next.js app with ease using Vercel (Next.js' hosting platform).
-- **MongoDB Atlas**: Ensure your database is hosted in the cloud for easy access.
+Production deployment uses:
 
-## Planned Features
+- Vercel
+- MongoDB Atlas
+- Cloudinary
+- Upstash Redis
+- Maileroo
 
-- **User Authentication**: Allow users to sign in and submit their own recipes.
-- **Recipe Ratings**: Enable users to rate and like recipes.
+Configure the same environment variables in your Vercel project before deploying.
+
+---
+
+## Project Goals
+
+This project demonstrates experience with:
+
+- Modern React development
+- Next.js App Router
+- Full-stack TypeScript development
+- Authentication and authorisation
+- RESTful API design
+- MongoDB data modelling
+- Secure application development
+- Production deployment
+- Responsive UI development
+- Automated end-to-end testing
+
+---
+
+## Future Improvements
+
+Potential future enhancements include:
+
+- Recipe ratings and reviews
+- Meal planning
+- Shopping lists
+- Nutrition information
+- Social recipe sharing
+- Recipe collections
+
+---
 
 ## License
 
