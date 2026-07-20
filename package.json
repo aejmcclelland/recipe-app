@@ -8,6 +8,7 @@
     "build": "NODE_OPTIONS=--trace-deprecation next build",
     "start": "next start",
     "lint": "next lint",
+    "report:email-normalisation": "node --import tsx scripts/report-email-normalisation.ts",
     "dev:test": "next dev --webpack --port 3000",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
@@ -49,6 +50,7 @@
     "@types/react": "19.2.11",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.2.6",
+    "tsx": "^4.22.4",
     "typescript": "^5.9.3"
   },
   "engines": {

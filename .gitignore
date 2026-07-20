@@ -51,5 +51,6 @@ node_modules/
 
 # local project notes / exports
 /csv-issues/
+/reports/
 directory-tree.txt
 rebekahs-recipes-structure.txt
