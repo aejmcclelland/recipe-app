@@ -7,6 +7,7 @@ import PrintIcon from '@mui/icons-material/Print';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import SaveIcon from '@mui/icons-material/Save';
 import { toast } from 'react-toastify';
+import type { RecipeResult } from '@/types/recipe';
 
 import jsPDF from 'jspdf';
 
@@ -15,7 +16,7 @@ interface ButtonToolbarProps {
 	ingredients: string[];
 	steps: string[];
 	setUrl: (url: string) => void;
-	setData: (data: any) => void;
+	setData: React.Dispatch<React.SetStateAction<RecipeResult | null>>;
 	categoryId: string;
 	onSave: () => void;
 	save?: boolean;

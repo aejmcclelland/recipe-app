@@ -46,8 +46,15 @@ function ResetPasswordForm() {
 			await resetPassword({ email, token, password });
 			toast.success('Password updated. Please sign in.');
 			router.push('/recipes/signin');
-		} catch (err: any) {
-			toast.error(err?.message || 'Reset link is invalid or has expired.');
+		} catch (err: unknown) {
+			const message =
+				typeof err === 'object' &&
+				err !== null &&
+				'message' in err &&
+				typeof err.message === 'string'
+					? err.message
+					: undefined;
+			toast.error(message || 'Reset link is invalid or has expired.');
 		} finally {
 			setSubmitting(false);
 		}

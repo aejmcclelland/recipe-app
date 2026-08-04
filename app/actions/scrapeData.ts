@@ -10,6 +10,7 @@ import {
 import { getSessionUser } from '@/utils/getSessionUser';
 import { requireVerifiedEmail } from '@/utils/requireVerifiedEmail';
 import { enforceRateLimit } from '@/utils/rateLimit';
+import type { RecipeResult } from '@/types/recipe';
 
 export async function scrapeData(formData: FormData) {
 	const sessionUser = await requireVerifiedEmail(await getSessionUser());
@@ -20,7 +21,7 @@ export async function scrapeData(formData: FormData) {
 
 	const { normalizedUrl, siteKey } = resolveSupportedScrapeTarget(url);
 
-	let data: any;
+	let data: RecipeResult;
 	switch (siteKey) {
 		case SUPPORTED_SCRAPE_SITES.BBC_GOOD_FOOD:
 			data = await scrapeBBC(normalizedUrl);

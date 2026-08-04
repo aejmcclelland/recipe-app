@@ -1,6 +1,8 @@
 // utils/authOptions.ts
 import type { AuthOptions } from 'next-auth';
-import GoogleProvider from 'next-auth/providers/google';
+import GoogleProvider, {
+	type GoogleProfile,
+} from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
 import connectDB from '@/config/database';
@@ -11,6 +13,10 @@ type TokenUser = {
 	email?: string | null;
 	name?: string | null;
 	image?: string | null;
+};
+
+type JwtUpdateSession = {
+	user?: Pick<TokenUser, 'name' | 'email' | 'image'>;
 };
 
 export const authOptions: AuthOptions = {
@@ -25,15 +31,13 @@ export const authOptions: AuthOptions = {
 				},
 			},
 			profile(profile) {
-				const picture =
-					(profile as { picture?: string }).picture ??
-					(profile as { image?: string }).image ??
-					null;
+				const googleProfile = profile as GoogleProfile & { image?: string };
+				const picture = googleProfile.picture ?? googleProfile.image ?? null;
 
 				return {
-					id: (profile as any).sub,
-					email: profile.email,
-					name: profile.name,
+					id: googleProfile.sub,
+					email: googleProfile.email,
+					name: googleProfile.name,
 					image: picture,
 				};
 			},
@@ -103,7 +107,7 @@ export const authOptions: AuthOptions = {
 						email,
 						firstName,
 						lastName: rest.join(' ') || 'Unknown',
-						image: (profile as any).picture,
+						image: (profile as GoogleProfile).picture,
 						authProvider: 'google',
 						emailVerified: new Date(),
 					});
@@ -113,7 +117,7 @@ export const authOptions: AuthOptions = {
 					await existingUser.save();
 				}
 
-				(user as any).id = existingUser._id?.toString();
+				user.id = existingUser._id?.toString();
 			}
 
 			return true;
@@ -121,9 +125,9 @@ export const authOptions: AuthOptions = {
 
 		async jwt({ token, user, trigger, session }) {
 			// Initial sign-in
-			if (user && (user as any).id) {
-				(token as any).user = {
-					id: (user as any).id,
+			if (user && user.id) {
+				token.user = {
+					id: user.id,
 					email: user.email,
 					name: user.name,
 					image: user.image,
@@ -131,23 +135,21 @@ export const authOptions: AuthOptions = {
 			}
 
 			// ✅ Allow client-side `useSession().update()` to refresh token values
-			const tokenUser = (token as any).user as TokenUser | undefined;
-			const sessionUser = (session as any)?.user as
-				| Pick<TokenUser, 'name' | 'email' | 'image'>
-				| undefined;
+			const tokenUser = token.user;
+			const sessionUser = (session as JwtUpdateSession | undefined)?.user;
 
 			if (trigger === 'update' && sessionUser && tokenUser) {
 				tokenUser.name = sessionUser.name ?? tokenUser.name;
 				tokenUser.email = sessionUser.email ?? tokenUser.email;
 				tokenUser.image = sessionUser.image ?? tokenUser.image;
-				(token as any).user = tokenUser;
+				token.user = tokenUser;
 			}
 
 			return token;
 		},
 
 		async session({ session, token }) {
-			const tokenUser = (token as any).user as TokenUser | undefined;
+			const tokenUser = token.user;
 
 			if (session.user && tokenUser) {
 				session.user.id = tokenUser.id;

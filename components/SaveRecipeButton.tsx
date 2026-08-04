@@ -4,9 +4,10 @@ import React from 'react';
 import { IconButton, Tooltip } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { saveScrapedRecipe } from '@/app/actions/saveScrapedRecipe';
+import type { RecipeResult } from '@/types/recipe';
 
 interface SaveRecipeButtonProps {
-	data: any;
+	data: RecipeResult;
 	categoryId: string;
 	onSaved?: () => void;
 }

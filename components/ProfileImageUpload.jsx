@@ -19,7 +19,6 @@ export default function ProfileImageUpload({ user, onImageUpdated, fallbackIcon 
     // If parent/user updates later, keep preview in sync
     useEffect(() => {
         setImagePreview(user?.image || session?.user?.image || null);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user?.image, session?.user?.image]);
 
     const handleFileChange = async (e) => {

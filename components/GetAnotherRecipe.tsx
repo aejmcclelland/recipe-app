@@ -2,10 +2,11 @@
 
 import React from 'react';
 import { Button, Box } from '@mui/material';
+import type { RecipeResult } from '@/types/recipe';
 
 interface GetAnotherRecipeProps {
 	setUrl: (value: string) => void;
-	setData: (value: any) => void;
+	setData: React.Dispatch<React.SetStateAction<RecipeResult | null>>;
 	icon: React.ReactNode;
 }
 

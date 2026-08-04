@@ -12,11 +12,12 @@ import React, {
 import { Box, TextField } from '@mui/material';
 import GetRecipeButton from './GetRecipeButton';
 import { scrapeData } from '../app/actions/scrapeData';
+import type { RecipeResult } from '@/types/recipe';
 
 interface RecipeFormProps {
 	url: string;
 	setUrl: Dispatch<SetStateAction<string>>;
-	setData: Dispatch<SetStateAction<any>>;
+	setData: Dispatch<SetStateAction<RecipeResult | null>>;
 }
 
 const RecipeForm: React.FC<RecipeFormProps> = ({ url, setUrl, setData }) => {

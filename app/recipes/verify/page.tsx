@@ -34,8 +34,16 @@ export default async function VerifyPage({ searchParams }: VerifyPageProps) {
 		}
 
 		return redirect('/recipes/verify/success');
-	} catch (err: any) {
-		if (err?.digest?.startsWith('NEXT_REDIRECT')) throw err;
+	} catch (err: unknown) {
+		if (
+			typeof err === 'object' &&
+			err !== null &&
+			'digest' in err &&
+			typeof err.digest === 'string' &&
+			err.digest.startsWith('NEXT_REDIRECT')
+		) {
+			throw err;
+		}
 		console.error('Verification error:', err);
 		return redirect(invalidRedirect);
 	}
