@@ -39,8 +39,8 @@ export async function resetPassword(params: {
 	}
 
 	user.password = password; // your pre-save hook hashes it
-	user.resetPasswordTokenHash = null as any;
-	user.resetPasswordExpires = null as any;
+	user.resetPasswordTokenHash = null;
+	user.resetPasswordExpires = null;
 
 	await user.save();
 
