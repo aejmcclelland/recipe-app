@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useSession } from 'next-auth/react';
 
@@ -20,13 +20,31 @@ const BookmarkButton = ({ recipe, initialBookmarked = false }) => {
     // IMPORTANT:
     // Do NOT call a server action on mount for each card.
     // We trust the parent-provided `initialBookmarked` value.
-    const [isBookmarked, setIsBookmarked] = useState(Boolean(initialBookmarked));
+    const parentBookmarked = Boolean(initialBookmarked);
+    const [bookmarkState, setBookmarkState] = useState({
+        recipeId,
+        parentBookmarked,
+        localOverride: null,
+    });
     const [isSaving, setIsSaving] = useState(false);
 
-    // If the parent changes the initial value (e.g. filter changes / new data), sync it.
-    useEffect(() => {
-        setIsBookmarked(Boolean(initialBookmarked));
-    }, [initialBookmarked]);
+    if (
+        bookmarkState.recipeId !== recipeId ||
+        bookmarkState.parentBookmarked !== parentBookmarked
+    ) {
+        setBookmarkState({ recipeId, parentBookmarked, localOverride: null });
+    }
+
+    const isBookmarked =
+        bookmarkState.recipeId === recipeId &&
+        bookmarkState.parentBookmarked === parentBookmarked &&
+        bookmarkState.localOverride !== null
+            ? bookmarkState.localOverride
+            : parentBookmarked;
+
+    const setLocalBookmarked = (value) => {
+        setBookmarkState({ recipeId, parentBookmarked, localOverride: value });
+    };
 
     const handleClick = async () => {
         if (status === 'loading') return; // session still loading
@@ -46,24 +64,24 @@ const BookmarkButton = ({ recipe, initialBookmarked = false }) => {
 
         // Optimistic UI update
         const nextLocal = !isBookmarked;
-        setIsBookmarked(nextLocal);
+        setLocalBookmarked(nextLocal);
 
         try {
             const result = await bookmarkRecipe(recipeId);
             if (!result?.success) {
                 // rollback
-                setIsBookmarked(!nextLocal);
+                setLocalBookmarked(!nextLocal);
                 toast.error('Unexpected error occurred. Please try again.');
                 return;
             }
 
             // Trust server truth (in case it differs)
-            setIsBookmarked(Boolean(result.isBookmarked));
+            setLocalBookmarked(Boolean(result.isBookmarked));
             const action = result.isBookmarked ? 'added to' : 'removed from';
             toast.success(`Recipe "${recipe?.name ?? 'Recipe'}" ${action} your bookmarks.`);
         } catch (error) {
             // rollback
-            setIsBookmarked(!nextLocal);
+            setLocalBookmarked(!nextLocal);
             console.error('Error toggling bookmark:', error);
             toast.error('Failed to toggle bookmark. Please try again.');
         } finally {

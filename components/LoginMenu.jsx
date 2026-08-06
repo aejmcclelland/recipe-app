@@ -1,7 +1,7 @@
 // components/LoginMenu.jsx
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Menu, MenuItem, IconButton, Typography, Tooltip } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Avatar from '@mui/material/Avatar';
@@ -29,19 +29,14 @@ export default function LoginMenu() {
         return null;
     }, [session?.user?.image]);
 
-    const [avatarImgError, setAvatarImgError] = useState(false);
-
-    // If the user changes their avatar URL, allow the image to try loading again
-    useEffect(() => {
-        setAvatarImgError(false);
-    }, [avatarUrl]);
+    const [failedAvatarUrl, setFailedAvatarUrl] = useState(null);
 
     return (
         <>
             <Tooltip title={session?.user ? 'Account' : 'Sign In'}>
                 <IconButton onClick={handleOpenMenu} sx={{ p: 0 }}>
                     <Avatar
-                        src={avatarUrl && !avatarImgError ? avatarUrl : undefined}
+                        src={avatarUrl && failedAvatarUrl !== avatarUrl ? avatarUrl : undefined}
                         alt={session?.user?.name || 'User Avatar'}
                         sx={{ width: 32, height: 32, bgcolor: 'transparent', color: 'inherit' }}
                         slotProps={{
@@ -49,7 +44,7 @@ export default function LoginMenu() {
                                 referrerPolicy: 'no-referrer',
                             },
                         }}
-                        onError={() => setAvatarImgError(true)}
+                        onError={() => setFailedAvatarUrl(avatarUrl)}
                     >
                         <AccountCircleIcon fontSize='large' />
                     </Avatar>
