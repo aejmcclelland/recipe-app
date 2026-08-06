@@ -1,10 +1,14 @@
 // utils/recipeFormValidation.ts
 
+type PopulatedIngredientInput = {
+  name?: string | null;
+};
+
 export type IngredientRowInput = {
-  ingredient?: unknown;
-  quantity?: unknown;
-  unit?: unknown;
-  customUnit?: unknown;
+  ingredient?: string | PopulatedIngredientInput | null;
+  quantity?: string | number | null;
+  unit?: string | null;
+  customUnit?: string | null;
   // allow extra props (e.g. _id, ingredient populated object, etc.)
   [key: string]: unknown;
 };
@@ -46,9 +50,24 @@ export type RecipeFormValidationResult =
   | RecipeFormValidationOk
   | RecipeFormValidationError;
 
-type Options = {
+export type RecipeFormValues = {
   ingredients: IngredientRowInput[];
-  steps: unknown[];
+  steps: Array<string | null | undefined>;
+};
+
+type IngredientRowMeta = {
+  ingredientName: string;
+  qtyStr: string;
+  unitRaw: string;
+  customUnit: string;
+  index: number;
+};
+
+type IngredientRowWithMeta = CleanIngredientRow & {
+  _meta: IngredientRowMeta;
+};
+
+type Options = RecipeFormValues & {
   /** Optional: convert strings like "1/2" to a decimal (e.g. 0.5). */
   fractionToDecimal?: (value: string) => number;
   /** If true, require at least one step. Default: true */
@@ -107,13 +126,16 @@ export function validateAndCleanRecipeForm(
 
   // ---- Ingredients ----
   const cleanedIngredientsWithMeta = safeIngredients
-    .map((row, index) => {
+    .map((row, index): IngredientRowWithMeta => {
       // Support both: { ingredient: 'onion' } and populated { ingredient: { name: 'onion' } }
+      const rawIngredient = row.ingredient;
       const rawName =
-        (row as any)?.ingredient?.name ?? (row as any)?.ingredient ?? '';
+        typeof rawIngredient === 'object' && rawIngredient !== null
+          ? rawIngredient.name ?? rawIngredient
+          : rawIngredient ?? '';
       const ingredientName = String(rawName ?? '').trim();
 
-      const rawQty = (row as any)?.quantity ?? '';
+      const rawQty = row.quantity ?? '';
       const qtyStr = String(rawQty ?? '').trim();
 
       // If they typed a fraction like "1/2", allow converting it.
@@ -127,11 +149,11 @@ export function validateAndCleanRecipeForm(
       ) {
         quantity = fractionToDecimal(rawQty);
       } else {
-        quantity = rawQty as any;
+        quantity = rawQty;
       }
 
-      const unitRaw = String((row as any)?.unit ?? '').trim();
-      const customUnit = String((row as any)?.customUnit ?? '').trim();
+      const unitRaw = String(row.unit ?? '').trim();
+      const customUnit = String(row.customUnit ?? '').trim();
       const unit = unitRaw === 'other' ? customUnit : unitRaw;
 
       return {
@@ -141,7 +163,7 @@ export function validateAndCleanRecipeForm(
         unit,
         customUnit,
         _meta: { ingredientName, qtyStr, unitRaw, customUnit, index },
-      } as any;
+      };
     })
     // drop completely empty rows
     .filter((row) => {
@@ -160,13 +182,7 @@ export function validateAndCleanRecipeForm(
 
   // Build per-row field errors (using original indexes)
   for (const r of cleanedIngredientsWithMeta) {
-    const m = r._meta as {
-      ingredientName: string;
-      qtyStr: string;
-      unitRaw: string;
-      customUnit: string;
-      index: number;
-    };
+    const m = r._meta;
 
     const rowErr = ingredientErrors[m.index] ?? (ingredientErrors[m.index] = {});
 
@@ -210,7 +226,7 @@ export function validateAndCleanRecipeForm(
 
   // strip meta
   const cleanedIngredients = cleanedIngredientsWithMeta.map(
-    ({ _meta, ...r }: any) => r
+    ({ _meta, ...r }) => r
   );
 
   return { ok: true, cleanedIngredients, cleanedSteps, ingredientErrors };
