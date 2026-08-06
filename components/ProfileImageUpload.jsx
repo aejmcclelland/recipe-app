@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Box, Avatar, Tooltip, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -11,15 +11,17 @@ import updateProfileImage from '@/app/actions/updateProfileImage';
 export default function ProfileImageUpload({ user, onImageUpdated, fallbackIcon = null }) {
     const { data: session, update } = useSession();
 
-    const initialImage = user?.image || session?.user?.image || null;
-
-    const [imagePreview, setImagePreview] = useState(initialImage);
+    const externalImage = user?.image || session?.user?.image || null;
+    const [localImage, setLocalImage] = useState(null);
+    const [failedImageUrl, setFailedImageUrl] = useState(null);
     const [uploading, setUploading] = useState(false);
 
-    // If parent/user updates later, keep preview in sync
-    useEffect(() => {
-        setImagePreview(user?.image || session?.user?.image || null);
-    }, [user?.image, session?.user?.image]);
+    if (localImage && localImage.externalImage !== externalImage) {
+        setLocalImage(null);
+    }
+
+    const imagePreview =
+        localImage?.externalImage === externalImage ? localImage.url : externalImage;
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
@@ -31,7 +33,8 @@ export default function ProfileImageUpload({ user, onImageUpdated, fallbackIcon 
                 const newImageUrl = await updateProfileImage(file);
 
                 if (newImageUrl) {
-                    setImagePreview(newImageUrl); // Update the image preview
+                    setLocalImage({ externalImage, url: newImageUrl }); // Update the image preview
+                    setFailedImageUrl(null);
 
                  
                     try {
@@ -74,14 +77,14 @@ export default function ProfileImageUpload({ user, onImageUpdated, fallbackIcon 
             }}
         >
             <Avatar
-                src={imagePreview || undefined}
+                src={imagePreview && failedImageUrl !== imagePreview ? imagePreview : undefined}
                 alt={user?.name || 'User Avatar'}
                 slotProps={{
                     img: {
                         referrerPolicy: 'no-referrer',
                     },
                 }}
-                onError={() => setImagePreview(null)}
+                onError={() => setFailedImageUrl(imagePreview)}
                 sx={{
                     width: 100,
                     height: 100,
