@@ -1,7 +1,7 @@
 // components/RecipeEditForm.jsx
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
 	Box,
 	Button,
@@ -57,14 +57,6 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 	const [ingredientErrors, setIngredientErrors] = useState(() =>
 		Array.isArray(recipe?.ingredients) ? recipe.ingredients.map(() => ({})) : []
 	);
-
-	useEffect(() => {
-		setIngredientErrors((prev) => {
-			const safePrev = Array.isArray(prev) ? prev : [];
-			const next = (ingredients || []).map((_, i) => safePrev[i] || {});
-			return next;
-		});
-	}, [ingredients]);
 
 	const handleCategoryChange = (event) => setSelectedCategory(event.target.value);
 

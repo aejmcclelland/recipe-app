@@ -71,6 +71,43 @@
 - Use the project's existing UI components and styling conventions consistently.
 - Follow existing project patterns before introducing a new abstraction.
 
+# React Patterns
+
+## State
+
+Prefer deriving state rather than synchronising state.
+
+Avoid:
+
+useEffect(() => {
+    setState(...)
+}, [dependency])
+
+Instead prefer:
+
+- lazy useState initialisers
+- derived values via useMemo
+- updating related state in the same event handler
+- reducers where state becomes complex
+
+## Context
+
+Context values should be memoised with useMemo.
+
+Context actions should use useCallback.
+
+Do not expose raw state setters unless genuinely required.
+
+## Forms
+
+Recipe forms are controlled.
+
+Ingredient rows and their validation errors should stay synchronised by the event handlers.
+
+Avoid effects that synchronise parallel state.
+
+...
+
 ## Validation
 
 Before considering React work complete, run:

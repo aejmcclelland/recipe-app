@@ -91,6 +91,9 @@ Fix all errors.
 Project-specific technology guidance:
 
 - React: `docs/technologies/react.md`
+- Material UI `docs/technologies/mui.md`
+
+Always follow project technology guides before introducing new patterns.
 
 Official documentation:
 
