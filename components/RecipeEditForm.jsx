@@ -1,7 +1,6 @@
 // components/RecipeEditForm.jsx
 'use client';
 
-import { useMemo, useState } from 'react';
 import {
 	Box,
 	Button,
@@ -15,18 +14,32 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material';
+import { useMemo, useState } from 'react';
+
+import updateRecipe from '@/app/actions/editRecipe';
+import { fractionToDecimal } from '@/utils/fractionToDecimal';
+import { validateAndCleanRecipeForm } from '@/utils/recipeFormValidation';
 import AddIcon from '@mui/icons-material/Add';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import updateRecipe from '@/app/actions/editRecipe';
 import IngredientInputRow from './IngredientInputRow';
 import StepsInputRow from './StepsInputRow';
-import { fractionToDecimal } from '@/utils/fractionToDecimal';
-import { validateAndCleanRecipeForm } from '@/utils/recipeFormValidation';
 
 const DEFAULT_IMAGE =
 	'https://res.cloudinary.com/dqeszgo28/image/upload/v1728739432/300_bebabf.png';
+
+const VisuallyHiddenInput = styled('input')({
+	clip: 'rect(0 0 0 0)',
+	clipPath: 'inset(50%)',
+	height: 1,
+	overflow: 'hidden',
+	position: 'absolute',
+	bottom: 0,
+	left: 0,
+	whiteSpace: 'nowrap',
+	width: 1,
+});
 
 export default function RecipeEditForm({ recipe, categories = [] }) {
 	const router = useRouter();
@@ -55,10 +68,13 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 	const [steps, setSteps] = useState(initialSteps);
 	const [ingredients, setIngredients] = useState(recipe?.ingredients ?? []);
 	const [ingredientErrors, setIngredientErrors] = useState(() =>
-		Array.isArray(recipe?.ingredients) ? recipe.ingredients.map(() => ({})) : []
+		Array.isArray(recipe?.ingredients)
+			? recipe.ingredients.map(() => ({}))
+			: [],
 	);
 
-	const handleCategoryChange = (event) => setSelectedCategory(event.target.value);
+	const handleCategoryChange = (event) =>
+		setSelectedCategory(event.target.value);
 
 	const handleImageChange = (event) => {
 		const file = event.target.files?.[0] ?? null;
@@ -78,7 +94,9 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 
 	const handleIngredientChange = (index, field, value) => {
 		setIngredients((prev) =>
-			(prev || []).map((ing, i) => (i === index ? { ...ing, [field]: value } : ing))
+			(prev || []).map((ing, i) =>
+				i === index ? { ...ing, [field]: value } : ing,
+			),
 		);
 
 		// clear field error as they edit
@@ -141,7 +159,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 
 		if (!result.ok) {
 			setIngredientErrors(
-				result.ingredientErrors || (ingredients || []).map(() => ({}))
+				result.ingredientErrors || (ingredients || []).map(() => ({})),
 			);
 			toast.error(result.message);
 			return;
@@ -170,13 +188,17 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 			<form onSubmit={updateRecipeById}>
 				<Stack spacing={4}>
 					<Stack spacing={1}>
-						<Typography variant="subtitle2" color="text.secondary" align="center">
+						<Typography
+							variant='subtitle2'
+							color='text.secondary'
+							align='center'>
 							Update your recipe details below
 						</Typography>
 					</Stack>
 
 					{/* Current image preview */}
-					<Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+					<Box
+						sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
 						<Image
 							src={deleteImage ? DEFAULT_IMAGE : recipe.image || DEFAULT_IMAGE}
 							alt={recipe?.name || 'Recipe Image'}
@@ -189,8 +211,8 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 					{/* Image upload */}
 					<Stack spacing={2} sx={{ width: '100%' }}>
 						<Button
-							component="label"
-							variant="contained"
+							component='label'
+							variant='contained'
 							fullWidth
 							startIcon={<AddIcon />}
 							sx={{
@@ -201,31 +223,42 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 								height: 40,
 								minHeight: 40,
 								'&:hover': { backgroundColor: '#b71c1c' },
-							}}
-						>
+							}}>
 							Upload New Image (optional)
-							<input hidden accept="image/*" type="file" onChange={handleImageChange} />
+							<VisuallyHiddenInput
+								name='imageFile'
+								accept='image/*'
+								type='file'
+								onChange={handleImageChange}
+							/>
 						</Button>
 
 						{selectedImageName && (
-							<Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
+							<Typography variant='body2' color='text.secondary' sx={{ pl: 1 }}>
 								Selected: {selectedImageName}
 							</Typography>
 						)}
 
 						<FormControlLabel
-							control={<Checkbox checked={deleteImage} onChange={handleDeleteImageChange} />}
-							label="Delete current image and use default image"
+							control={
+								<Checkbox
+									checked={deleteImage}
+									onChange={handleDeleteImageChange}
+								/>
+							}
+							label='Delete current image and use default image'
 						/>
 					</Stack>
 
 					{/* Name */}
 					<Stack spacing={2}>
-						<Typography variant="h6" align="left">Recipe Name</Typography>
+						<Typography variant='h6' align='left'>
+							Recipe Name
+						</Typography>
 						<TextField
-							name="name"
-							placeholder="e.g. Classic Lasagna"
-							variant="outlined"
+							name='name'
+							placeholder='e.g. Classic Lasagna'
+							variant='outlined'
 							fullWidth
 							required
 							defaultValue={recipe?.name ?? ''}
@@ -239,16 +272,17 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 
 					{/* Category */}
 					<Stack spacing={2} sx={{ width: '100%' }}>
-						<Typography variant="body2" align="left">Select a Category</Typography>
+						<Typography variant='body2' align='left'>
+							Select a Category
+						</Typography>
 						<FormControl fullWidth required>
-							<InputLabel id="category-label">Category</InputLabel>
+							<InputLabel id='category-label'>Category</InputLabel>
 							<Select
-								labelId="category-label"
-								label="Category"
-								name="category"
+								labelId='category-label'
+								label='Category'
+								name='category'
 								value={selectedCategory}
-								onChange={handleCategoryChange}
-							>
+								onChange={handleCategoryChange}>
 								{Array.isArray(categories) && categories.length > 0 ? (
 									categories.map((category) => (
 										<MenuItem key={category._id} value={category._id}>
@@ -256,7 +290,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 										</MenuItem>
 									))
 								) : (
-									<MenuItem value="" disabled>
+									<MenuItem value='' disabled>
 										No categories available
 									</MenuItem>
 								)}
@@ -266,33 +300,33 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 
 					{/* Times & Serves */}
 					<Stack spacing={4} sx={{ mt: 1 }}>
-						<Typography variant="h5">Times & Serves</Typography>
+						<Typography variant='h5'>Times & Serves</Typography>
 						<Stack spacing={2} direction={{ mobile: 'column', tablet: 'row' }}>
 							<TextField
-								label="Prep Time (mins)"
-								name="prepTime"
-								type="number"
-								variant="outlined"
+								label='Prep Time (mins)'
+								name='prepTime'
+								type='number'
+								variant='outlined'
 								fullWidth
 								required
 								value={prepTime}
 								onChange={(e) => setPrepTime(e.target.value)}
 							/>
 							<TextField
-								label="Cook Time (mins)"
-								name="cookTime"
-								type="number"
-								variant="outlined"
+								label='Cook Time (mins)'
+								name='cookTime'
+								type='number'
+								variant='outlined'
 								fullWidth
 								required
 								value={cookTime}
 								onChange={(e) => setCookTime(e.target.value)}
 							/>
 							<TextField
-								label="Serves"
-								name="serves"
-								type="number"
-								variant="outlined"
+								label='Serves'
+								name='serves'
+								type='number'
+								variant='outlined'
 								fullWidth
 								required
 								value={serves}
@@ -303,7 +337,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 
 					{/* Ingredients */}
 					<Stack spacing={1}>
-						<Typography variant="h5">Ingredients</Typography>
+						<Typography variant='h5'>Ingredients</Typography>
 						<Stack spacing={2}>
 							{ingredients.map((ingredient, index) => (
 								<IngredientInputRow
@@ -317,11 +351,10 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 							))}
 
 							<Button
-								variant="contained"
+								variant='contained'
 								onClick={handleAddIngredient}
-								type="button"
-								sx={{ width: { mobile: '100%', tablet: 'auto' } }}
-							>
+								type='button'
+								sx={{ width: { mobile: '100%', tablet: 'auto' } }}>
 								+ Add Ingredient
 							</Button>
 						</Stack>
@@ -329,7 +362,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 
 					{/* Steps */}
 					<Stack spacing={1}>
-						<Typography variant="h5">Steps</Typography>
+						<Typography variant='h5'>Steps</Typography>
 						<Stack spacing={2}>
 							{steps.map((step, index) => (
 								<StepsInputRow
@@ -341,17 +374,21 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 								/>
 							))}
 							<Button
-								variant="contained"
+								variant='contained'
 								onClick={handleAddStep}
-								type="button"
-								sx={{ width: { mobile: '100%', tablet: 'auto' } }}
-							>
+								type='button'
+								sx={{ width: { mobile: '100%', tablet: 'auto' } }}>
 								+ Add Step
 							</Button>
 						</Stack>
 					</Stack>
 
-					<Button type="submit" variant="contained" size="large" fullWidth sx={{ mt: 1 }}>
+					<Button
+						type='submit'
+						variant='contained'
+						size='large'
+						fullWidth
+						sx={{ mt: 1 }}>
 						Update Recipe
 					</Button>
 				</Stack>

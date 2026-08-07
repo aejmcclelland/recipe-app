@@ -65,12 +65,24 @@ Forms should generally follow this order:
 
 Buttons should use:
 
-height: 40
-fontWeight: 600
+height: 40 fontWeight: 600
 
 Image upload buttons should match existing styling across the application.
 
 Use Stack rather than Box when arranging vertical form sections.
+
+## File uploads
+
+Use MUI's visually hidden input pattern for file uploads.
+
+Prefer:
+
+- Button with `component="label"`
+- Styled `VisuallyHiddenInput`
+
+Avoid:
+
+- Native `<input hidden type="file">`
 
 ## Accessibility
 
