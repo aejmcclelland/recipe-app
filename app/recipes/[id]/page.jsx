@@ -39,6 +39,10 @@ export default async function RecipeDetailPage({ params }) {
 		return <RecipeNotFound />;
 	}
 
+	let serializedRecipe;
+	let isOwner;
+	let shouldShowNotFound = false;
+
 	try {
 		// Fetch the recipe by ID, populate necessary fields
 		const recipe = await Recipe.findById(recipeId)
@@ -48,72 +52,76 @@ export default async function RecipeDetailPage({ params }) {
 
 		if (!recipe) {
 			console.error(`Recipe not found with ID: ${recipeId}`);
-			return <RecipeNotFound />;
+			shouldShowNotFound = true;
+		} else {
+			// Serialize recipe data for client components
+			serializedRecipe = convertToSerializeableObject(recipe);
+
+			// Normalise legacy scraped ingredient defaults (avoid displaying ': 1 unit')
+			if (Array.isArray(serializedRecipe.ingredients)) {
+				serializedRecipe.ingredients = serializedRecipe.ingredients.map((ing) => {
+					const isLegacyDefault = ing?.quantity === 1 && ing?.unit === 'unit';
+					if (!isLegacyDefault) return ing;
+
+					// Remove the placeholder values so the UI can render just the ingredient name/text
+					const rest = { ...ing };
+					delete rest.quantity;
+					delete rest.unit;
+					return rest;
+				});
+			}
+
+			isOwner =
+				sessionUser?.id &&
+				serializedRecipe.user?._id &&
+				sessionUser.id === serializedRecipe.user._id.toString();
 		}
+	} catch (error) {
+		console.error('Error fetching recipe:', error.message);
+		shouldShowNotFound = true;
+	}
 
-		// Serialize recipe data for client components
-		const serializedRecipe = convertToSerializeableObject(recipe);
+	if (shouldShowNotFound) {
+		return <RecipeNotFound />;
+	}
 
-		// Normalise legacy scraped ingredient defaults (avoid displaying ': 1 unit')
-		if (Array.isArray(serializedRecipe.ingredients)) {
-			serializedRecipe.ingredients = serializedRecipe.ingredients.map((ing) => {
-				const isLegacyDefault = ing?.quantity === 1 && ing?.unit === 'unit';
-				if (!isLegacyDefault) return ing;
+	return (
+		<Container maxWidth='lg'>
+			{/* Recipe Name */}
+			<Box sx={{ textAlign: 'center', marginTop: 4, marginBottom: 4 }}>
+				<Typography variant='h3' component='h1' gutterBottom>
+					{serializedRecipe.name}
+				</Typography>
+			</Box>
 
-				// Remove the placeholder values so the UI can render just the ingredient name/text
-				const rest = { ...ing };
-				delete rest.quantity;
-				delete rest.unit;
-				return rest;
-			});
-		}
+			{/* Recipe Card */}
+			<Box
+				sx={{
+					display: 'flex',
+					justifyContent: 'center',
+					alignItems: 'center',
+					width: '100%',
+				}}>
+				<RecipeCard recipe={serializedRecipe} user={sessionUser} />
+			</Box>
 
-		const isOwner =
-			sessionUser?.id &&
-			serializedRecipe.user?._id &&
-			sessionUser.id === serializedRecipe.user._id.toString();
-
-		return (
-			<Container maxWidth='lg'>
-				{/* Recipe Name */}
-				<Box sx={{ textAlign: 'center', marginTop: 4, marginBottom: 4 }}>
-					<Typography variant='h3' component='h1' gutterBottom>
-						{serializedRecipe.name}
-					</Typography>
-				</Box>
-
-				{/* Recipe Card */}
+			{isOwner && (
 				<Box
 					sx={{
 						display: 'flex',
 						justifyContent: 'center',
 						alignItems: 'center',
-						width: '100%',
+						flexWrap: 'wrap',
+						marginTop: 3,
+						gap: 3,
+						paddingBottom: 2,
 					}}>
-					<RecipeCard recipe={serializedRecipe} user={sessionUser} />
+					<BookmarkButton recipe={serializedRecipe} />
+					<EditRecipeButton recipeId={serializedRecipe._id} />
+					<DeleteRecipeButton recipeId={serializedRecipe._id} />
+					<HomeButton />
 				</Box>
-
-				{isOwner && (
-					<Box
-						sx={{
-							display: 'flex',
-							justifyContent: 'center',
-							alignItems: 'center',
-							flexWrap: 'wrap',
-							marginTop: 3,
-							gap: 3,
-							paddingBottom: 2,
-						}}>
-						<BookmarkButton recipe={serializedRecipe} />
-						<EditRecipeButton recipeId={serializedRecipe._id} />
-						<DeleteRecipeButton recipeId={serializedRecipe._id} />
-						<HomeButton />
-					</Box>
-				)}
-			</Container>
-		);
-	} catch (error) {
-		console.error('Error fetching recipe:', error.message);
-		return <RecipeNotFound />;
-	}
+			)}
+		</Container>
+	);
 }
