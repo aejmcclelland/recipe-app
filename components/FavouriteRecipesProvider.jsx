@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 // Create a context for favorites
 const FavouriteRecipesContext = createContext();
@@ -8,36 +8,37 @@ const FavouriteRecipesContext = createContext();
 export const useFavouriteRecipes = () => useContext(FavouriteRecipesContext);
 
 export default function FavouriteRecipesProvider({ children }) {
-    const [favourites, setFavourites] = useState([]);
+	// Load favorites from local storage or database on mount
+	const [favourites, setFavourites] = useState(() => {
+		if (typeof window === 'undefined') {
+			return [];
+		}
 
-    // Load favorites from local storage or database on mount
-    useEffect(() => {
-        const savedFavourites = JSON.parse(localStorage.getItem('favourites')) || [];
-        setFavourites(savedFavourites);
-    }, []);
+		const saved = localStorage.getItem('favourites');
 
-    // Save to local storage or send to database on change
-    useEffect(() => {
-        localStorage.setItem('favourites', JSON.stringify(favourites));
-    }, [favourites]);
+		return saved ? JSON.parse(saved) : [];
+	});
 
-    // Toggle favorite
-    const toggleFavourite = (recipeId) => {
-        setFavourites((prevFavourites) =>
-            prevFavourites.includes(recipeId)
-                ? prevFavourites.filter((id) => id !== recipeId)
-                : [...prevFavourites, recipeId]
-        );
-    };
+	// Toggle favorite
+	const toggleFavourite = useCallback((recipeId) => {
+		setFavourites((prevFavourites) =>
+			prevFavourites.includes(recipeId)
+				? prevFavourites.filter((id) => id !== recipeId)
+				: [...prevFavourites, recipeId],
+		);
+	}, []);
 
+	const contextValue = useMemo(
+		() => ({
+			favourites,
+			toggleFavourite,
+		}),
+		[favourites, toggleFavourite],
+	);
 
-    // Check if a recipe is favorited
-    const isFavourite = (recipeId) => favourites.includes(recipeId);
-
-    return (
-        <FavouriteRecipesContext.Provider value={{ favourites, toggleFavourite, isFavourite }}>
-            {children}
-        </FavouriteRecipesContext.Provider>
-    );
+	return (
+		<FavouriteRecipesContext.Provider value={contextValue}>
+			{children}
+		</FavouriteRecipesContext.Provider>
+	);
 }
-
