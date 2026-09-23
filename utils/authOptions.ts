@@ -97,7 +97,7 @@ export const authOptions: AuthOptions = {
 					existingUser.authProvider &&
 					existingUser.authProvider !== 'google'
 				) {
-					return '/recipes/signin';
+					return '/recipes/signin?error=OAuthAccountNotLinked';
 				}
 
 				if (!existingUser) {
