@@ -34,8 +34,13 @@ async function openReset(page: Page) {
 		page.waitForResponse(response => new URL(response.url()).pathname === '/api/auth/session'),
 		page.goto(resetLink),
 	]);
-	await page.getByLabel('New password', { exact: true }).fill('test-password');
-	await page.getByLabel('Confirm new password', { exact: true }).fill('test-password');
+	// MUI's required asterisk is part of label text, but aria-hidden from the accessible name.
+	const password = page.getByLabel(/^New password/);
+	const confirm = page.getByLabel(/^Confirm new password/);
+	await expect(password).toHaveAccessibleName('New password');
+	await expect(confirm).toHaveAccessibleName('Confirm new password');
+	await password.fill('test-password');
+	await confirm.fill('test-password');
 }
 
 test('accepted request replaces the form with persistent neutral confirmation and deliberate resend', async ({ page }) => {
@@ -110,7 +115,7 @@ for (const query of ['', '?email=cook%40example.com', '?token=test-token', '?ema
 		await page.goto(`${resetPath}${query}`);
 		const form = page.getByTestId('reset-password-page');
 		await expect(form.getByRole('alert')).toContainText('You need a valid password-reset link');
-		await expect(page.getByLabel('New password', { exact: true })).toHaveCount(0);
+		await expect(page.getByLabel(/^New password/)).toHaveCount(0);
 		await expect(page.getByRole('link', { name: 'Request a new reset link' })).toHaveAttribute('href', requestPath);
 		await page.getByRole('link', { name: 'Request a new reset link' }).click();
 		await expect(page.getByRole('button', { name: 'Send reset link', exact: true })).toBeVisible();
@@ -123,7 +128,7 @@ test('invalid, expired or used link result removes the form and provides persist
 	await page.getByRole('button', { name: 'Update password' }).click();
 	const form = page.getByTestId('reset-password-page');
 	await expect(form.getByRole('alert')).toHaveText('This password-reset link is no longer valid. Please request a new link.');
-	await expect(page.getByLabel('New password', { exact: true })).toHaveCount(0);
+	await expect(page.getByLabel(/^New password/)).toHaveCount(0);
 	await page.clock.install();
 	await page.clock.fastForward(10000);
 	await expect(form.getByRole('alert')).toBeVisible();
@@ -146,12 +151,12 @@ for (const failure of ['UNAVAILABLE', 'RATE_LIMITED', 'network']) {
 		await openReset(page);
 		await page.getByRole('button', { name: 'Update password' }).click();
 		await expect(page.getByRole('button', { name: 'Updating…' })).toBeDisabled();
-		await expect(page.getByLabel('New password', { exact: true })).toBeDisabled();
+		await expect(page.getByLabel(/^New password/)).toBeDisabled();
 		await page.keyboard.press('Enter');
 		await expect.poll(() => requests).toBe(1);
 		release();
 		await expect(page.getByTestId('reset-password-page').getByRole('alert')).toContainText(failure === 'RATE_LIMITED' ? 'Too many attempts.' : 'We couldn’t update your password right now.');
-		await expect(page.getByLabel('New password', { exact: true })).toHaveValue('test-password');
+		await expect(page.getByLabel(/^New password/)).toHaveValue('test-password');
 		await expect(page.getByRole('button', { name: 'Update password' })).toBeEnabled();
 		await page.getByRole('button', { name: 'Update password' }).click();
 		await expect(page).toHaveURL(/\/recipes\/signin$/);
@@ -164,8 +169,8 @@ test('password validation stays visible and does not submit invalid input', asyn
 	let requests = 0;
 	await interceptAction(page, resetPath, async route => { requests++; await route.abort(); });
 	await openReset(page);
-	const password = page.getByLabel('New password', { exact: true });
-	const confirm = page.getByLabel('Confirm new password', { exact: true });
+	const password = page.getByLabel(/^New password/);
+	const confirm = page.getByLabel(/^Confirm new password/);
 	await password.fill('short');
 	await page.getByRole('button', { name: 'Update password' }).click();
 	await expect(password).toHaveAccessibleDescription('Password must be at least 8 characters.');
