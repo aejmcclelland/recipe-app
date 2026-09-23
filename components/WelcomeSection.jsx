@@ -11,7 +11,7 @@ export default function WelcomeSection() {
             <Typography variant="body1" color="text.secondary" gutterBottom>
                 Save, import, and organize recipes with ease — all securely stored and accessible anywhere.
             </Typography>
-            <Link href="/recipes/signin" passHref>
+            <Link href="/recipes/register" passHref>
                 <Button variant="contained" size="large" sx={{ mt: 3 }}>
                     Sign up for free
                 </Button>

@@ -9,6 +9,15 @@ test('home page loads and shows main heading', async ({ page }) => {
 	).toBeVisible();
 });
 
+test('logged-out sign-up CTA opens registration directly', async ({ page }) => {
+	await page.goto('/');
+	const signUp = page.getByRole('link', { name: 'Sign up for free' });
+	await expect(signUp).toHaveAttribute('href', '/recipes/register');
+	await signUp.click();
+	await expect(page).toHaveURL(/\/recipes\/register$/);
+	await expect(page.getByLabel('First Name')).toBeVisible();
+});
+
 test('home page shows the correct logged-in or logged-out experience', async ({
 	page,
 }) => {

@@ -1,7 +1,8 @@
 // components/RegisterUser.jsx
 'use client';
-import { useState } from 'react';
-import { Box, TextField, Button, Paper, Typography } from '@mui/material';
+import { useRef, useState } from 'react';
+import { Alert, Box, TextField, Button, Paper, Typography } from '@mui/material';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import registerUser from '@/app/actions/registerUser';
@@ -17,28 +18,42 @@ const RegisterForm = () => {
         confirmPassword: '',
         website: '',
     });
-    const [error] = useState(null);
+    const [error, setError] = useState(null);
     const [passwordStrength, setPasswordStrength] = useState(null);
     const [passwordError, setPasswordError] = useState('');
+    const [confirmPasswordError, setConfirmPasswordError] = useState('');
+    const passwordRef = useRef(null);
+    const confirmPasswordRef = useRef(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [name]: value }));
         if (name === 'password') {
+            setPasswordError('');
             const result = zxcvbn(value);
             setPasswordStrength(result);
+        }
+        if (name === 'password' || name === 'confirmPassword') {
+            setConfirmPasswordError('');
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError(null);
+        setPasswordError('');
+        setConfirmPasswordError('');
 
-        if (formData.password !== formData.confirmPassword) {
-            setPasswordError("Passwords do not match. Try again, please");
+        if (formData.password.length < 8) {
+            setPasswordError('Password must be at least 8 characters.');
+            passwordRef.current?.focus();
             return;
-        } else {
-            setPasswordError('');
+        }
+        if (formData.password !== formData.confirmPassword) {
+            setConfirmPasswordError('Passwords do not match. Please try again.');
+            confirmPasswordRef.current?.focus();
+            return;
         }
 
         setIsSubmitting(true);
@@ -47,14 +62,7 @@ const RegisterForm = () => {
 
             // If the server action reports failure (e.g. duplicate email), show error and STOP.
             if (!response?.success) {
-                toast.error(response?.message || 'Unable to register. Please try again.', {
-                    position: 'top-right',
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                });
+                setError(response?.message || 'Unable to register. Please try again.');
                 return; // IMPORTANT: do not redirect on failure
             }
 
@@ -83,102 +91,113 @@ const RegisterForm = () => {
                     response?.emailSent === false ? '&sent=0' : ''
                 }`
             );
-        } catch (error) {
-            toast.error(error.message || "Error registering user.", {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
+        } catch {
+            setError('Unable to register just now. Please try again.');
         } finally {
             setIsSubmitting(false);
         }
     };
 
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Paper
-                sx={{
-                    padding: 2,
-                    width: '100%',
-                    maxWidth: 400,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-                }}
-            >
-                <Typography variant="h4" gutterBottom>
-                    Register
-                </Typography>
-                {error && (
-                    <Typography color="error" sx={{ textAlign: 'center', mb: 2 }}>
-                        {error}
-                    </Typography>
-                )}
-                <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-                        <input
-                            type="text"
-                            name="website"
-                            value={formData.website}
-                            onChange={handleChange}
-                            tabIndex={-1}
-                            autoComplete="off"
-                            aria-hidden="true"
-                            style={{ position: 'absolute', left: '-10000px' }}
-                        />
-                        <TextField label="First Name" name="firstName" required value={formData.firstName} onChange={handleChange} margin="normal" fullWidth />
-                        <TextField label="Last Name" name="lastName" required value={formData.lastName} onChange={handleChange} margin="normal" fullWidth />
-                        <TextField label="Email" name="email" type="email" required value={formData.email} onChange={handleChange} margin="normal" fullWidth />
-                        <TextField label="Password" name="password" type="password" required value={formData.password} onChange={handleChange} margin="normal" fullWidth />
-                        <TextField
-                            label="Confirm Password"
-                            name="confirmPassword"
-                            type="password"
-                            required
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
-                            margin="normal"
-                            fullWidth
-                        />
-                        {passwordError && (
-                            <Typography color="error" variant="body2" sx={{ mt: 1 }}>
-                                {passwordError}
+        <Paper
+            sx={{
+                padding: { xs: 2, sm: 4 },
+                width: '100%',
+                borderRadius: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+            }}
+        >
+            <Typography variant="h4" component="h1" gutterBottom sx={{ color: 'primary.main', fontWeight: 600 }}>
+                Register
+            </Typography>
+            {error && (
+                <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
+                    {error}
+                </Alert>
+            )}
+            <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                    <input
+                        type="text"
+                        name="website"
+                        value={formData.website}
+                        onChange={handleChange}
+                        tabIndex={-1}
+                        autoComplete="off"
+                        aria-hidden="true"
+                        style={{ position: 'absolute', left: '-10000px' }}
+                    />
+                    <TextField label="First Name" name="firstName" required value={formData.firstName} onChange={handleChange} margin="normal" fullWidth />
+                    <TextField label="Last Name" name="lastName" required value={formData.lastName} onChange={handleChange} margin="normal" fullWidth />
+                    <TextField label="Email" name="email" type="email" required value={formData.email} onChange={handleChange} margin="normal" fullWidth />
+                    <TextField
+                        id="register-password"
+                        label="Password"
+                        name="password"
+                        type="password"
+                        required
+                        value={formData.password}
+                        onChange={handleChange}
+                        inputRef={passwordRef}
+                        error={Boolean(passwordError)}
+                        helperText={passwordError || 'Use at least 8 characters.'}
+                        slotProps={{ formHelperText: { 'aria-live': 'polite' } }}
+                        margin="normal"
+                        fullWidth
+                    />
+                    <TextField
+                        id="register-confirm-password"
+                        label="Confirm Password"
+                        name="confirmPassword"
+                        type="password"
+                        required
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        inputRef={confirmPasswordRef}
+                        error={Boolean(confirmPasswordError)}
+                        helperText={confirmPasswordError}
+                        slotProps={{ formHelperText: { 'aria-live': 'polite' } }}
+                        margin="normal"
+                        fullWidth
+                    />
+                    {passwordStrength && (
+                        <Box sx={{ width: '100%', mt: 1 }}>
+                            <Box
+                                sx={{
+                                    height: 8,
+                                    borderRadius: 4,
+                                    backgroundColor: ['#ccc', '#f44336', '#ff9800', '#ffeb3b', '#4caf50'][passwordStrength.score],
+                                    width: `${(passwordStrength.score + 1) * 20}%`,
+                                    transition: 'width 0.3s ease-in-out',
+                                }}
+                            />
+                            <Typography variant="caption" color="textSecondary" sx={{ mt: 0.5 }}>
+                                {passwordStrength.feedback.suggestions[0] || 'Password strength looks good.'}
                             </Typography>
-                        )}
-                        {passwordStrength && (
-                            <Box sx={{ width: '100%', mt: 1 }}>
-                                <Box
-                                    sx={{
-                                        height: 8,
-                                        borderRadius: 4,
-                                        backgroundColor: ['#ccc', '#f44336', '#ff9800', '#ffeb3b', '#4caf50'][passwordStrength.score],
-                                        width: `${(passwordStrength.score + 1) * 20}%`,
-                                        transition: 'width 0.3s ease-in-out',
-                                    }}
-                                />
-                                <Typography variant="caption" color="textSecondary" sx={{ mt: 0.5 }}>
-                                    {passwordStrength.feedback.suggestions[0] || 'Password strength looks good.'}
-                                </Typography>
-                            </Box>
-                        )}
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            type="submit"
-                            fullWidth
-                            sx={{ mt: 2 }}
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? 'Registering...' : 'Register'}
-                        </Button>
-                    </Box>
-                </form>
-            </Paper>
-        </Box>
+                        </Box>
+                    )}
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        type="submit"
+                        fullWidth
+                        sx={{ mt: 2 }}
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? 'Registering...' : 'Register'}
+                    </Button>
+                </Box>
+            </form>
+            <Typography variant="body2" sx={{ mt: 2 }}>
+                Already have an account?{' '}
+                <Link href="/recipes/signin" style={{ textDecoration: 'underline' }}>
+                    Sign in
+                </Link>
+            </Typography>
+        </Paper>
     );
 };
 
