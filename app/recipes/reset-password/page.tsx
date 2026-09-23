@@ -1,8 +1,10 @@
 'use client';
 
-import { Suspense, useMemo, useState } from 'react';
+import { Suspense, useRef, useState } from 'react';
+import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import {
+	Alert,
 	Box,
 	Button,
 	Container,
@@ -18,50 +20,63 @@ function ResetPasswordForm() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 
-	const email = useMemo(() => searchParams.get('email') || '', [searchParams]);
-	const token = useMemo(() => searchParams.get('token') || '', [searchParams]);
+	const email = (searchParams.get('email') || '').trim();
+	const token = (searchParams.get('token') || '').trim();
+	const missingLink = !email || !token;
 
 	const [password, setPassword] = useState('');
 	const [confirm, setConfirm] = useState('');
 	const [submitting, setSubmitting] = useState(false);
+	const pending = useRef(false);
+	const [error, setError] = useState('');
+	const [invalidLink, setInvalidLink] = useState(false);
+	const [passwordError, setPasswordError] = useState('');
+	const [confirmError, setConfirmError] = useState('');
 
 	async function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
+		if (pending.current || missingLink || invalidLink) return;
+		setError('');
+		setPasswordError('');
+		setConfirmError('');
 
-		if (!email || !token) {
-			toast.error('Reset link is missing or invalid.');
-			return;
-		}
 		if (password.length < 8) {
-			toast.error('Password must be at least 8 characters.');
+			setPasswordError('Password must be at least 8 characters.');
 			return;
 		}
 		if (password !== confirm) {
-			toast.error('Passwords do not match.');
+			setConfirmError('Passwords do not match.');
 			return;
 		}
 
+		pending.current = true;
 		setSubmitting(true);
 		try {
-			await resetPassword({ email, token, password });
-			toast.success('Password updated. Please sign in.');
-			router.push('/recipes/signin');
-		} catch (err: unknown) {
-			const message =
-				typeof err === 'object' &&
-				err !== null &&
-				'message' in err &&
-				typeof err.message === 'string'
-					? err.message
-					: undefined;
-			toast.error(message || 'Reset link is invalid or has expired.');
+			const result = await resetPassword({ email, token, password });
+			if (result.ok === true) {
+				toast.success('Password updated. Please sign in.');
+				router.push('/recipes/signin');
+			} else if (result.error === 'INVALID_LINK') {
+				setInvalidLink(true);
+				setPassword('');
+				setConfirm('');
+			} else if (result.error === 'INVALID_PASSWORD') {
+				setPasswordError('Password must be at least 8 characters.');
+			} else {
+				setError(result.error === 'RATE_LIMITED'
+					? 'Too many attempts. Please try again later.'
+					: 'We couldn’t update your password right now. Please try again.');
+			}
+		} catch {
+			setError('We couldn’t update your password right now. Please try again.');
 		} finally {
+			pending.current = false;
 			setSubmitting(false);
 		}
 	}
 
 	return (
-		<section>
+		<section data-testid="reset-password-page">
 			<Container
 				maxWidth="sm"
 				sx={{
@@ -73,43 +88,66 @@ function ResetPasswordForm() {
 			>
 				<Paper sx={{ p: 4, width: '100%', maxWidth: 520 }}>
 					<Stack spacing={2}>
-						<Typography variant="h5" component="h1">
-							Choose a new password
-						</Typography>
-						<Typography variant="body2" color="text.secondary">
-							Set a new password for <strong>{email || 'your account'}</strong>.
-						</Typography>
-
-						<Box component="form" onSubmit={handleSubmit}>
-							<Stack spacing={2}>
-								<TextField
-									label="New password"
-									type="password"
-									value={password}
-									onChange={(e) => setPassword(e.target.value)}
-									autoComplete="new-password"
-									required
-									fullWidth
-								/>
-								<TextField
-									label="Confirm new password"
-									type="password"
-									value={confirm}
-									onChange={(e) => setConfirm(e.target.value)}
-									autoComplete="new-password"
-									required
-									fullWidth
-								/>
-								<Button
-									type="submit"
-									variant="contained"
-									disabled={submitting}
-									sx={{ textTransform: 'none', py: 1.25 }}
-								>
-									{submitting ? 'Updating…' : 'Update password'}
+						{missingLink || invalidLink ? (
+							<>
+								<Typography variant="h5" component="h1">Request a new reset link</Typography>
+								<Alert severity="error">
+									{missingLink
+										? 'You need a valid password-reset link to choose a new password. Please request a new link.'
+										: 'This password-reset link is no longer valid. Please request a new link.'}
+								</Alert>
+								<Button component={Link} href="/recipes/forgot-password" variant="contained" sx={{ textTransform: 'none' }}>
+									Request a new reset link
 								</Button>
-							</Stack>
-						</Box>
+							</>
+						) : (
+							<>
+								<Typography variant="h5" component="h1">
+									Choose a new password
+								</Typography>
+								<Typography variant="body2" color="text.secondary">
+									Set a new password for <strong>{email || 'your account'}</strong>.
+								</Typography>
+
+								{error && <Alert severity="error">{error}</Alert>}
+								<Box component="form" onSubmit={handleSubmit} aria-busy={submitting}>
+									<Stack spacing={2}>
+										<TextField
+											label="New password"
+											disabled={submitting}
+											error={Boolean(passwordError)}
+											helperText={passwordError || "Use at least 8 characters."}
+											type="password"
+											value={password}
+											onChange={(e) => setPassword(e.target.value)}
+											autoComplete="new-password"
+											required
+											fullWidth
+										/>
+										<TextField
+											label="Confirm new password"
+											disabled={submitting}
+											error={Boolean(confirmError)}
+											helperText={confirmError}
+											type="password"
+											value={confirm}
+											onChange={(e) => setConfirm(e.target.value)}
+											autoComplete="new-password"
+											required
+											fullWidth
+										/>
+										<Button
+											type="submit"
+											variant="contained"
+											disabled={submitting}
+											sx={{ textTransform: 'none', py: 1.25 }}
+										>
+											{submitting ? 'Updating…' : 'Update password'}
+										</Button>
+									</Stack>
+								</Box>
+							</>
+						)}
 					</Stack>
 				</Paper>
 			</Container>
