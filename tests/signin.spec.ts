@@ -178,4 +178,8 @@ test('destination validation rejects unsafe URLs and authentication loops', () =
 	const edit = '/recipes/507f1f77bcf86cd799439011/edit?from=home#ingredients';
 	expect(getSignInDestination(edit, origin)).toBe(edit);
 	expect(getSignInDestination(`${origin}${edit}`, origin)).toBe(edit);
+	const recipeUrl = 'https://www.bbcgoodfood.com/recipes/fish-pie?ref=family&name=fish%20pie#method';
+	const importDestination = `/recipes/copyWeb?url=${encodeURIComponent(recipeUrl)}`;
+	expect(getSignInDestination(importDestination, origin)).toBe(importDestination);
+	expect(getSignInDestination(`${origin}${importDestination}`, origin)).toBe(importDestination);
 });

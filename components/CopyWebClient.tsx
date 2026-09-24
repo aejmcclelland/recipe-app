@@ -14,10 +14,11 @@ import ScrapingSiteLinks from '@/components/ScrapingSiteLinks';
 
 interface CopyWebClientProps {
 	categories: Array<{ _id: string; name: string }>;
+	initialUrl: string;
 }
 
-const CopyWebClient: React.FC<CopyWebClientProps> = ({ categories }) => {
-	const [url, setUrl] = useState('');
+const CopyWebClient: React.FC<CopyWebClientProps> = ({ categories, initialUrl }) => {
+	const [url, setUrl] = useState(initialUrl);
 	const [data, setData] = useState<RecipeResult | null>(null);
 	const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
 	const [save, setSave] = useState(false);
@@ -71,15 +72,24 @@ const CopyWebClient: React.FC<CopyWebClientProps> = ({ categories }) => {
 				<Typography
 					className='no-print'
 					variant='h4'
+					component='h1'
 					gutterBottom
-					sx={{ mb: 4 }}>
-					Get your favourite recipe from one of these websites
+					sx={{ mb: 2 }}>
+					Import Recipe
+				</Typography>
+				<Typography sx={{ mb: 3 }}>
+					Find a recipe you like, copy its link, then paste it here.
+				</Typography>
+				<RecipeForm url={url} setUrl={setUrl} setData={setData} />
+				<Typography variant='body2' sx={{ mt: 3, mb: 2 }}>
+					Supports Good Food, BBC Food and Jamie Oliver.
 				</Typography>
 				<ScrapingSiteLinks />
-				<RecipeForm url={url} setUrl={setUrl} setData={setData} />
-				<Typography variant='caption' sx={{ mt: 2, opacity: 0.8 }}>
-					Status: {data ? `Loaded: ${data.title}` : 'No recipe loaded yet'}
-				</Typography>
+				{data && (
+					<Typography role='status' variant='h5' sx={{ mt: 2 }}>
+						{data.title}
+					</Typography>
+				)}
 			</Box>
 
 			{data && (

@@ -17,6 +17,7 @@ const GetRecipeButton: React.FC<GetRecipeButtonProps> = ({
 			variant='contained'
 			color='secondary'
 			type='submit'
+			startIcon={isPending ? <CircularProgress size={20} color='inherit' aria-hidden='true' /> : undefined}
 			disabled={isPending || isDisabled}
 			fullWidth
 			sx={{
@@ -26,11 +27,7 @@ const GetRecipeButton: React.FC<GetRecipeButtonProps> = ({
 				fontFamily: 'Archivo, sans-serif',
 				borderRadius: '12px',
 			}}>
-			{isPending ? (
-				<CircularProgress size={24} color='inherit' />
-			) : (
-				'Get Recipe'
-			)}
+			{isPending ? 'Importing recipe…' : 'Import Recipe'}
 		</Button>
 	);
 };
