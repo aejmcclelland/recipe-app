@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MONGODB_URI: ${{ secrets.MONGODB_URI }}
+      NEXTAUTH_URL: http://localhost:3000
+      # Only signs disposable local test sessions; never use a production secret.
+      NEXTAUTH_SECRET: playwright-ci-only-secret
 
     steps:
       - uses: actions/checkout@v7

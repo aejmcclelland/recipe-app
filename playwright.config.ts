@@ -1,8 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const PLAYWRIGHT_PORT = Number(process.env.PLAYWRIGHT_PORT || 3000);
+// Match Next.js's default dev origin so its HMR/debug channel can hydrate pages.
 const PLAYWRIGHT_BASE_URL =
-	process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${PLAYWRIGHT_PORT}`;
+	process.env.PLAYWRIGHT_BASE_URL ?? `http://localhost:${PLAYWRIGHT_PORT}`;
 
 /**
  * Read environment variables from file.
@@ -26,7 +27,9 @@ export default defineConfig({
 	/* Opt out of parallel tests on CI. */
 	workers: process.env.CI ? 1 : undefined,
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
-	reporter: 'html',
+	reporter: process.env.CI
+		? [['list', { printFailuresInline: true }], ['html', { open: 'never' }]]
+		: 'html',
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	use: {
 		/* Base URL to use in actions like `await page.goto('')`. */
