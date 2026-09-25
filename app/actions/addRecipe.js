@@ -103,10 +103,9 @@ export default async function addRecipe(formData) {
 					throw new Error(`Custom unit required (row ${idx + 1})`);
 				}
 
-				// if you want to enforce unit when quantity exists
-				// (optional: tweak to your preference)
-				if (quantity != null && !unit) {
-					throw new Error(`Unit required (row ${idx + 1})`);
+				// A count needs no unit, but a selected unit still needs a quantity.
+				if (rawUnit && (q == null || String(q).trim() === '')) {
+					throw new Error(`Quantity required (row ${idx + 1})`);
 				}
 
 				let ingredient = await Ingredient.findOne({ name });

@@ -83,7 +83,7 @@ function isNonEmptyString(value: unknown): value is string {
  * - Trims strings
  * - Removes completely empty ingredient rows
  * - Enforces: ingredient name required for non-empty rows
- * - Enforces: quantity <-> unit pairing
+ * - Enforces: a unit requires quantity; quantity alone is valid
  * - Enforces: when unit === 'other', customUnit required (and becomes the unit)
  * - Cleans steps and enforces at least 1 step (configurable)
  *
@@ -193,11 +193,6 @@ export function validateAndCleanRecipeForm(
 
     const hasQty = m.qtyStr.length > 0;
     const hasUnit = m.unitRaw.length > 0;
-
-    // quantity requires unit
-    if (hasQty && !hasUnit) {
-      rowErr.unit = 'Choose a unit (or select Other).';
-    }
 
     // unit requires quantity
     if (hasUnit && !hasQty) {

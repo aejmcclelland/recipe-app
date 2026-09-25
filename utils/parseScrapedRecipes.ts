@@ -36,7 +36,8 @@ export async function parseScrapedRecipe(rawData: {
 
 			return {
 				ingredient: ingredientDoc._id as mongoose.Types.ObjectId,
-				...(normalised.parsed ? { quantity: normalised.quantity, unit: normalised.unit } : {}),
+				...(normalised.parsed ? { quantity: normalised.quantity } : {}),
+				...(normalised.unit ? { unit: normalised.unit } : {}),
 			};
 		})
 	);

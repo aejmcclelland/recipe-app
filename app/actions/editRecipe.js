@@ -82,6 +82,18 @@ async function updateRecipe(recipeId, formData) {
 	// Normalise ingredients so `ingredient` is ALWAYS an ObjectId (your schema expects this)
 	const ingredients = (await Promise.all(
 		ingredientsArray.map(async (ingredientObj) => {
+			const q = ingredientObj?.quantity;
+			const quantity = q === '' || q == null ? undefined : Number(q);
+			const rawUnit = (ingredientObj?.unit ?? '').toString().trim();
+			const customUnit = (ingredientObj?.customUnit ?? '').toString().trim();
+			const unit = rawUnit === 'other' ? customUnit : rawUnit;
+			if (rawUnit && (q == null || String(q).trim() === '')) {
+				throw new Error('Quantity required when a unit is selected');
+			}
+			if (rawUnit === 'other' && !customUnit) {
+				throw new Error('Custom unit required');
+			}
+
 			// Support both: ingredient as ObjectId string, populated object, or plain name string
 			const rawIngredient = ingredientObj?.ingredient;
 			const rawId =
@@ -110,15 +122,6 @@ async function updateRecipe(recipeId, formData) {
 				}
 				ingredientId = ingredientDoc._id;
 			}
-
-			// Handle quantity
-			const q = ingredientObj?.quantity;
-			const quantity = q === '' || q == null ? undefined : Number(q);
-
-			// Handle unit + customUnit (support 'other' from the form)
-			const rawUnit = (ingredientObj?.unit ?? '').toString().trim();
-			const customUnit = (ingredientObj?.customUnit ?? '').toString().trim();
-			const unit = rawUnit === 'other' ? customUnit : rawUnit;
 
 			return {
 				ingredient: ingredientId,

@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { normaliseScrapedIngredient } from '../../utils/normaliseScrapedIngredient';
 import { pluraliseUnit } from '../../utils/pluraliseUnit';
+import { validateAndCleanRecipeForm } from '../../utils/recipeFormValidation';
 
 const parsedCases = [
 	['4 tbsp olive oil', 4, 'tablespoon', 'olive oil', 'tablespoons'],
@@ -19,11 +20,12 @@ for (const [raw, quantity, unit, ingredient, displayUnit] of parsedCases) {
 }
 
 for (const raw of [
-	'2 garlic cloves',
-	'½ tsp chilli flakes',
-	'2 x 400g tins tomatoes',
+	'¼ tsp chilli flakes',
+	'2 x 400g cans chopped tomatoes',
 	'  Salt and  pepper to taste  ',
 	'1-2 tbsp olive oil',
+	'1–2 tbsp olive oil',
+	'1 1/2 tbsp sugar',
 	'1..5 g flour',
 	'',
 ]) {
@@ -31,3 +33,26 @@ for (const raw of [
 		assert.deepEqual(normaliseScrapedIngredient(raw), { parsed: false, ingredient: raw });
 	});
 }
+
+for (const [raw, quantity, ingredient] of [
+	['1 onion finely chopped', 1, 'onion finely chopped'],
+	['2 garlic cloves crushed', 2, 'garlic cloves crushed'],
+	['4 skinless chicken breasts, sliced into strips', 4, 'skinless chicken breasts, sliced into strips'],
+] as const) {
+	test(`recognises count ${JSON.stringify(raw)}`, () => {
+		assert.deepEqual(normaliseScrapedIngredient(raw), { parsed: true, ingredient, quantity });
+	});
+}
+
+test('quantity without unit is valid for manual and populated edit rows', () => {
+	for (const ingredient of ['eggs', { name: 'garlic cloves crushed' }]) {
+		const result = validateAndCleanRecipeForm({ ingredients: [{ ingredient, quantity: '2', unit: '' }], steps: ['Mix.'] });
+		assert.equal(result.ok, true);
+	}
+});
+
+test('unit without quantity remains invalid', () => {
+	const result = validateAndCleanRecipeForm({ ingredients: [{ ingredient: 'olive oil', unit: 'tablespoon' }], steps: ['Mix.'] });
+	assert.equal(result.ok, false);
+	assert.ok(result.ingredientErrors?.[0].quantity);
+});
