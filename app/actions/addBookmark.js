@@ -4,6 +4,7 @@ import  connectDB  from '@/config/database';
 import User from '@/models/User';
 import { getSessionUser } from '@/utils/getSessionUser';
 import mongoose from 'mongoose';
+import { canReadRecipe } from '@/utils/recipeAccess';
 import {
 	EmailVerificationRequiredError,
 	requireVerifiedEmail,
@@ -25,6 +26,9 @@ async function addBookmark(recipeId) {
 		}
 
 		await requireVerifiedEmail(sessionUser);
+		if (!await canReadRecipe(recipeId, sessionUser.id)) {
+			throw new Error('Recipe not found');
+		}
 
 		const user = await User.findById(sessionUser.id);
 		if (!user) {

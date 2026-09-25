@@ -4,7 +4,7 @@
 import cloudinary from '@/config/cloudinary';
 import connectDB from '@/config/database';
 import Recipe from '@/models/Recipe';
-import mongoose from 'mongoose';
+import { getOwnedRecipe, ownedRecipeFilter } from '@/utils/recipeAccess';
 import { redirect } from 'next/navigation';
 import { getSessionUser } from '@/utils/getSessionUser';
 import { requireVerifiedEmail } from '@/utils/requireVerifiedEmail';
@@ -17,11 +17,7 @@ async function deleteRecipe(recipeId) {
 		throw new Error('You must be logged in to delete a recipe');
 	}
 
-	if (!mongoose.Types.ObjectId.isValid(recipeId)) {
-		throw new Error('Recipe not found');
-	}
-
-	const recipe = await Recipe.findOne({ _id: recipeId, user: sessionUser.id });
+	const recipe = await getOwnedRecipe(recipeId, sessionUser.id);
 
 	if (!recipe) {
 		throw new Error('Recipe not found');
@@ -40,7 +36,8 @@ async function deleteRecipe(recipeId) {
 	}
 
 	// Delete the recipe from the database
-	await Recipe.findOneAndDelete({ _id: recipeId, user: sessionUser.id });
+	const deleted = await Recipe.findOneAndDelete(ownedRecipeFilter(recipeId, sessionUser.id));
+	if (!deleted) throw new Error('Recipe not found');
 	redirect('/recipes');
 }
 

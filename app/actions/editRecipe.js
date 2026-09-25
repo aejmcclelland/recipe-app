@@ -8,6 +8,7 @@ import { revalidatePath } from 'next/cache';
 import connectDB from '@/config/database';
 import { getSessionUser } from '@/utils/getSessionUser';
 import { requireVerifiedEmail } from '@/utils/requireVerifiedEmail';
+import { getOwnedRecipe, ownedRecipeFilter } from '@/utils/recipeAccess';
 
 async function updateRecipe(recipeId, formData) {
 	await connectDB();
@@ -23,21 +24,11 @@ async function updateRecipe(recipeId, formData) {
 	const deleteImage = formData.get('deleteImage') === 'true';
 
 	// Fetch the existing recipe
-	const existingRecipe = await Recipe.findById(recipeId);
+	const existingRecipe = await getOwnedRecipe(recipeId, userId);
 
 	// Check if the recipe exists
 	if (!existingRecipe) {
 		throw new Error('Recipe not found');
-	}
-
-	// Check if the recipe has an owner (older recipes may predate auth)
-	if (!existingRecipe.user) {
-		throw new Error('This recipe has no owner set. Please re-save it under your account or contact support.');
-	}
-
-	// Check if the user is the owner of the recipe
-	if (existingRecipe.user.toString() !== userId) {
-		throw new Error('You are not authorized to edit this recipe');
 	}
 
 	await requireVerifiedEmail(sessionUser);
@@ -160,7 +151,8 @@ async function updateRecipe(recipeId, formData) {
 	};
 
 	try {
-		await Recipe.findByIdAndUpdate(recipeId, updatedRecipe);
+		const updated = await Recipe.findOneAndUpdate(ownedRecipeFilter(recipeId, userId), updatedRecipe);
+		if (!updated) throw new Error('Recipe not found');
 		revalidatePath(`/recipes/${recipeId}`);
 		return recipeId; // Return recipe ID to handle redirection or success message in the caller
 	} catch (error) {

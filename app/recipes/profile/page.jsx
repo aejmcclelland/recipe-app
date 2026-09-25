@@ -11,6 +11,7 @@ import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 import { serializeBookmarks } from '@/utils/serializeBookmarks';
 import BookmarkRecipeCard from '@/components/BookmarkRecipeCard';
 import UserDetails from '@/components/UserDetails';
+import { readableRecipeFilter } from '@/utils/recipeAccess';
 
 const ProfilePage = async () => {
     let loadStatus = 'loading';
@@ -55,6 +56,8 @@ const ProfilePage = async () => {
                     .populate({
                         path: 'bookmarks',
                         model: 'Recipe',
+                        match: readableRecipeFilter(userId),
+                        select: '-sharedWith',
                         populate: { path: 'category', select: 'name', model: 'Category' },
                     })
                     .lean();

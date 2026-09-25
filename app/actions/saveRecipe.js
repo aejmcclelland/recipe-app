@@ -2,7 +2,7 @@
 
 import connectDB from '@/config/database';
 import User from '@/models/User';
-import Recipe from '@/models/Recipe';
+import { canReadRecipe, isRecipeId } from '@/utils/recipeAccess';
 import { getSessionUser } from '@/utils/getSessionUser';
 import {
 	EmailVerificationRequiredError,
@@ -23,9 +23,7 @@ async function saveRecipe(recipeId) {
 		console.log('Bookmark RecipeId:', recipeId);
 		const userId = sessionUser.id;
 
-		// Validate recipe existence
-		const recipeExists = await Recipe.exists({ _id: recipeId });
-		if (!recipeExists) {
+		if (!isRecipeId(recipeId)) {
 			throw new Error('Recipe not found');
 		}
 
@@ -40,6 +38,7 @@ async function saveRecipe(recipeId) {
 			// Remove the recipe if already bookmarked
 			user.bookmarks.pull(recipeId);
 		} else {
+			if (!await canReadRecipe(recipeId, userId)) throw new Error('Recipe not found');
 			// Add the recipe if not bookmarked
 			user.bookmarks.push(recipeId);
 		}

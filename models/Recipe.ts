@@ -22,6 +22,7 @@ export interface IRecipe extends Document {
 	sourceUrl?: string;
 	category: mongoose.Types.ObjectId;
 	user: mongoose.Types.ObjectId;
+	sharedWith: mongoose.Types.ObjectId[];
 }
 
 const recipeSchema = new Schema<IRecipe>({
@@ -81,6 +82,13 @@ const recipeSchema = new Schema<IRecipe>({
 		type: Schema.Types.ObjectId,
 		ref: 'User',
 		required: true,
+		index: true,
+	},
+	sharedWith: {
+		type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+		default: [],
+		index: true,
+		select: false,
 	},
 });
 

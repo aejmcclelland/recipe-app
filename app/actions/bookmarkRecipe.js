@@ -4,6 +4,7 @@ import connectDB from '@/config/database';
 import User from '@/models/User';
 import { getSessionUser } from '@/utils/getSessionUser';
 import { revalidatePath } from 'next/cache';
+import { canReadRecipe, isRecipeId } from '@/utils/recipeAccess';
 import {
 	EmailVerificationRequiredError,
 	requireVerifiedEmail,
@@ -27,7 +28,7 @@ async function bookmarkRecipe(recipeId, recipeName) {
 		const userId = sessionUser.id; //  Directly use `userId`
 
 		// Validate recipeId
-		if (!recipeId || typeof recipeId !== 'string') {
+		if (!isRecipeId(recipeId)) {
 			throw new Error(`Invalid recipe ID: ${recipeId}`);
 		}
 
@@ -55,6 +56,7 @@ async function bookmarkRecipe(recipeId, recipeName) {
 			);
 			message = `Recipe ${recipeName} removed from bookmarks`;
 		} else {
+			if (!await canReadRecipe(recipeId, userId)) throw new Error('Recipe not found');
 			// Add the recipe to bookmarks
 			user.bookmarks.push(recipeId);
 			message = `Recipe ${recipeName} added to bookmarks`;
