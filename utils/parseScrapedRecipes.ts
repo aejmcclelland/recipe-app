@@ -1,6 +1,7 @@
 // utils/parseScrapedRecipes.ts
 import mongoose from 'mongoose';
 import Ingredient from '@/models/Ingredient';
+import { normaliseScrapedIngredient } from './normaliseScrapedIngredient';
 
 export async function parseScrapedRecipe(rawData: {
 	title: string;
@@ -17,7 +18,9 @@ export async function parseScrapedRecipe(rawData: {
 }> {
 	const parsedIngredients = await Promise.all(
 		rawData.ingredients.map(async (item) => {
-			const name = item.trim().toLowerCase();
+			const normalised = normaliseScrapedIngredient(item);
+			// Preserve the importer's shared-name canonicalisation, including fallback lines.
+			const name = normalised.ingredient.trim().toLowerCase();
 
 			const ingredientDoc = await Ingredient.findOneAndUpdate(
 				{ name },
@@ -33,6 +36,7 @@ export async function parseScrapedRecipe(rawData: {
 
 			return {
 				ingredient: ingredientDoc._id as mongoose.Types.ObjectId,
+				...(normalised.parsed ? { quantity: normalised.quantity, unit: normalised.unit } : {}),
 			};
 		})
 	);

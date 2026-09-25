@@ -122,7 +122,7 @@ export default function RecipeCard({ recipe }) {
 										// Quantity + unit -> pluralised correctly
 										return (
 											<li key={getIngredientKey(ing, index)}>
-												{quantity} {name} {pluraliseUnit(unit, quantity)}
+												{quantity} {pluraliseUnit(unit, quantity)} {name}
 											</li>
 										);
 									})}
