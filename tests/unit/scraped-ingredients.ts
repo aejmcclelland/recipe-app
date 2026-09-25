@@ -10,10 +10,10 @@ const parsedCases = [
 	['200g plain flour', 200, 'g', 'plain flour', 'g'],
 	['400 ml chicken stock', 400, 'ml', 'chicken stock', 'ml'],
 	['  1.5   L Vegetable  Stock  ', 1.5, 'l', 'Vegetable  Stock', 'l'],
-	['¼ tsp chilli flakes', 0.25, 'teaspoon', 'chilli flakes', 'teaspoons'],
-	['½ tsp salt', 0.5, 'teaspoon', 'salt', 'teaspoons'],
+	['¼ tsp chilli flakes', 0.25, 'teaspoon', 'chilli flakes', 'teaspoon'],
+	['½ tsp salt', 0.5, 'teaspoon', 'salt', 'teaspoon'],
 	['1½ tbsp sugar', 1.5, 'tablespoon', 'sugar', 'tablespoons'],
-	['1/2 tsp salt', 0.5, 'teaspoon', 'salt', 'teaspoons'],
+	['1/2 tsp salt', 0.5, 'teaspoon', 'salt', 'teaspoon'],
 	['1 1/2 tbsp sugar', 1.5, 'tablespoon', 'sugar', 'tablespoons'],
 	['½kg potatoes', 0.5, 'kg', 'potatoes', 'kg'],
 ] as const;

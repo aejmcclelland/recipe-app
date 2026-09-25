@@ -5,6 +5,7 @@ import { Card, CardContent, Typography, Box } from '@mui/material';
 import Image from 'next/image';
 import PropTypes from 'prop-types';
 import { pluraliseUnit } from '@/utils/pluraliseUnit';
+import { formatQuantity } from '@/utils/formatQuantity';
 
 function normaliseStepText(value) {
 	if (typeof value === 'string') {
@@ -114,7 +115,7 @@ export default function RecipeCard({ recipe }) {
 										if (!unit) {
 											return (
 												<li key={getIngredientKey(ing, index)}>
-													{quantity} {name}
+													{formatQuantity(quantity)} {name}
 												</li>
 											);
 										}
@@ -122,7 +123,7 @@ export default function RecipeCard({ recipe }) {
 										// Quantity + unit -> pluralised correctly
 										return (
 											<li key={getIngredientKey(ing, index)}>
-												{quantity} {pluraliseUnit(unit, quantity)} {name}
+												{formatQuantity(quantity)} {pluraliseUnit(unit, quantity)} {name}
 											</li>
 										);
 									})}
