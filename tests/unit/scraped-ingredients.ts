@@ -10,6 +10,12 @@ const parsedCases = [
 	['200g plain flour', 200, 'g', 'plain flour', 'g'],
 	['400 ml chicken stock', 400, 'ml', 'chicken stock', 'ml'],
 	['  1.5   L Vegetable  Stock  ', 1.5, 'l', 'Vegetable  Stock', 'l'],
+	['¼ tsp chilli flakes', 0.25, 'teaspoon', 'chilli flakes', 'teaspoons'],
+	['½ tsp salt', 0.5, 'teaspoon', 'salt', 'teaspoons'],
+	['1½ tbsp sugar', 1.5, 'tablespoon', 'sugar', 'tablespoons'],
+	['1/2 tsp salt', 0.5, 'teaspoon', 'salt', 'teaspoons'],
+	['1 1/2 tbsp sugar', 1.5, 'tablespoon', 'sugar', 'tablespoons'],
+	['½kg potatoes', 0.5, 'kg', 'potatoes', 'kg'],
 ] as const;
 
 for (const [raw, quantity, unit, ingredient, displayUnit] of parsedCases) {
@@ -20,12 +26,13 @@ for (const [raw, quantity, unit, ingredient, displayUnit] of parsedCases) {
 }
 
 for (const raw of [
-	'¼ tsp chilli flakes',
 	'2 x 400g cans chopped tomatoes',
 	'  Salt and  pepper to taste  ',
 	'1-2 tbsp olive oil',
 	'1–2 tbsp olive oil',
-	'1 1/2 tbsp sugar',
+	'½-1 tsp chilli flakes',
+	'1/2-1 tsp chilli flakes',
+	'1/0 tsp salt',
 	'1..5 g flour',
 	'',
 ]) {
@@ -38,6 +45,7 @@ for (const [raw, quantity, ingredient] of [
 	['1 onion finely chopped', 1, 'onion finely chopped'],
 	['2 garlic cloves crushed', 2, 'garlic cloves crushed'],
 	['4 skinless chicken breasts, sliced into strips', 4, 'skinless chicken breasts, sliced into strips'],
+	['½ avocado', 0.5, 'avocado'],
 ] as const) {
 	test(`recognises count ${JSON.stringify(raw)}`, () => {
 		assert.deepEqual(normaliseScrapedIngredient(raw), { parsed: true, ingredient, quantity });
