@@ -11,6 +11,7 @@ import {
 	MenuItem,
 	Select,
 	Stack,
+	styled,
 	TextField,
 	Typography,
 } from '@mui/material';
@@ -184,7 +185,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 	};
 
 	return (
-		<Box sx={{ width: 800, maxWidth: '100%', mx: 'auto', p: 3 }}>
+		<Box sx={{ width: '100%', maxWidth: 800, mx: 'auto', px: { xs: 0, sm: 3 }, py: 3 }}>
 			<form onSubmit={updateRecipeById}>
 				<Stack spacing={4}>
 					<Stack spacing={1}>
@@ -204,7 +205,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 							alt={recipe?.name || 'Recipe Image'}
 							width={300}
 							height={187}
-							style={{ objectFit: 'cover', borderRadius: 12 }}
+							style={{ objectFit: 'cover', borderRadius: 12, maxWidth: '100%', height: 'auto' }}
 						/>
 					</Box>
 
@@ -265,7 +266,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 							sx={{
 								fontWeight: 600,
 								fontSize: '1.1rem',
-								'& .MuiInputBase-root': { height: 48 },
+
 							}}
 						/>
 					</Stack>
@@ -301,7 +302,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 					{/* Times & Serves */}
 					<Stack spacing={4} sx={{ mt: 1 }}>
 						<Typography variant='h5'>Times & Serves</Typography>
-						<Stack spacing={2} direction={{ mobile: 'column', tablet: 'row' }}>
+						<Stack spacing={2} useFlexGap direction={{ xs: 'column', sm: 'row' }}>
 							<TextField
 								label='Prep Time (mins)'
 								name='prepTime'
@@ -338,7 +339,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 					{/* Ingredients */}
 					<Stack spacing={1}>
 						<Typography variant='h5'>Ingredients</Typography>
-						<Stack spacing={2}>
+						<Stack spacing={3}>
 							{ingredients.map((ingredient, index) => (
 								<IngredientInputRow
 									key={index}
@@ -354,7 +355,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 								variant='contained'
 								onClick={handleAddIngredient}
 								type='button'
-								sx={{ width: { mobile: '100%', tablet: 'auto' } }}>
+								sx={{ width: { xs: '100%', sm: 'auto' }, alignSelf: { sm: 'flex-start' }, minHeight: 44 }}>
 								+ Add Ingredient
 							</Button>
 						</Stack>
@@ -377,7 +378,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 								variant='contained'
 								onClick={handleAddStep}
 								type='button'
-								sx={{ width: { mobile: '100%', tablet: 'auto' } }}>
+								sx={{ width: { xs: '100%', sm: 'auto' }, alignSelf: { sm: 'flex-start' }, minHeight: 44 }}>
 								+ Add Step
 							</Button>
 						</Stack>

@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useMemo } from 'react';
-import { Box, IconButton, TextField, MenuItem } from '@mui/material';
+import { Box, Stack, IconButton, TextField, MenuItem } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { UNIT_OPTIONS } from '../utils/measurements';
 
@@ -61,120 +61,106 @@ export default function IngredientInputRow({
   };
 
   return (
-    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Stack spacing={2} useFlexGap sx={{ width: '100%', minWidth: 0 }}>
       {/* Row 1: Ingredient (full width always) */}
       <TextField
         label="Ingredient"
         value={ingredient.ingredient?.name ?? ingredient.ingredient ?? ''}
         onChange={(e) => handleIngredientChange(index, 'ingredient', e.target.value)}
         fullWidth
+        multiline
+        minRows={1}
         error={!!fieldError('ingredient')}
         helperText={fieldError('ingredient')}
-        sx={{ minWidth: 0 }}
+        sx={{
+          minWidth: 0,
+          '& .MuiInputBase-root': { p: 2 },
+          // The theme adds search-icon padding to all inputs; textareas need their normal inset.
+          '& .MuiInputBase-root .MuiInputBase-inputMultiline': { p: 0, overflowWrap: 'anywhere' },
+        }}
       />
 
-      {/* Row 2(+):
-          - Mobile:   [Quantity][Unit][Delete] then Custom unit full-width below
-          - Tablet+:  [Quantity][Unit][Custom unit][Delete] all on one line when Other is selected
-      */}
-      <Box
-        sx={{
-          width: '100%',
+      <Stack direction="row" spacing={1} useFlexGap alignItems="flex-start">
+        <Box sx={{
+          flex: 1,
+          minWidth: 0,
           display: 'grid',
           gap: 2,
-          alignItems: 'start',
-          gridTemplateColumns: {
-            mobile: '1fr 1fr auto',
-            tablet: isOther ? '120px 160px 1fr auto' : '120px 160px 1fr auto',
-          },
-          gridTemplateAreas: {
-            mobile: isOther
-              ? `
-                "qty unit del"
-                "custom custom custom"
-              `
-              : `"qty unit del"`,
-            tablet: isOther ? `"qty unit custom del"` : `"qty unit custom del"`,
-          },
-        }}
-      >
-        {/* Quantity */}
-        <Box sx={{ gridArea: 'qty', minWidth: 0 }}>
-          <TextField
-            label="Quantity"
-            value={ingredient.quantity ?? ''}
-            onChange={(e) => handleIngredientChange(index, 'quantity', e.target.value)}
-            slotProps={{ input: { inputMode: 'decimal' } }}
-            fullWidth
-            error={!!fieldError('quantity')}
-            helperText={fieldError('quantity')}
-          />
-        </Box>
-
-        {/* Unit (TextField select is more reliable than Select+renderValue with some theme overrides) */}
-        <Box sx={{ gridArea: 'unit', minWidth: 0 }}>
-          <TextField
-            select
-            label="Unit"
-            value={unitValue}
-            onChange={(e) => {
-              const next = String(e.target.value ?? '');
-              handleIngredientChange(index, 'unit', next);
-
-              if (next !== 'other') {
-                handleIngredientChange(index, 'customUnit', '');
-              }
-            }}
-            fullWidth
-            error={!!fieldError('unit')}
-            helperText={fieldError('unit')}
-          >
-            <MenuItem value="">
-              <em>Select unit</em>
-            </MenuItem>
-
-            {unitOptions.map(({ value, label }) => (
-              <MenuItem key={value} value={value}>
-                {label}
-              </MenuItem>
-            ))}
-
-            <MenuItem value="other">Other…</MenuItem>
-          </TextField>
-        </Box>
-
-        {/* Custom unit */}
-        <Box sx={{ gridArea: 'custom', minWidth: 0 }}>
-          {isOther && (
+          gridTemplateColumns: { xs: 'minmax(0, 1fr)', sm: 'repeat(2, minmax(0, 1fr))' },
+        }}>
+          {/* Quantity */}
+          <Box sx={{ minWidth: 0 }}>
             <TextField
-              label="Custom unit"
-              value={ingredient.customUnit ?? ''}
-              onChange={(e) => handleIngredientChange(index, 'customUnit', e.target.value)}
-              onKeyDown={(e) => {
-                // stop Enter submitting the whole recipe form
-                if (e.key === 'Enter') e.preventDefault();
+              label="Quantity"
+              value={ingredient.quantity ?? ''}
+              onChange={(e) => handleIngredientChange(index, 'quantity', e.target.value)}
+              slotProps={{ input: { inputMode: 'decimal' } }}
+              fullWidth
+              error={!!fieldError('quantity')}
+              helperText={fieldError('quantity')}
+            />
+          </Box>
+
+          {/* Unit (TextField select is more reliable than Select+renderValue with some theme overrides) */}
+          <Box sx={{ minWidth: 0 }}>
+            <TextField
+              select
+              label="Unit"
+              value={unitValue}
+              onChange={(e) => {
+                const next = String(e.target.value ?? '');
+                handleIngredientChange(index, 'unit', next);
+
+                if (next !== 'other') {
+                  handleIngredientChange(index, 'customUnit', '');
+                }
               }}
               fullWidth
-              error={!!fieldError('customUnit')}
-              helperText={fieldError('customUnit')}
-            />
+              error={!!fieldError('unit')}
+              helperText={fieldError('unit')}
+            >
+              <MenuItem value="">
+                <em>Select unit</em>
+              </MenuItem>
+
+              {unitOptions.map(({ value, label }) => (
+                <MenuItem key={value} value={value}>
+                  {label}
+                </MenuItem>
+              ))}
+
+              <MenuItem value="other">Other…</MenuItem>
+            </TextField>
+          </Box>
+
+          {/* Custom unit */}
+          {isOther && (
+            <Box sx={{ gridColumn: '1 / -1', minWidth: 0 }}>
+              <TextField
+                label="Custom unit"
+                value={ingredient.customUnit ?? ''}
+                onChange={(e) => handleIngredientChange(index, 'customUnit', e.target.value)}
+                onKeyDown={(e) => {
+                  // stop Enter submitting the whole recipe form
+                  if (e.key === 'Enter') e.preventDefault();
+                }}
+                fullWidth
+                error={!!fieldError('customUnit')}
+                helperText={fieldError('customUnit')}
+              />
+            </Box>
           )}
         </Box>
 
         {/* Delete */}
-        <Box
-          sx={{
-            gridArea: 'del',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-          }}
+        <IconButton
+          aria-label="Remove ingredient"
+          onClick={handleRemoveIngredient}
+          sx={{ flexShrink: 0, width: 44, height: 44 }}
         >
-          <IconButton aria-label="Remove ingredient" onClick={handleRemoveIngredient}>
-            <DeleteIcon color="warning" />
-          </IconButton>
-        </Box>
-      </Box>
-    </Box>
+          <DeleteIcon color="warning" />
+        </IconButton>
+      </Stack>
+    </Stack>
   );
 }
