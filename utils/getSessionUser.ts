@@ -15,13 +15,14 @@ export const getSessionUser = async (): Promise<SessionUser | null> => {
 	try {
 		const session: Session | null = await getServerSession(authOptions);
 
-		const email = session?.user?.email;
-		if (!email) return null;
+		// JWT/session callbacks preserve this database ID across client updates.
+		// Email is editable session metadata and must never select the account.
+		const userId = session?.user?.id;
+		if (typeof userId !== 'string' || !/^[a-f\d]{24}$/i.test(userId)) return null;
 
 		await connectDB();
 
-		const sanitisedEmail = email.toLowerCase().trim();
-		const userDoc = await User.findOne({ email: sanitisedEmail })
+		const userDoc = await User.findById(userId)
 			.select('_id firstName lastName email image')
 			.lean();
 

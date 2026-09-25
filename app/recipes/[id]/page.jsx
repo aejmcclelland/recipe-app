@@ -1,13 +1,10 @@
-import connectDB from '../../../config/database';
-import Recipe from '../../../models/Recipe';
-import Ingredient from '@/models/Ingredient';
+import { getRecipeForViewer } from '@/utils/recipeAccess';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import RecipeCard from '@/components/RecipeCard';
 import { Box, Typography, Container } from '@mui/material';
 import HomeButton from '@/components/HomeButton';
 import { getSessionUser } from '@/utils/getSessionUser';
 import RecipeNotFound from '@/components/RecipeNotFound';
-import mongoose from 'mongoose';
 import EditRecipeButton from '@/components/EditRecipeButton';
 import DeleteRecipeButton from '@/components/DeleteRecipeButton';
 import BookmarkButton from '@/components/BookmarkButton';
@@ -20,8 +17,6 @@ export const metadata = {
 };
 
 export default async function RecipeDetailPage({ params }) {
-	// Connect to DB
-	await connectDB();
 	const resolvedParams = await params;
 	const recipeId = resolvedParams?.id;
 
@@ -33,9 +28,7 @@ export default async function RecipeDetailPage({ params }) {
 	// Fetch session user
 	const sessionUser = await getSessionUser();
 
-	// Validate and handle invalid recipeId
-	if (!mongoose.Types.ObjectId.isValid(recipeId)) {
-		console.error(`Invalid recipe ID: ${recipeId}`);
+	if (!sessionUser?.id) {
 		return <RecipeNotFound />;
 	}
 
@@ -44,11 +37,7 @@ export default async function RecipeDetailPage({ params }) {
 	let shouldShowNotFound = false;
 
 	try {
-		// Fetch the recipe by ID, populate necessary fields
-		const recipe = await Recipe.findById(recipeId)
-			.populate({ path: 'ingredients.ingredient', model: Ingredient })
-			.populate('user') // Ensure the owner's info is available
-			.lean();
+		const recipe = await getRecipeForViewer(recipeId, sessionUser.id);
 
 		if (!recipe) {
 			console.error(`Recipe not found with ID: ${recipeId}`);
@@ -71,10 +60,7 @@ export default async function RecipeDetailPage({ params }) {
 				});
 			}
 
-			isOwner =
-				sessionUser?.id &&
-				serializedRecipe.user?._id &&
-				sessionUser.id === serializedRecipe.user._id.toString();
+			isOwner = sessionUser.id === serializedRecipe.user?.toString();
 		}
 	} catch (error) {
 		console.error('Error fetching recipe:', error.message);
