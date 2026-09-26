@@ -17,6 +17,7 @@ import BackToHomeButton from '@/components/BackToHomeButton';
 import RecipesClient from '@/components/RecipesClient';
 import { getSessionUser } from '@/utils/getSessionUser';
 import { redirect } from 'next/navigation';
+import { getSharedRecipesForViewer } from '@/utils/recipeAccess';
 
 
 export default async function RecipesPage() {
@@ -26,6 +27,7 @@ export default async function RecipesPage() {
     }
     const user = { id: sessionUser.id, ...sessionUser };
     let recipesWithIds;
+    let sharedRecipes;
     let loadError = false;
 
     try {
@@ -36,8 +38,7 @@ export default async function RecipesPage() {
             .lean();
         recipesWithIds = convertToSerializeableObject(recipes);
 
-        // Fetch user data
-        // Fetch user session data
+        sharedRecipes = convertToSerializeableObject(await getSharedRecipesForViewer(sessionUser.id));
     } catch (error) {
         console.error('Error loading RecipesPage:', error.message);
         loadError = true;
@@ -54,7 +55,8 @@ export default async function RecipesPage() {
     return (
         <Container data-testid="recipes-page">
             <RecipeSearchForm />
-            <RecipesClient recipes={recipesWithIds} user={user} />
+            <RecipesClient recipes={recipesWithIds} user={user} heading="My Recipes" />
+            <RecipesClient recipes={sharedRecipes} user={user} heading="Shared with me" />
             <BackToHomeButton />
         </Container>
     );

@@ -13,6 +13,7 @@ type RateLimitName =
 	| 'auth'
 	| 'password-reset'
 	| 'recipe-import'
+	| 'recipe-sharing'
 	| 'recipe-create';
 
 type RateLimitConfig = {
@@ -22,6 +23,11 @@ type RateLimitConfig = {
 };
 
 const RATE_LIMITS: Record<RateLimitName, RateLimitConfig> = {
+	'recipe-sharing': {
+		limit: 30,
+		window: '15 m',
+		message: 'Too many sharing attempts. Please try again later.',
+	},
 	auth: {
 		limit: 10,
 		window: '15 m',

@@ -92,7 +92,19 @@ const recipeSchema = new Schema<IRecipe>({
 	},
 });
 
+const existingRecipe = models.Recipe as Model<IRecipe> | undefined;
+
+// Next.js hot reload keeps Mongoose models registered between module updates.
+// A compiled model cannot safely gain a schema path after the fact, so replace
+// a pre-sharing cached model. Otherwise Mongoose strict mode discards sharing
+// updates until the development server is restarted.
+if (existingRecipe && !existingRecipe.schema.path('sharedWith')) {
+	mongoose.deleteModel('Recipe');
+}
+
 const Recipe: Model<IRecipe> =
-	(models.Recipe as Model<IRecipe>) || model<IRecipe>('Recipe', recipeSchema);
+	(existingRecipe?.schema.path('sharedWith')
+		? existingRecipe
+		: model<IRecipe>('Recipe', recipeSchema));
 
 export default Recipe;

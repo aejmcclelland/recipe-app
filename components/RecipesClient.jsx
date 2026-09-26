@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid';
 import RecipeOverviewCard from '@/components/RecipeOverviewCard';
 import { useFilter } from '@/context/FilterContext';
 
-export default function RecipesClient({ recipes, user }) {
+export default function RecipesClient({ recipes, user, heading }) {
     const { selectedCategory } = useFilter();
 
     // Filter recipes based on selectedCategory
@@ -14,9 +14,9 @@ export default function RecipesClient({ recipes, user }) {
         : recipes.filter(recipe => recipe.category?.name === selectedCategory);
 
     return (
-        <Box>
-            <Typography variant="h4" align="center" sx={{ marginBottom: 2 }}>
-                {selectedCategory === 'All' ? 'All Recipes' : `${selectedCategory} Recipes`}
+        <Box component="section" aria-label={heading} sx={{ mb: 4 }}>
+            <Typography component="h2" variant="h4" align="center" sx={{ marginBottom: 2 }}>
+                {heading || (selectedCategory === 'All' ? 'All Recipes' : `${selectedCategory} Recipes`)}
             </Typography>
             <Grid container spacing={4} justifyContent="center">
                 {filteredRecipes.length > 0 ? (

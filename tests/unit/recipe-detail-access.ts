@@ -16,11 +16,18 @@ let bookmarks: string[];
 let writes: Record<string, unknown>[];
 let imageDeletes: number;
 let saves: number;
+let userLookups: string[];
+let limited: boolean;
+let databaseFailure: boolean;
+const accounts = [ownerId, sharedId, otherId].map((id, i) => ({
+	...{ password: 'private-hash', resetPasswordTokenHash: 'private-token' },
+	_id: new mongoose.Types.ObjectId(id), email: `${['owner', 'recipient', 'other'][i]}@example.com`,
+}));
 function matches(filter: Record<string, unknown>): boolean {
 	return Object.entries(filter).every(([key, value]) => {
 		if (key === '$or') return (value as Record<string, unknown>[]).some(matches);
 		if (key === '_id') return value === recipeId;
-		if (key === 'user') return value === owner;
+		if (key === 'user') return typeof value === 'object' && value !== null ? (value as { $ne: string }).$ne !== owner : value === owner;
 		if (key === 'sharedWith') return sharedWith?.includes(String(value)) ?? false;
 		throw new Error(`Unexpected filter ${key}`);
 	});
@@ -44,6 +51,16 @@ registerHooks({ resolve(specifier, context, nextResolve) {
 mock.module('../../config/database.ts', { defaultExport: async () => {} });
 mock.module('../../models/Ingredient.ts', { defaultExport: {} });
 mock.module('../../utils/getSessionUser.ts', { namedExports: { getSessionUser: async () => viewer } });
+class RateLimitError extends Error {}
+mock.module('../../utils/rateLimit.ts', { namedExports: {
+	RateLimitError, enforceRateLimit: async (name: string, id: string) => {
+		assert.equal(name, 'recipe-sharing'); assert.equal(id, ownerId);
+		if (limited) throw new RateLimitError();
+	},
+} });
+mock.module('../../utils/emailVerification.ts', { namedExports: {
+	sanitiseEmail: (value: unknown) => typeof value === 'string' ? value.trim().toLowerCase() : '',
+} });
 mock.module('../../utils/requireVerifiedEmail.ts', { namedExports: {
 	EmailVerificationRequiredError: class extends Error {},
 	requireVerifiedEmail: async () => {},
@@ -54,6 +71,20 @@ mock.module('../../config/cloudinary.js', { defaultExport: { uploader: {
 mock.module('next/cache', { namedExports: { revalidatePath: () => {} } });
 mock.module('next/navigation', { namedExports: { redirect: () => {} } });
 mock.module('../../models/User.ts', { defaultExport: {
+	findOne: ({ email }: { email: string }) => {
+		userLookups.push(email);
+		return { select: (fields: string) => {
+			assert.ok(fields === '_id email' || fields === '_id');
+			return { lean: async () => {
+				if (databaseFailure) throw new Error('private database error');
+				return accounts.find(user => user.email === email) ?? null;
+			} };
+		} };
+	},
+	find: (filter: { _id: { $in: string[] } }) => ({ select: (fields: string) => {
+		assert.equal(fields, '_id email');
+		return { lean: async () => accounts.filter(user => filter._id.$in.some(id => String(id) === user._id.toString())) };
+	} }),
 	findById: () => {
 		const user = {
 			firstName: 'Recipe', email: 'viewer@example.com',
@@ -74,7 +105,17 @@ mock.module('../../models/User.ts', { defaultExport: {
 } });
 mock.module('../../models/Recipe.ts', { defaultExport: {
 	exists: async (filter: Record<string, unknown>) => matches(filter) ? { _id: recipeId } : null,
-	find: (filter: Record<string, unknown>) => ({ populate: () => ({ lean: async () => matches(filter) ? [recipeData()] : [] }) }),
+	find: (filter: Record<string, unknown>) => {
+		const query = { select: () => query, populate: () => query, lean: async () => matches(filter) ? [recipeData()] : [] };
+		return query;
+	},
+	updateOne: async (filter: Record<string, unknown>, update: { $addToSet?: { sharedWith: unknown }; $pull?: { sharedWith: string } }) => {
+		writes.push({ filter, update });
+		if (!matches(filter)) return { matchedCount: 0 };
+		if (update.$addToSet) sharedWith = [...new Set([...(sharedWith ?? []), String(update.$addToSet.sharedWith)])];
+		if (update.$pull) sharedWith = (sharedWith ?? []).filter(id => id !== update.$pull!.sharedWith);
+		return { matchedCount: 1 };
+	},
 	findOneAndUpdate: async (filter: Record<string, unknown>, update: Record<string, unknown>) => {
 		writes.push({ filter, update }); return matches(filter) ? recipeData() : null;
 	},
@@ -101,9 +142,10 @@ mock.module('../../models/Recipe.ts', { defaultExport: {
 	},
 } });
 // Inspect the actual page's client props without executing browser-only UI.
-for (const name of ['RecipeCard', 'HomeButton', 'RecipeNotFound', 'EditRecipeButton', 'DeleteRecipeButton', 'BookmarkButton', 'RecipeOverviewCard', 'BookmarkRecipeCard', 'UserDetails']) {
+for (const name of ['RecipeCard', 'HomeButton', 'RecipeNotFound', 'EditRecipeButton', 'DeleteRecipeButton', 'BookmarkButton', 'RecipeOverviewCard', 'BookmarkRecipeCard', 'UserDetails', 'RecipesClient', 'RecipeSearchForm', 'BackToHomeButton']) {
 	mock.module(`../../components/${name}.jsx`, { defaultExport: name });
 }
+mock.module('../../components/RecipeSharing.tsx', { defaultExport: 'RecipeSharing' });
 mock.module('@mui/material', { namedExports: { Box: 'Box', Typography: 'Typography', Container: 'Container' } });
 // tsx uses the classic JSX runtime for this project's jsx: preserve setting.
 Object.assign(globalThis, { React });
@@ -115,6 +157,8 @@ const { default: addBookmark } = await import('../../app/actions/addBookmark.js'
 const { default: bookmarkRecipe } = await import('../../app/actions/bookmarkRecipe.js');
 const { default: saveRecipe } = await import('../../app/actions/saveRecipe.js');
 const { default: deleteBookmark } = await import('../../app/actions/deleteBookmark.js');
+const { lookupSharingRecipient, getSharingRecipients, grantRecipeAccess, revokeRecipeAccess } = await import('../../app/actions/recipeSharing');
+const { default: RecipesPage } = await import('../../app/recipes/page.jsx');
 
 function elements(node: React.ReactNode): ReactElement<Record<string, unknown>>[] {
 	if (Array.isArray(node)) return node.flatMap(elements);
@@ -125,11 +169,92 @@ const render = (id = recipeId) => RecipeDetailPage({ params: Promise.resolve({ i
 beforeEach(() => {
 	viewer = { id: ownerId }; owner = ownerId; queries = [];
 	sharedWith = [sharedId]; bookmarks = []; writes = []; imageDeletes = 0; saves = 0;
+	userLookups = []; limited = false; databaseFailure = false;
+});
+
+test('exact normalized lookup returns only ID/email and reports already shared', async () => {
+	sharedWith = [];
+	assert.deepEqual(await lookupSharingRecipient(recipeId, ' Recipient@Example.com '), {
+		status: 'ready', recipient: { id: sharedId, email: 'recipient@example.com' },
+	});
+	assert.deepEqual(userLookups, ['recipient@example.com']);
+	sharedWith = [sharedId];
+	assert.equal((await lookupSharingRecipient(recipeId, 'recipient@example.com')).status, 'already_shared');
+});
+test('unknown email is unregistered, partial/malformed inputs disclose no users', async () => {
+	assert.deepEqual(await lookupSharingRecipient(recipeId, 'unknown@example.com'), { status: 'unregistered', email: 'unknown@example.com' });
+	for (const input of ['recipient', 'recipient@', '', { email: 'recipient@example.com' }, 'a'.repeat(255) + '@example.com']) {
+		assert.equal((await lookupSharingRecipient(recipeId, input)).status, 'invalid_email');
+	}
+	assert.deepEqual(userLookups, ['unknown@example.com']);
+	assert.deepEqual(writes, []);
+});
+for (const id of [sharedId, otherId, null]) {
+	test(`sharing management denies non-owner ${id}`, async () => {
+		viewer = id ? { id } : null;
+		assert.equal((await lookupSharingRecipient(recipeId, 'other@example.com')).status, 'unavailable');
+		assert.equal((await getSharingRecipients(recipeId)).status, 'unavailable');
+		assert.equal((await grantRecipeAccess(recipeId, 'other@example.com')).status, 'unavailable');
+		assert.equal((await revokeRecipeAccess(recipeId, id === sharedId ? otherId : sharedId)).status, 'unavailable');
+		assert.deepEqual(userLookups, []); assert.deepEqual(writes, []);
+	});
+}
+test('grant is idempotent, stores only recipient ID, preserves owner and enables reading', async () => {
+	sharedWith = undefined;
+	for (let i = 0; i < 2; i++) assert.deepEqual(await grantRecipeAccess(recipeId, 'recipient@example.com'), { status: 'shared' });
+	assert.deepEqual(sharedWith, [sharedId]); assert.equal(owner, ownerId);
+	for (const write of writes) {
+		assert.deepEqual(write.filter, { _id: recipeId, user: ownerId });
+		assert.deepEqual(Object.keys(write.update as object), ['$addToSet']);
+	}
+	viewer = { id: sharedId };
+	assert.ok(elements(await render()).some(e => e.type === 'RecipeCard'));
+});
+test('self, unknown and forged recipient inputs never grant access', async () => {
+	assert.equal((await lookupSharingRecipient(recipeId, 'owner@example.com')).status, 'self');
+	assert.equal((await grantRecipeAccess(recipeId, 'owner@example.com')).status, 'self');
+	assert.equal((await grantRecipeAccess(recipeId, 'unknown@example.com')).status, 'unregistered');
+	assert.equal((await grantRecipeAccess(recipeId, { id: sharedId, email: 'recipient@example.com', owner: ownerId })).status, 'invalid_email');
+	assert.equal((await grantRecipeAccess('invalid', 'recipient@example.com')).status, 'unavailable');
+	assert.deepEqual(writes, []);
+});
+test('recipient list omits deleted IDs and private fields; legacy list is empty', async () => {
+	sharedWith = [sharedId, 'ffffffffffffffffffffffff'];
+	assert.deepEqual(await getSharingRecipients(recipeId), { status: 'recipients', recipients: [{ id: sharedId, email: 'recipient@example.com' }] });
+	sharedWith = undefined;
+	assert.deepEqual(await getSharingRecipients(recipeId), { status: 'recipients', recipients: [] });
+});
+test('lookup/grant rate limit and unexpected failures return safe states without writes', async () => {
+	limited = true;
+	assert.equal((await lookupSharingRecipient(recipeId, 'recipient@example.com')).status, 'rate_limited');
+	assert.equal((await grantRecipeAccess(recipeId, 'recipient@example.com')).status, 'rate_limited');
+	assert.deepEqual(userLookups, []);
+	limited = false; databaseFailure = true;
+	assert.deepEqual(await lookupSharingRecipient(recipeId, 'recipient@example.com'), { status: 'error' });
+	assert.deepEqual(writes, []);
+});
+test('revoke is owner-scoped/idempotent and removes detail, bookmark and shared-list access', async () => {
+	bookmarks = [recipeId]; viewer = { id: sharedId };
+	const sharedList = async () => elements(await RecipesPage()).find(e => e.props.heading === 'Shared with me')!.props.recipes;
+	assert.equal((await sharedList() as unknown[]).length, 1);
+	assert.equal((elements(await RecipesPage()).find(e => e.props.heading === 'My Recipes')!.props.recipes as unknown[]).length, 0);
+	viewer = { id: otherId }; assert.equal((await sharedList() as unknown[]).length, 0);
+	viewer = { id: ownerId };
+	assert.equal((await sharedList() as unknown[]).length, 0);
+	assert.equal((elements(await RecipesPage()).find(e => e.props.heading === 'My Recipes')!.props.recipes as unknown[]).length, 1);
+	for (let i = 0; i < 2; i++) assert.deepEqual(await revokeRecipeAccess(recipeId, sharedId), { status: 'revoked' });
+	assert.deepEqual(writes[0], { filter: { _id: recipeId, user: ownerId }, update: { $pull: { sharedWith: sharedId } } });
+	assert.deepEqual(bookmarks, [recipeId]); assert.equal(owner, ownerId);
+	viewer = { id: sharedId };
+	assert.equal((await render()).type, 'RecipeNotFound');
+	assert.equal((await sharedList() as unknown[]).length, 0);
+	assert.ok(!JSON.stringify(await ProfilePage()).includes('Private soup'));
+	await deleteBookmark(recipeId); assert.equal(bookmarks.length, 0);
 });
 
 test('owner can view recipe and keeps edit/delete controls', async () => {
 	const tree = elements(await render());
-	for (const type of ['RecipeCard', 'EditRecipeButton', 'DeleteRecipeButton']) {
+	for (const type of ['RecipeCard', 'EditRecipeButton', 'DeleteRecipeButton', 'RecipeSharing']) {
 		assert.ok(tree.some(element => element.type === type));
 	}
 	assert.deepEqual(queries, [{ _id: recipeId, $or: [{ user: ownerId }, { sharedWith: ownerId }] }]);
@@ -162,7 +287,7 @@ test('shared user can read without edit/delete controls or sharing data', async 
 	viewer = { id: sharedId };
 	const tree = elements(await render());
 	assert.ok(tree.some(e => e.type === 'RecipeCard'));
-	assert.ok(!tree.some(e => e.type === 'EditRecipeButton' || e.type === 'DeleteRecipeButton'));
+	assert.ok(!tree.some(e => ['EditRecipeButton', 'DeleteRecipeButton', 'RecipeSharing'].includes(String(e.type))));
 	assert.ok(!JSON.stringify(tree).includes('sharedWith'));
 });
 test('legacy recipe without sharedWith is owner-only', async () => {

@@ -33,6 +33,15 @@ export async function canReadRecipe(recipeId: string, viewerId?: string) {
 	return Boolean(await Recipe.exists({ _id: recipeId, ...readableRecipeFilter(viewerId) }));
 }
 
+export async function getSharedRecipesForViewer(viewerId?: string) {
+	if (!isRecipeId(viewerId)) return [];
+	await connectDB();
+	return Recipe.find({ sharedWith: viewerId, user: { $ne: viewerId } })
+		.select('-sharedWith')
+		.populate('category')
+		.lean();
+}
+
 // viewerId must come from getSessionUser, never from client input.
 // Keep read access separate from the owner checks in mutation actions.
 export async function getRecipeForViewer(recipeId: string, viewerId?: string) {

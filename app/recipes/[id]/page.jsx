@@ -8,6 +8,7 @@ import RecipeNotFound from '@/components/RecipeNotFound';
 import EditRecipeButton from '@/components/EditRecipeButton';
 import DeleteRecipeButton from '@/components/DeleteRecipeButton';
 import BookmarkButton from '@/components/BookmarkButton';
+import RecipeSharing from '@/components/RecipeSharing';
 
 export const metadata = {
 	robots: {
@@ -103,6 +104,7 @@ export default async function RecipeDetailPage({ params }) {
 						paddingBottom: 2,
 					}}>
 					<BookmarkButton recipe={serializedRecipe} />
+					<RecipeSharing recipeId={serializedRecipe._id} />
 					<EditRecipeButton recipeId={serializedRecipe._id} />
 					<DeleteRecipeButton recipeId={serializedRecipe._id} />
 					<HomeButton />
