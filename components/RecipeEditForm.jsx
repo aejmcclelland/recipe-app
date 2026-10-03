@@ -66,8 +66,16 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 	const [cookTime, setCookTime] = useState(recipe?.cookTime ?? '');
 	const [serves, setServes] = useState(recipe?.serves ?? '');
 
-	const [steps, setSteps] = useState(initialSteps);
-	const [ingredients, setIngredients] = useState(recipe?.ingredients ?? []);
+	// Keep row identity separate from editable values and array positions.
+	const [steps, setSteps] = useState(() =>
+		initialSteps.map((value) => ({ rowId: crypto.randomUUID(), value })),
+	);
+	const [ingredients, setIngredients] = useState(() =>
+		(recipe?.ingredients ?? []).map((ingredient) => ({
+			...ingredient,
+			rowId: crypto.randomUUID(),
+		})),
+	);
 	const [ingredientErrors, setIngredientErrors] = useState(() =>
 		Array.isArray(recipe?.ingredients)
 			? recipe.ingredients.map(() => ({}))
@@ -116,9 +124,10 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 	};
 
 	const handleAddIngredient = () => {
+		const rowId = crypto.randomUUID();
 		setIngredients((prev) => [
 			...(prev || []),
-			{ ingredient: '', quantity: '', unit: '', customUnit: '' },
+			{ rowId, ingredient: '', quantity: '', unit: '', customUnit: '' },
 		]);
 		setIngredientErrors((prev) => [...(prev || []), {}]);
 	};
@@ -128,12 +137,15 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 		setIngredientErrors((prev) => (prev || []).filter((_, i) => i !== index));
 	};
 
-	const handleAddStep = () => setSteps((prev) => [...(prev || []), '']);
+	const handleAddStep = () => {
+		const rowId = crypto.randomUUID();
+		setSteps((prev) => [...(prev || []), { rowId, value: '' }]);
+	};
 
 	const handleStepChange = (index, value) => {
 		setSteps((prev) => {
 			const updated = [...(prev || [])];
-			updated[index] = value;
+			updated[index] = { ...updated[index], value };
 			return updated;
 		});
 	};
@@ -153,8 +165,8 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 		formData.set('serves', String(serves));
 
 		const result = validateAndCleanRecipeForm({
-			ingredients,
-			steps,
+			ingredients: ingredients.map(({ rowId: _rowId, ...ingredient }) => ingredient),
+			steps: steps.map((step) => step.value),
 			fractionToDecimal,
 		});
 
@@ -342,7 +354,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 						<Stack spacing={3}>
 							{ingredients.map((ingredient, index) => (
 								<IngredientInputRow
-									key={index}
+									key={ingredient.rowId}
 									index={index}
 									ingredient={ingredient}
 									errors={ingredientErrors?.[index]}
@@ -367,9 +379,9 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 						<Stack spacing={2}>
 							{steps.map((step, index) => (
 								<StepsInputRow
-									key={index}
+									key={step.rowId}
 									index={index}
-									step={step}
+									step={step.value}
 									handleStepChange={handleStepChange}
 									handleRemoveStep={handleRemoveStep}
 								/>
