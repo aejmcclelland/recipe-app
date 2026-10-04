@@ -8,6 +8,7 @@ import SearchBar from '@/components/SearchBar';
 import CategoryFilterSection from '@/components/CategoryFilterSection';
 import { Typography } from '@mui/material';
 import { getSessionUser } from '@/utils/getSessionUser';
+import { getSharedRecipesForViewer } from '@/utils/recipeAccess';
 import Hero from '@/components/Hero';
 import WelcomeSection from '@/components/WelcomeSection';
 import { headers } from 'next/headers';
@@ -69,18 +70,22 @@ export default async function Home() {
 	const isNewUser = url.searchParams.get('page') === 'new';
 
 	let userRecipes = [];
+	let sharedRecipes = [];
 
 	if (sessionUser) {
 		const recipeDocs = await Recipe.find({ user: sessionUser.id })
 			.populate('category')
 			.lean();
 		userRecipes = convertToSerializeableObject(recipeDocs);
+		sharedRecipes = convertToSerializeableObject(
+			await getSharedRecipesForViewer(sessionUser.id)
+		);
 	}
 
 	const firstNameRaw = sessionUser?.name?.split(' ')[0] ?? '';
 	const firstName =
 		firstNameRaw.charAt(0).toUpperCase() + firstNameRaw.slice(1).toLowerCase();
-	const hasRecipes = userRecipes.length > 0;
+	const hasRecipes = userRecipes.length > 0 || sharedRecipes.length > 0;
 
 	function renderHomeContent() {
 		if (!sessionUser) {
@@ -116,8 +121,10 @@ export default async function Home() {
 				<CategoryFilterSection categories={categoriesWithIds} />
 				<HomeClient
 					recipes={userRecipes}
+					sharedRecipes={sharedRecipes}
 					user={{ id: sessionUser.id, ...sessionUser }}
 				/>
+				{userRecipes.length === 0 && <Hero />}
 			</>
 		);
 	}
