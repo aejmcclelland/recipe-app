@@ -15,11 +15,12 @@ export default function ThemeRegistry({ children }) {
 	const { data: session } = useSession();
 	const hasSession = Boolean(session?.user);
 	let selectedTheme = theme;
+	// Match migrated paths even after sign-out clears the session, before navigation finishes.
 	if (usesHomeTheme(pathname, hasSession)) {
 		selectedTheme = homeTheme;
-	} else if (usesProfileTheme(pathname, hasSession) || usesImportTheme(pathname, hasSession) || usesRecipeEditTheme(pathname, hasSession) || usesRecipeAddTheme(pathname, hasSession)) {
-		selectedTheme = profileTheme;
-	} else if (usesPublicTheme(pathname, hasSession) || usesRecipeDetailTheme(pathname, hasSession)) {
+	} else if (usesProfileTheme(pathname, true) || usesImportTheme(pathname, true) || usesRecipeEditTheme(pathname, true) || usesRecipeAddTheme(pathname, true)) {
+		selectedTheme = hasSession ? profileTheme : publicTheme;
+	} else if (usesPublicTheme(pathname, hasSession) || usesRecipeDetailTheme(pathname, true)) {
 		selectedTheme = publicTheme;
 	}
 
