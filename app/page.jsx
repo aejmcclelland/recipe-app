@@ -1,35 +1,35 @@
 export const dynamic = 'force-dynamic';
-import connectDB from '@/config/database';
-import Recipe from '../models/Recipe';
-import { convertToSerializeableObject } from '@/utils/convertToObject';
-import Category from '@/models/Category';
+import CategoryFilterSection from '@/components/CategoryFilterSection';
+import Hero from '@/components/Hero';
 import HomeClient from '@/components/HomeClient';
 import SearchBar from '@/components/SearchBar';
-import CategoryFilterSection from '@/components/CategoryFilterSection';
-import { Typography } from '@mui/material';
+import WelcomeSection from '@/components/WelcomeSection';
+import connectDB from '@/config/database';
+import Category from '@/models/Category';
+import { convertToSerializeableObject } from '@/utils/convertToObject';
 import { getSessionUser } from '@/utils/getSessionUser';
 import { getSharedRecipesForViewer } from '@/utils/recipeAccess';
-import Hero from '@/components/Hero';
-import WelcomeSection from '@/components/WelcomeSection';
+import { Box, Typography } from '@mui/material';
 import { headers } from 'next/headers';
+import Recipe from '../models/Recipe';
 
 const homepageDescription =
-	"Rebekah's Recipes is a family recipe organiser for saving, importing, editing, scraping, bookmarking, and printing your favourite recipes.";
+	'Keep all the recipes you love in one place. Save recipes from around the web, add your own favourites, organise them and share them with family and friends.';
 
 export const metadata = {
-	title: 'Personal Recipe Manager',
+	title: 'Keep Your Favourite Recipes Together',
 	description: homepageDescription,
 	alternates: {
 		canonical: '/',
 	},
 	openGraph: {
-		title: "Personal Recipe Manager | Rebekah's Recipes",
+		title: "Keep Your Favourite Recipes Together | Rebekah's Recipes",
 		description: homepageDescription,
 		url: '/',
 	},
 	twitter: {
 		card: 'summary',
-		title: "Personal Recipe Manager | Rebekah's Recipes",
+		title: "Keep Your Favourite Recipes Together | Rebekah's Recipes",
 		description: homepageDescription,
 	},
 };
@@ -42,13 +42,12 @@ const webApplicationJsonLd = {
 	applicationCategory: 'LifestyleApplication',
 	operatingSystem: 'Web',
 	description:
-		'A family recipe organiser for storing your own recipes, scraping and importing recipes from supported websites, editing ingredients and methods, and saving everything in one account.',
+		'Keep all the recipes you love in one place. Save recipes from around the web, add your own favourites, organise them and share them with family and friends.',
 	featureList: [
 		'Save your own recipes online',
-		'Scrape and import recipes from supported recipe websites',
-		'Edit ingredients and methods',
-		'Organise recipes by category',
-		'Bookmark favourite recipes',
+		'Save recipes from supported websites',
+		'Add and organise your own recipes',
+		'Share recipes with family and friends',
 	],
 	offers: {
 		'@type': 'Offer',
@@ -78,7 +77,7 @@ export default async function Home() {
 			.lean();
 		userRecipes = convertToSerializeableObject(recipeDocs);
 		sharedRecipes = convertToSerializeableObject(
-			await getSharedRecipesForViewer(sessionUser.id)
+			await getSharedRecipesForViewer(sessionUser.id),
 		);
 	}
 
@@ -93,31 +92,21 @@ export default async function Home() {
 		}
 
 		if (!hasRecipes) {
-			return (
-				<>
-					<Typography variant='h5' align='center' gutterBottom>
-						Hello, {firstName}!
-					</Typography>
-					<Typography variant='body1' align='center' gutterBottom>
-						{isNewUser
-							? 'Let’s get started by adding or importing your first recipe.'
-							: 'Add your own recipes, or better still add your favourite recipes from the web!'}
-					</Typography>
-					<Hero />
-				</>
-			);
+			return <Hero />;
 		}
 
 		return (
 			<>
-				<Typography variant='h5' align='center' gutterBottom>
-					Hello, {firstName}!
-				</Typography>
-				<Typography variant='body1' align='center' gutterBottom>
-					Add your own recipes, or better still add your favourite recipes from
-					the web!
-				</Typography>
-				<SearchBar />
+				<Box
+					sx={{
+						width: '100%',
+						maxWidth: 900,
+						mx: 'auto',
+					}}>
+					<Box sx={{ display: 'flex', justifyContent: 'center' }}>
+						<SearchBar />
+					</Box>
+				</Box>
 				<CategoryFilterSection categories={categoriesWithIds} />
 				<HomeClient
 					recipes={userRecipes}
@@ -137,21 +126,29 @@ export default async function Home() {
 					__html: JSON.stringify(webApplicationJsonLd),
 				}}
 			/>
-			<Typography variant='h2' align='center' gutterBottom>
-				Welcome to Rebekah&#39;s Recipes!
-			</Typography>
-
-			<Typography
-				variant='body1'
-				align='center'
-				gutterBottom
-				sx={{ maxWidth: 760, mx: 'auto', mb: 3 }}>
-				Rebekah&#39;s Recipes, or RebekahsRecipes for short, is a family recipe
-				organiser that helps anyone register, save, scrape, import, edit,
-				bookmark, and print their favourite recipes.
-			</Typography>
-
-			{renderHomeContent()}
+			{sessionUser ? (
+				<Box
+					component='main'
+					data-testid='authenticated-home'
+					sx={{ py: { xs: 2, sm: 4 } }}>
+					<Box component='header' sx={{ mb: { xs: 4, sm: 5 } }}>
+						<Typography
+							component='h1'
+							variant='h2'
+							sx={{ fontSize: { xs: '2.25rem', sm: '3rem' }, mb: 1.5 }}>
+							Hello, {firstName}!
+						</Typography>
+						<Typography color='text.secondary' sx={{ maxWidth: 620 }}>
+							{!hasRecipes && isNewUser
+								? 'Let’s get started by adding or importing your first recipe.'
+								: 'Add your own recipes, or better still add your favourite recipes from the web!'}
+						</Typography>
+					</Box>
+					{renderHomeContent()}
+				</Box>
+			) : (
+				renderHomeContent()
+			)}
 		</>
 	);
 }

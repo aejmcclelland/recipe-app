@@ -6,7 +6,8 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ProfileImageUpload from './ProfileImageUpload';
 import ProfileDetailsForm from './ProfileDetailsForm';
 
-export default function UserDetails({ user, onDetailsUpdated }) {
+export default function UserDetails({ user, onDetailsUpdated, appearance = 'default' }) {
+	const isProfile = appearance === 'profile';
 	const [userImage, setUserImage] = useState(user?.image || null);
 
 	const fullName = useMemo(() => {
@@ -42,6 +43,14 @@ export default function UserDetails({ user, onDetailsUpdated }) {
 				width: '100%',
 				maxWidth: 520,
 				mx: 'auto',
+				...(isProfile && {
+					p: { xs: 2.5, sm: 4 },
+					maxWidth: 600,
+					bgcolor: 'background.paper',
+					borderColor: 'divider',
+					borderRadius: 3,
+					boxShadow: 'none',
+				}),
 			}}
 		>
 			{/* Avatar */}
@@ -49,20 +58,21 @@ export default function UserDetails({ user, onDetailsUpdated }) {
 				user={profileUser}
 				onImageUpdated={handleImageUpdate}
 				fallbackIcon={<AccountCircleIcon fontSize="large" />}
+				appearance={appearance}
 			/>
 
 			{/* Header */}
-			<Typography variant="h5" sx={{ mt: 1 }}>
+			<Typography variant={isProfile ? 'h6' : 'h5'} component={isProfile ? 'h2' : undefined} sx={{ mt: isProfile ? 2 : 1, ...(isProfile && { fontWeight: 600, overflowWrap: 'anywhere', textAlign: 'center' }) }}>
 				{fullName}
 			</Typography>
-			<Typography variant="body2" sx={{ mt: 0.5, color: 'text.secondary' }}>
+			<Typography variant="body2" sx={{ mt: 0.5, color: 'text.secondary', ...(isProfile && { overflowWrap: 'anywhere', maxWidth: '100%', textAlign: 'center' }) }}>
 				{user?.email || ''}
 			</Typography>
 
 			<Divider sx={{ width: '100%', my: 2 }} />
 
 			{/* Read-only summary */}
-			<Stack spacing={0.5} sx={{ width: '100%', mb: 2 }}>
+			<Stack spacing={0.5} sx={{ width: '100%', mb: isProfile ? 3 : 2, ...(isProfile && { overflowWrap: 'anywhere' }) }}>
 				<Typography variant="subtitle2" color="text.secondary">
 					Current details
 				</Typography>
@@ -79,7 +89,7 @@ export default function UserDetails({ user, onDetailsUpdated }) {
 
 			{/* Editable form */}
 			<Box sx={{ width: '100%' }}>
-				<ProfileDetailsForm user={profileUser} onDetailsUpdated={onDetailsUpdated} />
+				<ProfileDetailsForm user={profileUser} onDetailsUpdated={onDetailsUpdated} appearance={appearance} />
 			</Box>
 		</Box>
 	);

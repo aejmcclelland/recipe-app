@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import HomeIcon from '@mui/icons-material/Home';
 import FloatingIconButton from './FloatingIconButton';
 
-const HomeButton = () => {
+const HomeButton = ({ appearance = 'default' }) => {
     const router = useRouter();
 
     return (
@@ -12,6 +12,8 @@ const HomeButton = () => {
             onClick={() => router.push('/')}
             icon={<HomeIcon />}
             tooltip="Back to Home"
+            appearance={appearance}
+            actionKind="navigation"
         />
     );
 };

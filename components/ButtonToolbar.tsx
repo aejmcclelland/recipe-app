@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Box, IconButton, Tooltip } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import PrintIcon from '@mui/icons-material/Print';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
@@ -56,92 +56,39 @@ const ButtonToolbar: React.FC<ButtonToolbarProps> = ({
 	return (
 		<Box
 			className='no-print'
-			sx={{
-				position: 'fixed',
-				bottom: {
-					xs: 230,
-					md: 150,
-				},
-				left: '50%',
-				transform: 'translateX(-50%)',
-				backgroundColor: 'rgba(255, 255, 255, 0.85)',
-				borderRadius: 50,
-				padding: '0.5rem 1.5rem',
-				display: 'flex',
-				gap: 2,
-				zIndex: 10,
-				boxShadow: 3,
-				paddingBottom: 2,
-			}}>
-			<Tooltip title='Export to PDF'>
-				<IconButton
-					onClick={handleExportPDF}
-					sx={{
-						backgroundColor: '#d32f2f', // red button
-						borderRadius: '50%',
-						width: 64,
-						height: 64,
-						color: 'white',
-						'&:hover': { backgroundColor: '#b71c1c' },
-					}}>
-					<PictureAsPdfIcon fontSize='medium' />
-				</IconButton>
-			</Tooltip>
-			<Tooltip title='Print Recipe'>
-				<IconButton
-					onClick={() => window.print()}
-					sx={{
-						backgroundColor: '#d32f2f', // red button
-						borderRadius: '50%',
-						width: 64,
-						height: 64,
-						color: 'white',
-						'&:hover': { backgroundColor: '#b71c1c' },
-					}}>
-					<PrintIcon fontSize='medium' />
-				</IconButton>
-			</Tooltip>
-			<Tooltip title='Get Another Recipe'>
-				<IconButton
-					onClick={() => {
-						setUrl('');
-						setData(null);
-						window.scrollTo({ top: 0, behavior: 'smooth' });
-					}}
-					sx={{
-						backgroundColor: '#d32f2f', // red button
-						borderRadius: '50%',
-						width: 64,
-						height: 64,
-						color: 'white',
-						'&:hover': { backgroundColor: '#b71c1c' },
-					}}>
-					<AutorenewIcon fontSize='medium' />
-				</IconButton>
-			</Tooltip>
-			<Tooltip title='Save Recipe'>
-				<IconButton
-					disabled={!!save}
-					onClick={() => {
-						if (save) return;
-						if (!categoryId) {
-							toast.error('Please select a category before saving');
-							return;
-						}
-						onSave();
-					}}
-					sx={{
-						backgroundColor: '#d32f2f',
-						borderRadius: '50%',
-						width: 64,
-						height: 64,
-						color: 'white',
-						opacity: save ? 0.6 : 1,
-						'&:hover': { backgroundColor: '#b71c1c' },
-					}}>
-					<SaveIcon fontSize='medium' />
-				</IconButton>
-			</Tooltip>
+			sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+			<Button
+				variant='contained'
+				startIcon={<SaveIcon />}
+				disabled={!!save}
+				onClick={() => {
+					if (save) return;
+					if (!categoryId) {
+						toast.error('Please select a category before saving');
+						return;
+					}
+					onSave();
+				}}
+				sx={{ width: { xs: '100%', sm: 'auto' }, minHeight: 48, px: 3 }}>
+				Save recipe
+			</Button>
+			<Button variant='text' startIcon={<PictureAsPdfIcon />} onClick={handleExportPDF} sx={{ minHeight: 44 }}>
+				Export to PDF
+			</Button>
+			<Button variant='text' startIcon={<PrintIcon />} onClick={() => window.print()} sx={{ minHeight: 44 }}>
+				Print
+			</Button>
+			<Button
+				variant='text'
+				startIcon={<AutorenewIcon />}
+				onClick={() => {
+					setUrl('');
+					setData(null);
+					window.scrollTo({ top: 0, behavior: 'smooth' });
+				}}
+				sx={{ minHeight: 44 }}>
+				Get another recipe
+			</Button>
 		</Box>
 	);
 };

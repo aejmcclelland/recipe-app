@@ -7,9 +7,9 @@ export default function CategoryFilterSection({ categories }) {
     return (
         <Box
             sx={{
-                backgroundColor: '#ffffffff',
-                borderBottom: '1px solid #ddd',
-                py: 2,mb: 4,
+                borderBottom: '1px solid',
+                borderColor: 'divider',
+                mb: 4,
             }}>
             <FilterCategory categories={categories} />
         </Box>

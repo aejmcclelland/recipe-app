@@ -7,6 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { UNIT_OPTIONS } from '../utils/measurements';
 
 export default function IngredientInputRow({
+  appearance = 'default',
   index,
   ingredient,
   errors,
@@ -61,7 +62,7 @@ export default function IngredientInputRow({
   };
 
   return (
-    <Stack spacing={2} useFlexGap sx={{ width: '100%', minWidth: 0 }}>
+    <Stack spacing={2} useFlexGap sx={{ width: '100%', minWidth: 0, ...(appearance === 'edit' ? { pb: 3, borderBottom: 1, borderColor: 'divider' } : {}) }}>
       {/* Row 1: Ingredient (full width always) */}
       <TextField
         label="Ingredient"
@@ -72,7 +73,7 @@ export default function IngredientInputRow({
         minRows={1}
         error={!!fieldError('ingredient')}
         helperText={fieldError('ingredient')}
-        sx={{
+        sx={appearance === 'edit' ? { minWidth: 0 } : {
           minWidth: 0,
           '& .MuiInputBase-root': { p: 2 },
           // The theme adds search-icon padding to all inputs; textareas need their normal inset.
@@ -156,9 +157,9 @@ export default function IngredientInputRow({
         <IconButton
           aria-label="Remove ingredient"
           onClick={handleRemoveIngredient}
-          sx={{ flexShrink: 0, width: 44, height: 44 }}
+          sx={{ flexShrink: 0, width: 44, height: 44, ...(appearance === 'edit' ? { color: 'text.secondary' } : {}) }}
         >
-          <DeleteIcon color="warning" />
+          <DeleteIcon color={appearance === 'edit' ? 'inherit' : 'warning'} />
         </IconButton>
       </Stack>
     </Stack>

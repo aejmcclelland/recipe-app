@@ -1,13 +1,14 @@
-import RecipeEditForm from '@/components/RecipeEditForm';
 import RecipeDeleteForm from '@/components/RecipeDeleteForm';
-import connectDB from '@/config/database';
-import Recipe from '@/models/Recipe';
-import Category from '@/models/Category';
-import { convertToSerializeableObject } from '@/utils/convertToObject';
-import { Container, Typography, Box } from '@mui/material';
-import { getSessionUser } from '@/utils/getSessionUser';
+import RecipeEditForm from '@/components/RecipeEditForm';
 import RecipeNotFound from '@/components/RecipeNotFound';
+import connectDB from '@/config/database';
+import Category from '@/models/Category';
+import Recipe from '@/models/Recipe';
+import { convertToSerializeableObject } from '@/utils/convertToObject';
+import { getSessionUser } from '@/utils/getSessionUser';
+import { Box, Typography } from '@mui/material';
 import mongoose from 'mongoose';
+import NextLink from 'next/link';
 
 const RecipeEditPage = async ({ params }) => {
 	await connectDB();
@@ -25,7 +26,10 @@ const RecipeEditPage = async ({ params }) => {
 		return <RecipeNotFound />;
 	}
 
-	const recipeDoc = await Recipe.findOne({ _id: recipeId, user: sessionUser.id })
+	const recipeDoc = await Recipe.findOne({
+		_id: recipeId,
+		user: sessionUser.id,
+	})
 		.populate('ingredients.ingredient')
 		.lean();
 
@@ -40,24 +44,49 @@ const RecipeEditPage = async ({ params }) => {
 	const serializedCategories = convertToSerializeableObject(categories);
 
 	return (
-		<Container
-			maxWidth='md'
-			sx={{
-				mt: 4,
-				justifyContent: 'center',
-				alignItems: 'center',
-				flexWrap: 'wrap',
-			}}>
-			<Typography variant='h4' component='h1' align='center' gutterBottom>
+		<Box sx={{ maxWidth: 800, mx: 'auto', py: { xs: 2, md: 4 } }}>
+			<NextLink
+				href={`/recipes/${recipe._id}`}
+				style={{ textDecoration: 'none' }}>
+				<Typography
+					component='span'
+					color='text.secondary'
+					sx={{
+						display: 'inline-flex',
+						alignItems: 'center',
+						minHeight: 44,
+						mb: 2,
+						'&:hover': {
+							textDecoration: 'underline',
+						},
+					}}>
+					Back to recipe
+				</Typography>
+			</NextLink>
+			<Typography variant='h2' component='h1' gutterBottom>
 				Edit Recipe
 			</Typography>
-			<Box mt={2}>
-				<RecipeEditForm recipe={recipe} categories={serializedCategories} />
+			<Typography color='text.secondary' sx={{ mb: 4 }}>
+				Update your recipe details below.
+			</Typography>
+			<RecipeEditForm recipe={recipe} categories={serializedCategories} />
+			<Box
+				component='section'
+				aria-labelledby='delete-recipe-heading'
+				sx={{ mt: 5, pt: 4, borderTop: 1, borderColor: 'divider' }}>
+				<Typography
+					id='delete-recipe-heading'
+					variant='h5'
+					component='h2'
+					gutterBottom>
+					Delete recipe
+				</Typography>
+				<Typography color='text.secondary' sx={{ mb: 2 }}>
+					Permanently remove this recipe from your collection.
+				</Typography>
+				<RecipeDeleteForm recipe={recipe} appearance='edit' />
 			</Box>
-			<Box mt={4} display='flex' justifyContent='center'>
-				<RecipeDeleteForm recipe={recipe} />
-			</Box>
-		</Container>
+		</Box>
 	);
 };
 

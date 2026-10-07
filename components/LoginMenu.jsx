@@ -7,8 +7,10 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Avatar from '@mui/material/Avatar';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { useTheme } from '@mui/material/styles';
 
 export default function LoginMenu() {
+    const { publicShell } = useTheme();
     const { data: session } = useSession();
     const [anchorEl, setAnchorEl] = useState(null);
     const router = useRouter();
@@ -66,7 +68,7 @@ export default function LoginMenu() {
                 }}
                 slotProps={{
                     paper: {
-                        elevation: 6,
+                        elevation: publicShell ? 0 : 6,
                         sx: {
                             mt: 1.4,
                             minWidth: 120,

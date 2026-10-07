@@ -6,7 +6,7 @@ import { Button, Typography, Box } from '@mui/material';
 import deleteRecipe from '@/app/actions/deleteRecipe';
 import Grid from '@mui/material/Grid';
 
-function RecipeDeleteForm({ recipe }) {
+function RecipeDeleteForm({ recipe, appearance = 'default' }) {
     const [isDeleted, setIsDeleted] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const router = useRouter();
@@ -40,12 +40,12 @@ function RecipeDeleteForm({ recipe }) {
     return (
         <Grid container spacing={3}>
 
-            <Box display="flex" justifyContent="flex-end">
+            <Box display="flex" justifyContent={appearance === 'edit' ? 'flex-start' : 'flex-end'}>
                 <Button
                     onClick={() => handleDeleteRecipe(recipe._id)}
-                    variant="contained"
+                    variant={appearance === 'edit' ? 'outlined' : 'contained'}
                     color="error"
-                    sx={{ ml: 2 }}
+                    sx={{ ml: appearance === 'edit' ? 0 : 2, ...(appearance === 'edit' ? { minHeight: 44 } : {}) }}
                     type="button"
                     disabled={isDeleting}
                 >

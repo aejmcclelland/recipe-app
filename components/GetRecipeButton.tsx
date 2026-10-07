@@ -5,28 +5,24 @@ import { Button, CircularProgress } from '@mui/material';
 interface GetRecipeButtonProps {
 	isPending: boolean;
 	isDisabled: boolean;
+	secondary?: boolean;
 }
 
 const GetRecipeButton: React.FC<GetRecipeButtonProps> = ({
 	isPending,
 	isDisabled,
+	secondary = false,
 }) => {
 	return (
 		<Button
 			className='no-print'
-			variant='contained'
-			color='secondary'
+			variant={secondary ? 'outlined' : 'contained'}
+			color='primary'
 			type='submit'
 			startIcon={isPending ? <CircularProgress size={20} color='inherit' aria-hidden='true' /> : undefined}
 			disabled={isPending || isDisabled}
 			fullWidth
-			sx={{
-				paddingY: 1.5,
-				fontSize: '1.1rem',
-				fontWeight: 600,
-				fontFamily: 'Archivo, sans-serif',
-				borderRadius: '12px',
-			}}>
+			sx={{ minHeight: 48 }}>
 			{isPending ? 'Importing recipe…' : 'Import Recipe'}
 		</Button>
 	);

@@ -80,51 +80,52 @@ const ProfilePage = async () => {
 
     if (loadStatus === 'signed-out') {
         return (
-            <Container maxWidth="lg">
-                <h2>Please log in to access your profile.</h2>
+            <Container maxWidth="lg" disableGutters>
+                <Typography component="h1" variant="h6">Please log in to access your profile.</Typography>
             </Container>
         );
     }
 
     if (loadStatus === 'missing-profile') {
         return (
-            <Container maxWidth="lg">
-                <p>Unable to load your profile details.</p>
+            <Container maxWidth="lg" disableGutters>
+                <Typography>Unable to load your profile details.</Typography>
             </Container>
         );
     }
 
     if (loadStatus === 'error') {
         return (
-            <Container maxWidth="lg">
-                <p>Something went wrong while loading your profile. Please try again later.</p>
+            <Container maxWidth="lg" disableGutters>
+                <Typography>Something went wrong while loading your profile. Please try again later.</Typography>
             </Container>
         );
     }
 
     return (
-        <Container maxWidth="lg">
+        <Container maxWidth="lg" disableGutters>
+            <Typography component="h1" variant="h2" sx={{ mt: { xs: 1, md: 2 }, mb: 4 }}>Your profile</Typography>
             {/* Profile header + avatar + edit form */}
-            <UserDetails user={profileUser} />
+            <UserDetails user={profileUser} appearance="profile" />
 
             {/* User's Recipes */}
-            <Box mt={4}>
-                <h3>Your Recipes</h3>
+            <Box component="section" aria-labelledby="owned-recipes-heading" mt={5}>
+                <Typography id="owned-recipes-heading" component="h2" variant="h4" sx={{ mb: 3 }}>Your Recipes</Typography>
                 <Box display="flex" flexWrap="wrap" gap={2} justifyContent="center">
                     {userRecipes.map((recipe) => (
-                        <Box key={recipe._id.toString()} sx={{ maxWidth: 400 }}>
-                            <RecipeOverviewCard recipe={recipe} user={sessionUser} />
+                        <Box key={recipe._id.toString()} sx={{ width: '100%', maxWidth: 400, minWidth: 0 }}>
+                            <RecipeOverviewCard recipe={recipe} user={sessionUser} appearance="home" />
                         </Box>
                     ))}
                 </Box>
             </Box>
 
             {/* Bookmarked Recipes */}
-            <Box mt={4}>
-                <h3>Bookmarked Recipes</h3>
+            <Box component="section" aria-labelledby="bookmarked-recipes-heading" mt={5}>
+                <Typography id="bookmarked-recipes-heading" component="h2" variant="h4" sx={{ mb: 3 }}>Bookmarked Recipes</Typography>
                 <Box
                     display="grid"
-                    gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }}
+                    gridTemplateColumns={{ xs: 'minmax(0, 1fr)', sm: 'repeat(2, minmax(0, 1fr))' }}
                     gap={4}
                 >
                     {bookmarkedRecipes.length > 0 ? (
@@ -134,6 +135,7 @@ const ProfilePage = async () => {
                                 recipe={recipe}
                                 user={sessionUser?.user}
                                 isBookmarked
+                                appearance="profile"
                             />
                         ))
                     ) : (

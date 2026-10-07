@@ -17,9 +17,10 @@ interface RecipeFormProps {
 	url: string;
 	setUrl: Dispatch<SetStateAction<string>>;
 	setData: Dispatch<SetStateAction<RecipeResult | null>>;
+	hasPreview?: boolean;
 }
 
-const RecipeForm: React.FC<RecipeFormProps> = ({ url, setUrl, setData }) => {
+const RecipeForm: React.FC<RecipeFormProps> = ({ url, setUrl, setData, hasPreview = false }) => {
 	const [isPending, startTransition] = useTransition();
 	const [isPasting, setIsPasting] = useState(false);
 	const [clipboardError, setClipboardError] = useState('');
@@ -76,19 +77,9 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ url, setUrl, setData }) => {
 			className='no-print'
 			sx={{
 				width: '100%',
-				maxWidth: 500,
+				maxWidth: 560,
 				mx: 'auto',
 			}}>
-			<Button
-				type='button'
-				variant={url.trim() ? 'outlined' : 'contained'}
-				fullWidth
-				disabled={isPending || isPasting}
-				onClick={handlePaste}
-				sx={{ minHeight: 48, borderRadius: '12px', fontWeight: 600 }}>
-				{isPasting ? 'Pasting…' : 'Paste recipe link'}
-			</Button>
-			{clipboardError && <Alert severity='info'>{clipboardError}</Alert>}
 			<TextField
 				fullWidth
 				label='Recipe link'
@@ -104,15 +95,19 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ url, setUrl, setData }) => {
 				id='url-input'
 				name='url'
 				variant='outlined'
-				sx={{
-					'& .MuiOutlinedInput-root': {
-						borderRadius: '12px',
-					},
-				}}
 			/>
 
+			<Button
+				type='button'
+				variant='text'
+				disabled={isPending || isPasting}
+				onClick={handlePaste}
+				sx={{ alignSelf: 'flex-start', minHeight: 44 }}>
+				{isPasting ? 'Pasting…' : 'Paste recipe link'}
+			</Button>
+			{clipboardError && <Alert severity='info'>{clipboardError}</Alert>}
 			{importError && <Alert severity='error'>{importError}</Alert>}
-			<GetRecipeButton isDisabled={isPasting || !url.trim()} isPending={isPending} />
+			<GetRecipeButton isDisabled={isPasting || !url.trim()} isPending={isPending} secondary={hasPreview} />
 		</Stack>
 	);
 };

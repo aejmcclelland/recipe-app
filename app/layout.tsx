@@ -10,6 +10,8 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/next';
 import ThemeRegistry from './ThemeRegistry';
 import type { ReactNode } from 'react';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/utils/authOptions';
 import '../assets/globals.css';
 import '../assets/google-button.css';
 
@@ -52,16 +54,20 @@ export const viewport = {
 	initialScale: 1,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: ReactNode;
 }>) {
+	// Seed the client session so theme selection is correct on the first render.
+	// This reads the existing JWT session and does not query user data.
+	const session = await getServerSession(authOptions);
+
 	return (
 		<html lang='en' className={archivo.className}>
 			<body className={archivo.className}>
-				<ThemeRegistry>
-					<AuthProvider>
+				<AuthProvider session={session}>
+					<ThemeRegistry>
 						<ToastContainer autoClose={3000} position='top-right' />
 						<FilterProvider>
 							<Box
@@ -77,8 +83,8 @@ export default function RootLayout({
 						</FilterProvider>
 						<SpeedInsights />
 						<Analytics />
-					</AuthProvider>
-				</ThemeRegistry>
+					</ThemeRegistry>
+				</AuthProvider>
 			</body>
 		</html>
 	);

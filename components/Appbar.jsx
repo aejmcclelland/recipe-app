@@ -1,22 +1,22 @@
 'use client';
-import React from 'react';
+import { shadowsIntoLight } from '@/app/fonts/fonts';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import LanguageIcon from '@mui/icons-material/Language';
+import RestaurantOutlinedIcon from '@mui/icons-material/RestaurantOutlined';
 import {
 	AppBar,
 	Box,
-	Toolbar,
 	IconButton,
-	Typography,
+	Toolbar,
 	Tooltip,
+	Typography,
 	useMediaQuery,
 } from '@mui/material';
-import LanguageIcon from '@mui/icons-material/Language';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import RestaurantOutlinedIcon from '@mui/icons-material/RestaurantOutlined';
-import LoginMenu from '../components/LoginMenu';
-import Link from 'next/link';
 import { useTheme } from '@mui/material/styles';
 import { useSession } from 'next-auth/react';
-import { shadowsIntoLight } from '@/app/fonts/fonts';
+import Link from 'next/link';
+import LoginMenu from '../components/LoginMenu';
+import PublicBrand from '@/components/PublicBrand';
 
 export default function SearchAppBar() {
 	const theme = useTheme();
@@ -25,7 +25,7 @@ export default function SearchAppBar() {
 
 	return (
 		<Box sx={{ flexGrow: 1 }}>
-			<AppBar className="no-print" position='static'>
+			<AppBar className='no-print site-appbar' position='static'>
 				<Toolbar
 					sx={{
 						display: 'flex',
@@ -46,27 +46,36 @@ export default function SearchAppBar() {
 							textDecoration: 'none',
 							color: 'inherit',
 						}}>
-						<RestaurantOutlinedIcon
-							sx={{ fontSize: isMobile ? '1.7rem' : '2rem', mr: isMobile ? 0.5 : 1 }}
-						/>
-						<Typography
-							variant='h6'
-							noWrap
-							sx={{
-								fontSize: isMobile ? '1.1rem' : '1.5rem',
-								mr: isMobile ? 0 : 0.5,
-							}}>
-							Rebekah&#39;s
-						</Typography>
-						<Typography
-							variant='h6'
-							noWrap
-							sx={{
-								fontFamily: shadowsIntoLight.style.fontFamily,
-								fontSize: isMobile ? '1.1rem' : '1.5rem',
-							}}>
-							Recipes
-						</Typography>
+						{theme.publicShell ? (
+							<PublicBrand />
+						) : (
+							<>
+								<RestaurantOutlinedIcon
+									sx={{
+										fontSize: isMobile ? '1.7rem' : '2rem',
+										mr: isMobile ? 0.5 : 1,
+									}}
+								/>
+								<Typography
+									variant='h6'
+									noWrap
+									sx={{
+										fontSize: isMobile ? '1.1rem' : '1.5rem',
+										mr: isMobile ? 0 : 0.5,
+									}}>
+									Rebekah&#39;s
+								</Typography>
+								<Typography
+									variant='h6'
+									noWrap
+									sx={{
+										fontFamily: shadowsIntoLight.style.fontFamily,
+										fontSize: isMobile ? '1.1rem' : '1.5rem',
+									}}>
+									Recipes
+								</Typography>
+							</>
+						)}
 					</Box>
 
 					<Box

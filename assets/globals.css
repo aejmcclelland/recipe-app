@@ -22,11 +22,31 @@ a {
   text-decoration: none;
 }
 
+body:has([data-public-landing-root]) .site-appbar {
+  background-color: #f8f5ee;
+  color: #1a2027;
+  box-shadow: none;
+}
+
+body:has([data-public-landing-root]) .site-appbar .MuiIconButton-root {
+  color: #1a2027;
+}
+
+body:has([data-public-landing-root]) .site-footer {
+  background-color: #f8f5ee;
+  border-top: 1px solid #e4dccf;
+  color: #1a2027;
+}
+
+body:has([data-public-landing-root]) .site-footer .MuiIconButton-root,
+body:has([data-public-landing-root]) .site-footer .MuiSvgIcon-root {
+  color: #1a2027;
+}
+
 
 @media print {
   .no-print {
     display: none !important;
   }
 }
-
 

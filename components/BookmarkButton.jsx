@@ -12,7 +12,7 @@ import BookmarkRemoveIcon from '@mui/icons-material/BookmarkRemove';
 
 import bookmarkRecipe from '@/app/actions/bookmarkRecipe';
 
-const BookmarkButton = ({ recipe, initialBookmarked = false }) => {
+const BookmarkButton = ({ recipe, initialBookmarked = false, appearance = 'default' }) => {
     const { data: session, status } = useSession();
     const userId = session?.user?.id;
     const recipeId = useMemo(() => String(recipe?._id ?? ''), [recipe?._id]);
@@ -96,6 +96,8 @@ const BookmarkButton = ({ recipe, initialBookmarked = false }) => {
             icon={isBookmarked ? <BookmarkRemoveIcon /> : <BookmarkAddIcon />}
             tooltip={isBookmarked ? 'Remove Bookmark' : 'Add Bookmark'}
             color={isBookmarked ? 'green' : '#d32f2f'}
+            appearance={appearance}
+            selected={isBookmarked}
         />
     );
 };

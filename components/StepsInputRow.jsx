@@ -5,6 +5,7 @@ import { Stack, IconButton, TextField } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function StepsInputRow({
+    appearance = 'default',
     index,
     step,
     handleStepChange,
@@ -23,9 +24,9 @@ export default function StepsInputRow({
             <IconButton
                 aria-label="Remove step"
                 onClick={() => handleRemoveStep(index)}
-                sx={{ flexShrink: 0 }}
+                sx={{ flexShrink: 0, ...(appearance === 'edit' ? { width: 44, height: 44, color: 'text.secondary' } : {}) }}
             >
-                <DeleteIcon color='warning'/>
+                <DeleteIcon color={appearance === 'edit' ? 'inherit' : 'warning'}/>
             </IconButton>
         </Stack>
     );

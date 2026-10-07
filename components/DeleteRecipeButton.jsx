@@ -6,7 +6,7 @@ import FloatingIconButton from './FloatingIconButton';
 import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
 import deleteRecipe from '@/app/actions/deleteRecipe';
 
-const DeleteRecipeButton = ({ recipeId }) => {
+const DeleteRecipeButton = ({ recipeId, appearance = 'default' }) => {
     const [, setDeleting] = useState(false);
     const router = useRouter();
 
@@ -30,6 +30,8 @@ const DeleteRecipeButton = ({ recipeId }) => {
             onClick={handleDelete}
             icon={<DeleteForeverOutlinedIcon />}
             tooltip="Delete Recipe"
+            appearance={appearance}
+            actionKind="destructive"
         />
     );
 };

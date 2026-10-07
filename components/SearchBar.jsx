@@ -22,12 +22,17 @@ const SearchBar = () => {
             sx={{
                 display: 'flex',
                 alignItems: 'center',
-                backgroundColor: '#ffffffff',
-                borderRadius: 2,
-                padding: '4px 8px',
-                boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-                maxWidth: '400px',
-                margin: '20px auto',
+                bgcolor: 'background.paper',
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 3,
+                px: 2,
+                py: 0.5,
+                gap: 1,
+                maxWidth: 560,
+                width: '100%',
+                mb: 2,
+                '&:focus-within': { borderColor: 'text.primary' },
             }}
         >
             <InputBase
@@ -35,9 +40,9 @@ const SearchBar = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 inputProps={{ 'aria-label': 'search' }}
-                sx={{ ml: 1, flex: 1, color: '#000000' }}
+                sx={{ flex: 1, minWidth: 0 }}
             />
-            <IconButton type="submit" sx={{ color: '#555555' }}>
+            <IconButton type="submit" aria-label="Search recipes">
                 <SearchIcon />
             </IconButton>
         </Box>

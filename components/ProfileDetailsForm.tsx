@@ -19,11 +19,13 @@ type ProfileDetailsFormProps = {
 		emailVerified: boolean;
 	};
 	onDetailsUpdated?: () => void;
+	appearance?: 'default' | 'profile';
 };
 
 export default function ProfileDetailsForm({
 	user,
 	onDetailsUpdated,
+	appearance = 'default',
 }: ProfileDetailsFormProps) {
 	const [firstName, setFirstName] = useState(user.firstName || '');
 	const [lastName, setLastName] = useState(user.lastName || '');
@@ -80,7 +82,7 @@ export default function ProfileDetailsForm({
 	};
 
 	return (
-		<Box display='flex' flexDirection='column' gap={2}>
+		<Box display='flex' flexDirection='column' gap={appearance === 'profile' ? 2.5 : 2}>
 			<TextField
 				label='First Name'
 				value={firstName}
@@ -113,11 +115,12 @@ export default function ProfileDetailsForm({
 						: 'Email not verified'
 				}
 			/>
-			<Button variant='contained' onClick={handleSubmit} disabled={isSaving}>
+			<Button variant='contained' onClick={handleSubmit} disabled={isSaving}
+				sx={appearance === 'profile' ? { alignSelf: { xs: 'stretch', sm: 'flex-end' }, px: 3, minHeight: 44 } : undefined}>
 				{isSaving ? 'Saving...' : 'Save Changes'}
 			</Button>
 			{/* Delete account section */}
-			<DeleteAccountSection />
+			<DeleteAccountSection appearance={appearance} />
 		</Box>
 	);
 }

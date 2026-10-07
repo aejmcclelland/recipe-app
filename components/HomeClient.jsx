@@ -39,13 +39,14 @@ export default function HomeClient({ recipes = [], sharedRecipes = [], user }) {
 				{items.length > 0 ? items.map((recipe) => (
 					<Grid size={{ xs: 12, sm: 6, md: 4 }} key={recipe._id}>
 						<RecipeOverviewCard
+							appearance="home"
 							recipe={recipe}
 							user={user}
 							isBookmarked={recipe.isBookmarked}
 						/>
 					</Grid>
 				)) : (
-					<Box textAlign="center" mt={4}>
+					<Box textAlign="center" sx={{ py: 4, px: 2, color: 'text.secondary', width: '100%' }}>
 						<Typography>{emptyMessage}</Typography>
 					</Box>
 				)}
@@ -54,21 +55,21 @@ export default function HomeClient({ recipes = [], sharedRecipes = [], user }) {
 	}
 
 	return (
-		<Container maxWidth="lg">
+		<Container maxWidth="lg" disableGutters>
 			{sharedRecipes.length === 0 ? (
 				recipeGrid(owned, 'No recipes found for this category.')
 			) : (
 				<>
-					<Box component="section" aria-label="My Recipes" sx={{ mb: 4 }}>
-						<Typography component="h2" variant="h4" align="center" sx={{ mb: 2 }}>
+					<Box component="section" aria-label="My Recipes" sx={{ mb: 6 }}>
+						<Typography component="h2" variant="h4" sx={{ mb: 3 }}>
 							My Recipes
 						</Typography>
 						{recipeGrid(owned, recipes.length === 0
 							? 'You have not added any recipes of your own yet.'
 							: 'No recipes found for this category.')}
 					</Box>
-					<Box component="section" aria-label="Shared with me" sx={{ mb: 4 }}>
-						<Typography component="h2" variant="h4" align="center" sx={{ mb: 2 }}>
+					<Box component="section" aria-label="Shared with me" sx={{ mb: 6 }}>
+						<Typography component="h2" variant="h4" sx={{ mb: 3 }}>
 							Shared with me
 						</Typography>
 						{recipeGrid(shared, 'No shared recipes found for this category.')}

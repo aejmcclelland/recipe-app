@@ -1,21 +1,35 @@
-'use client';
-import { Box, Typography, Button } from '@mui/material';
-import Link from 'next/link';
+import { Box } from '@mui/material';
+import LandingHero from '@/components/landing/LandingHero';
+import LandingBenefits from '@/components/landing/LandingBenefits';
+import ProductShowcase from '@/components/landing/ProductShowcase';
+import ImportExplainer from '@/components/landing/ImportExplainer';
+import LandingFinalCta from '@/components/landing/LandingFinalCta';
 
 export default function WelcomeSection() {
-    return (
-        <Box data-testid="welcome-section"  sx={{ py: 8, textAlign: 'center' }}>
-            <Typography variant="h3" gutterBottom>
-                Start building your Recipe Collection
-            </Typography>
-            <Typography variant="body1" color="text.secondary" gutterBottom>
-                Save, import, and organize recipes with ease — all securely stored and accessible anywhere.
-            </Typography>
-            <Link href="/recipes/register" passHref>
-                <Button variant="contained" size="large" sx={{ mt: 3 }}>
-                    Sign up for free
-                </Button>
-            </Link>
-        </Box>
-    );
+	return (
+		<Box
+			component='main'
+			data-public-landing-root
+			data-testid='welcome-section'
+			sx={{
+				position: 'relative',
+				width: '100vw',
+				ml: 'calc(50% - 50vw)',
+				mt: -3,
+				mb: -3,
+				backgroundColor: '#f8f5ee',
+				color: '#1a2027',
+				overflow: 'hidden',
+				'& a:focus-visible, & button:focus-visible': {
+					outline: '3px solid #d32f2f',
+					outlineOffset: 3,
+				},
+			}}>
+			<LandingHero />
+			<LandingBenefits />
+			<ProductShowcase />
+			<ImportExplainer />
+			<LandingFinalCta />
+		</Box>
+	);
 }

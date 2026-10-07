@@ -1,18 +1,24 @@
+'use client';
+
 import RestaurantOutlinedIcon from '@mui/icons-material/RestaurantOutlined';
 import { Box, Typography, Container, IconButton, Link } from '@mui/material';
 import Grid from '@mui/material/Grid';
+import { useTheme } from '@mui/material/styles';
+import PublicBrand from '@/components/PublicBrand';
 
 const Footer = () => {
+    const { publicShell } = useTheme();
     const currentYear = new Date().getFullYear();
 
     return (
-        <Box className="no-print"
+        <Box className="no-print site-footer"
             component="footer"
             sx={{
-                backgroundColor: 'primary.main',
+                backgroundColor: publicShell ? 'background.default' : 'primary.main',
                 py: 3,
-                borderTop: '1px solid #d32f2f',
-                color: '#ffffff',
+                borderTop: publicShell ? '1px solid' : 0,
+                borderColor: publicShell ? 'divider' : 'primary.main',
+                color: publicShell ? 'text.primary' : '#ffffff',
             }}
         >
             <Container maxWidth="lg">
@@ -26,12 +32,18 @@ const Footer = () => {
                     {/* Brand Section */}
                     <Grid size={{ xs: 12, sm: 4 }}>
                         <Box display="flex" alignItems="center" justifyContent={{ xs: 'center', sm: 'flex-start' }}>
-                            <IconButton edge="start" aria-label="restaurant-icon">
-                                <RestaurantOutlinedIcon sx={{ fontSize: '2rem', color: '#ffffff' }} />
-                            </IconButton>
-                            <Typography variant="h6" ml={1}>
-                                Rebekah&#39;s Recipes
-                            </Typography>
+                            {publicShell ? (
+                                <PublicBrand />
+                            ) : (
+                                <>
+                                    <IconButton edge="start" aria-label="restaurant-icon">
+                                        <RestaurantOutlinedIcon sx={{ fontSize: '2rem', color: '#ffffff' }} />
+                                    </IconButton>
+                                    <Typography variant="h6" ml={1}>
+                                        Rebekah&#39;s Recipes
+                                    </Typography>
+                                </>
+                            )}
                         </Box>
                         <Typography variant="body2" mt={1}>
                             &copy; {currentYear} Rebekah&#39;s Recipes. All rights reserved.

@@ -41,9 +41,14 @@ Before making React component, hook, state, effect, form, or rendering changes:
 - Next.js App Router
 - TypeScript
 - React 19
-- Prisma
 - NextAuth
-- DaisyUI
+
+- Mongoose
+
+- NextAuth
+
+- Material UI
+
 - Tailwind CSS
 
 ---
@@ -60,9 +65,11 @@ Before making React component, hook, state, effect, form, or rendering changes:
 
 ## Database
 
-- Do not modify the Prisma schema unless requested.
+- MongoDB is accessed through Mongoose.
+- Do not modify Mongoose schemas/models unless requested.
+- Preserve existing model relationships, indexes and validation.
 - Avoid unnecessary database queries.
-- Prefer existing Prisma helpers.
+- Reuse existing database helpers and query patterns where possible.
 
 ---
 

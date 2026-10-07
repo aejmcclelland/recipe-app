@@ -76,72 +76,79 @@ function ResetPasswordForm() {
 	}
 
 	return (
-		<section data-testid="reset-password-page">
+		<section data-testid='reset-password-page'>
 			<Container
-				maxWidth="sm"
+				maxWidth='sm'
 				sx={{
 					minHeight: '100vh',
 					display: 'flex',
 					alignItems: 'center',
 					p: 3,
-				}}
-			>
+				}}>
 				<Paper sx={{ p: 4, width: '100%', maxWidth: 520 }}>
 					<Stack spacing={2}>
 						{missingLink || invalidLink ? (
 							<>
-								<Typography variant="h5" component="h1">Request a new reset link</Typography>
-								<Alert severity="error">
+								<Typography variant='h5' component='h1'>
+									Request a new reset link
+								</Typography>
+								<Alert severity='error'>
 									{missingLink
 										? 'You need a valid password-reset link to choose a new password. Please request a new link.'
 										: 'This password-reset link is no longer valid. Please request a new link.'}
 								</Alert>
-								<Button component={Link} href="/recipes/forgot-password" variant="contained" sx={{ textTransform: 'none' }}>
+								<Button
+									href='/recipes/forgot-password'
+									variant='contained'
+									sx={{ textTransform: 'none' }}>
 									Request a new reset link
 								</Button>
 							</>
 						) : (
 							<>
-								<Typography variant="h5" component="h1">
+								<Typography variant='h5' component='h1'>
 									Choose a new password
 								</Typography>
-								<Typography variant="body2" color="text.secondary">
-									Set a new password for <strong>{email || 'your account'}</strong>.
+								<Typography variant='body2' color='text.secondary'>
+									Set a new password for{' '}
+									<strong>{email || 'your account'}</strong>.
 								</Typography>
 
-								{error && <Alert severity="error">{error}</Alert>}
-								<Box component="form" onSubmit={handleSubmit} aria-busy={submitting}>
+								{error && <Alert severity='error'>{error}</Alert>}
+								<Box
+									component='form'
+									onSubmit={handleSubmit}
+									aria-busy={submitting}>
 									<Stack spacing={2}>
 										<TextField
-											label="New password"
+											label='New password'
 											disabled={submitting}
 											error={Boolean(passwordError)}
-											helperText={passwordError || "Use at least 8 characters."}
-											type="password"
+											helperText={passwordError || 'Use at least 8 characters.'}
+											type='password'
 											value={password}
 											onChange={(e) => setPassword(e.target.value)}
-											autoComplete="new-password"
+											autoComplete='new-password'
 											required
 											fullWidth
 										/>
 										<TextField
-											label="Confirm new password"
+											label='Confirm new password'
 											disabled={submitting}
 											error={Boolean(confirmError)}
 											helperText={confirmError}
-											type="password"
+											type='password'
 											value={confirm}
 											onChange={(e) => setConfirm(e.target.value)}
-											autoComplete="new-password"
+											autoComplete='new-password'
 											required
 											fullWidth
 										/>
 										<Button
-											type="submit"
-											variant="contained"
+											type='submit'
+											variant='contained'
 											disabled={submitting}
-											sx={{ textTransform: 'none', py: 1.25 }}
-										>
+											sx={{ textTransform: 'none', py: 1.25 }}>
 											{submitting ? 'Updating…' : 'Update password'}
 										</Button>
 									</Stack>

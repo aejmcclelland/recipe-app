@@ -17,9 +17,22 @@ import {
     MenuItem,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import { styled } from '@mui/material/styles';
 import StepsInputRow from './StepsInputRow';
 import { validateAndCleanRecipeForm } from '@/utils/recipeFormValidation';
 import { toast } from 'react-toastify';
+
+const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+});
 
 export default function RecipeAddForm({ categories = [] }) {
     const [ingredients, setIngredients] = useState([]);
@@ -112,181 +125,148 @@ export default function RecipeAddForm({ categories = [] }) {
     };
 
     return (
-        <Box sx={{ width: '100%', maxWidth: 800, mx: 'auto', px: { xs: 0, sm: 3 }, py: 3 }}>
+        <Box sx={{ width: '100%' }}>
             <form action={addRecipe} onSubmit={handleFormSubmit}>
                 <Stack spacing={4}>
-                    <Stack spacing={1}>
-                        <Typography variant="h4" align="center">
-                            Add a Recipe
-                        </Typography>
-                        <Typography variant="subtitle2" color="text.secondary" align="center">
-                            Fill in the details to add your recipe
-                        </Typography>
-                    </Stack>
+                    <TextField
+                        name="name"
+                        label="Recipe Name"
+                        placeholder="e.g. Mum's Lasagne"
+                        variant="outlined"
+                        fullWidth
+                        required
+                    />
 
-                    <Stack spacing={2}>
-                        <Typography variant="h6" align="left" sx={{ mb: 0 }}>
-                            Recipe Name
-                        </Typography>
-                        <TextField
-                            name="name"
-                            placeholder="e.g. Mum's Lasagne"
-                            variant="outlined"
-                            fullWidth
-                            required
-                            sx={{
-                                fontWeight: 600,
-                                fontSize: '1.1rem',
+                    <FormControl fullWidth required>
+                        <InputLabel id="category-label">Category</InputLabel>
+                        <Select labelId="category-label" label="Category" name="category" defaultValue="">
+                            {Array.isArray(categories) && categories.length > 0 ? (
+                                categories.map((category) => (
+                                    <MenuItem key={category._id} value={category._id}>
+                                        {category.name}
+                                    </MenuItem>
+                                ))
+                            ) : (
+                                <MenuItem value="" disabled>
+                                    No categories available
+                                </MenuItem>
+                            )}
+                        </Select>
+                    </FormControl>
 
-                            }}
-                        />
-                    </Stack>
-
-                    <Stack spacing={2}>
+                    <Stack component="section" aria-labelledby="recipe-image-heading" spacing={2} sx={{ pt: 3, borderTop: 1, borderColor: 'divider' }}>
+                        <Typography id="recipe-image-heading" variant="h5" component="h2">Recipe image</Typography>
                         <Button
                             component="label"
-                            variant="contained"
-                            fullWidth
+                            variant="outlined"
                             startIcon={<AddIcon />}
-                            sx={{
-                                backgroundColor: '#d32f2f',
-                                color: '#fff',
-                                fontWeight: 600,
-                                fontSize: '1rem',
-                                height: 40,
-                                minHeight: 40,
-                                mb: 1,
-                                '&:hover': { backgroundColor: '#b71c1c' },
-                            }}
+                            sx={{ alignSelf: 'flex-start', minHeight: 44 }}
                         >
                             Upload Image (optional)
-                            <input
-                                hidden
+                            <VisuallyHiddenInput
                                 accept="image/*"
                                 type="file"
                                 name="imageFile"
                                 onChange={(e) => setSelectedImage(e.target.files?.[0]?.name || null)}
                             />
                         </Button>
-
                         {selectedImage && (
-                            <Typography variant="body2" color="text.secondary" sx={{ pl: 1 }}>
+                            <Typography variant="body2" color="text.secondary" sx={{ overflowWrap: 'anywhere' }}>
                                 Selected: {selectedImage}
                             </Typography>
                         )}
                     </Stack>
 
-                    <Stack spacing={2} sx={{ width: '100%', mb: 4 }}>
-                        <Typography variant="body2" align="left">
-                            Select a Category
-                        </Typography>
-
-                        <FormControl fullWidth required>
-                            <InputLabel id="category-label">Category</InputLabel>
-                            <Select labelId="category-label" label="Category" name="category" defaultValue="">
-                                {Array.isArray(categories) && categories.length > 0 ? (
-                                    categories.map((category) => (
-                                        // ✅ Use _id to match Edit form + backend expectations
-                                        <MenuItem key={category._id} value={category._id}>
-                                            {category.name}
-                                        </MenuItem>
-                                    ))
-                                ) : (
-                                    <MenuItem value="" disabled>
-                                        No categories available
-                                    </MenuItem>
-                                )}
-                            </Select>
-                        </FormControl>
-                    </Stack>
-                </Stack>
-
-                <Stack spacing={4} sx={{ mt: 4 }}>
-                    <Typography variant="h5">Times & Serves</Typography>
-                    <Stack spacing={2} useFlexGap direction={{ xs: 'column', sm: 'row' }}>
-                        <TextField
-                            label="Prep Time (mins)"
-                            name="prepTime"
-                            type="number"
-                            variant="outlined"
-                            fullWidth
-                            required
-                        />
-                        <TextField
-                            label="Cook Time (mins)"
-                            name="cookTime"
-                            type="number"
-                            variant="outlined"
-                            fullWidth
-                            required
-                        />
-                        <TextField
-                            label="Serves"
-                            name="serves"
-                            type="number"
-                            variant="outlined"
-                            fullWidth
-                            required
-                        />
-                    </Stack>
-                </Stack>
-
-                <Stack spacing={4} sx={{ mt: 4, mb: 4 }}>
-                    <Typography variant="h5">Ingredients</Typography>
-                    <Stack spacing={3}>
-                        {ingredients.map((ingredient, index) => (
-                            <IngredientInputRow
-                                key={index}
-                                index={index}
-                                ingredient={ingredient}
-                                errors={ingredientErrors?.[index]}
-                                handleIngredientChange={handleIngredientChange}
-                                handleRemoveIngredient={() => handleRemoveIngredient(index)}
+                    <Stack component="section" aria-labelledby="recipe-timing-heading" spacing={3} sx={{ pt: 3, borderTop: 1, borderColor: 'divider' }}>
+                        <Typography id="recipe-timing-heading" variant="h5" component="h2">Timing and servings</Typography>
+                        <Stack spacing={2} useFlexGap direction={{ xs: 'column', sm: 'row' }}>
+                            <TextField
+                                label="Prep Time (mins)"
+                                name="prepTime"
+                                type="number"
+                                variant="outlined"
+                                fullWidth
+                                required
                             />
-                        ))}
-
-                        <Button
-                            variant="contained"
-                            onClick={handleAddIngredient}
-                            type="button"
-                            sx={{ width: { xs: '100%', sm: 'auto' }, alignSelf: { sm: 'flex-start' }, minHeight: 44 }}
-                        >
-                            + Add Ingredient
-                        </Button>
-
-                        <input type="hidden" name="ingredients" ref={ingredientsRef} />
-                    </Stack>
-                </Stack>
-
-                <Stack spacing={1} sx={{ mt: 4 }}>
-                    <Typography variant="h5">Steps</Typography>
-                    <Stack spacing={2}>
-                        {steps.map((step, index) => (
-                            <StepsInputRow
-                                key={index}
-                                index={index}
-                                step={step}
-                                handleStepChange={handleStepChange}
-                                handleRemoveStep={handleRemoveStep}
+                            <TextField
+                                label="Cook Time (mins)"
+                                name="cookTime"
+                                type="number"
+                                variant="outlined"
+                                fullWidth
+                                required
                             />
-                        ))}
-
-                        <Button
-                            variant="contained"
-                            onClick={handleAddStep}
-                            type="button"
-                            sx={{ width: { xs: '100%', sm: 'auto' }, alignSelf: { sm: 'flex-start' }, minHeight: 44 }}
-                        >
-                            + Add Step
-                        </Button>
-
-                        <input type="hidden" name="steps" ref={stepsRef} />
+                            <TextField
+                                label="Serves"
+                                name="serves"
+                                type="number"
+                                variant="outlined"
+                                fullWidth
+                                required
+                            />
+                        </Stack>
                     </Stack>
-                </Stack>
 
-                <Button type="submit" variant="contained" size="large" fullWidth sx={{ mt: 4 }}>
-                    Add Recipe
-                </Button>
+                    <Stack component="section" aria-labelledby="recipe-ingredients-heading" spacing={3} sx={{ pt: 3, borderTop: 1, borderColor: 'divider' }}>
+                        <Typography id="recipe-ingredients-heading" variant="h5" component="h2">Ingredients</Typography>
+                        <Stack spacing={3}>
+                            {ingredients.map((ingredient, index) => (
+                                <IngredientInputRow
+                                    appearance="edit"
+                                    key={index}
+                                    index={index}
+                                    ingredient={ingredient}
+                                    errors={ingredientErrors?.[index]}
+                                    handleIngredientChange={handleIngredientChange}
+                                    handleRemoveIngredient={() => handleRemoveIngredient(index)}
+                                />
+                            ))}
+                            <Button
+                                variant="outlined"
+                                onClick={handleAddIngredient}
+                                type="button"
+                                sx={{ width: { xs: '100%', sm: 'auto' }, alignSelf: { sm: 'flex-start' }, minHeight: 44 }}
+                            >
+                                + Add Ingredient
+                            </Button>
+                            <input type="hidden" name="ingredients" ref={ingredientsRef} />
+                        </Stack>
+                    </Stack>
+
+                    <Stack component="section" aria-labelledby="recipe-method-heading" spacing={3} sx={{ pt: 3, borderTop: 1, borderColor: 'divider' }}>
+                        <Typography id="recipe-method-heading" variant="h5" component="h2">Method</Typography>
+                        <Stack spacing={2}>
+                            {steps.map((step, index) => (
+                                <StepsInputRow
+                                    appearance="edit"
+                                    key={index}
+                                    index={index}
+                                    step={step}
+                                    handleStepChange={handleStepChange}
+                                    handleRemoveStep={handleRemoveStep}
+                                />
+                            ))}
+                            <Button
+                                variant="outlined"
+                                onClick={handleAddStep}
+                                type="button"
+                                sx={{ width: { xs: '100%', sm: 'auto' }, alignSelf: { sm: 'flex-start' }, minHeight: 44 }}
+                            >
+                                + Add Step
+                            </Button>
+                            <input type="hidden" name="steps" ref={stepsRef} />
+                        </Stack>
+                    </Stack>
+
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        size="large"
+                        sx={{ alignSelf: { sm: 'flex-start' }, width: { xs: '100%', sm: 'auto' }, minHeight: 48, px: 4 }}
+                    >
+                        Create Recipe
+                    </Button>
+                </Stack>
             </form>
         </Box>
     );

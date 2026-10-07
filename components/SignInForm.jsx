@@ -1,28 +1,28 @@
 // components/SignInForm.jsx
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { signIn, getProviders } from 'next-auth/react';
-import {
-	Alert,
-	Button,
-	Typography,
-	Box,
-	TextField,
-	Paper,
-	Divider,
-	Stack,
-	Link as MuiLink,
-	InputAdornment,
-} from '@mui/material';
-import { toast } from 'react-toastify';
-import MailOutlineIcon from '@mui/icons-material/MailOutline';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 import { resendVerificationEmail } from '@/app/actions/resendVerificationEmail';
 import GoogleButton from '@/components/GoogleButton';
 import { getSignInDestination } from '@/utils/signInDestination';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
+import {
+	Alert,
+	Box,
+	Button,
+	Divider,
+	InputAdornment,
+	Link as MuiLink,
+	Paper,
+	Stack,
+	TextField,
+	Typography,
+} from '@mui/material';
+import { getProviders, signIn } from 'next-auth/react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
 
 function getSignInError(code) {
 	if (!code) return null;
@@ -57,7 +57,10 @@ export default function SignInForm() {
 	const registered = searchParams.get('registered') === '1';
 	const verifyPending = searchParams.get('verify') === '1';
 
-	const [providerState, setProviderState] = useState({ status: 'loading', providers: null });
+	const [providerState, setProviderState] = useState({
+		status: 'loading',
+		providers: null,
+	});
 	const [providerAttempt, setProviderAttempt] = useState(0);
 	const providers = providerState.providers;
 	const [loginError, setLoginError] = useState(null);
@@ -72,8 +75,13 @@ export default function SignInForm() {
 
 	const shouldFocusEmail = useRef(false);
 	const trimmedEmail = email.trim().toLowerCase();
-	const displayedError = loginError ?? getSignInError(searchParams.get('error'));
-	const destination = () => getSignInDestination(searchParams.get('callbackUrl'), window.location.origin);
+	const displayedError =
+		loginError ?? getSignInError(searchParams.get('error'));
+	const destination = () =>
+		getSignInDestination(
+			searchParams.get('callbackUrl'),
+			window.location.origin,
+		);
 	const canContinue = trimmedEmail.length > 3 && trimmedEmail.includes('@');
 	const canSubmit = canContinue && password.length > 0;
 
@@ -82,14 +90,17 @@ export default function SignInForm() {
 		const loadProviders = async () => {
 			try {
 				const result = await getProviders();
-				if (!result?.google && !result?.credentials) throw new Error('Providers unavailable');
+				if (!result?.google && !result?.credentials)
+					throw new Error('Providers unavailable');
 				if (active) setProviderState({ status: 'ready', providers: result });
 			} catch {
 				if (active) setProviderState({ status: 'error', providers: null });
 			}
 		};
-		loadProviders();
-		return () => { active = false; };
+		void loadProviders();
+		return () => {
+			active = false;
+		};
 	}, [providerAttempt]);
 
 	const handleChangeEmail = () => {
@@ -104,9 +115,13 @@ export default function SignInForm() {
 		setLoginError('');
 		setPendingAction('google');
 		try {
-			await signIn(providers?.google?.id || 'google', { callbackUrl: destination() });
+			await signIn(providers?.google?.id || 'google', {
+				callbackUrl: destination(),
+			});
 		} catch {
-			setLoginError('There was an issue with Google Sign-In. Please try again.');
+			setLoginError(
+				'There was an issue with Google Sign-In. Please try again.',
+			);
 		} finally {
 			setPendingAction(null);
 		}
@@ -145,10 +160,16 @@ export default function SignInForm() {
 			});
 
 			if (res?.status === 429 || res?.status === 503) {
-				setLoginError(getSignInError(res.status === 429 ? 'RATE_LIMITED' : 'SERVICE_UNAVAILABLE'));
+				setLoginError(
+					getSignInError(
+						res.status === 429 ? 'RATE_LIMITED' : 'SERVICE_UNAVAILABLE',
+					),
+				);
 			} else if (res?.error === 'EMAIL_NOT_VERIFIED') {
 				setNeedsVerification(true);
-				setLoginError('Please verify your email before signing in. You can resend the verification link below.');
+				setLoginError(
+					'Please verify your email before signing in. You can resend the verification link below.',
+				);
 			} else if (res?.error) {
 				setLoginError(getSignInError(res.error));
 			} else if (res?.ok) {
@@ -165,202 +186,233 @@ export default function SignInForm() {
 		}
 	};
 
+	let signInContent;
+	if (providers) {
+		signInContent = (
+			<Stack spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
+				{/* Google sign-in */}
+				{providers.google && (
+					<GoogleButton onClick={handleGoogleSignIn} disabled={isLoading} />
+				)}
+
+				<Divider>or</Divider>
+
+				{/* Step 1: email */}
+				{providers.credentials && step === 1 && (
+					<Box
+						component='form'
+						onSubmit={handleContinue}
+						sx={{ width: '100%', maxWidth: 320 }}>
+						<Stack spacing={2}>
+							<TextField
+								label='Email'
+								name='email'
+								inputRef={(input) => {
+									if (input && shouldFocusEmail.current) {
+										input.focus();
+										shouldFocusEmail.current = false;
+									}
+								}}
+								type='email'
+								required
+								fullWidth
+								value={email}
+								onChange={(e) => {
+									setEmail(e.target.value);
+									setNeedsVerification(false);
+								}}
+								autoComplete='email'
+								inputProps={{ 'data-testid': 'signin-email' }}
+								slotProps={{
+									input: {
+										startAdornment: (
+											<InputAdornment position='start'>
+												<MailOutlineIcon fontSize='small' />
+											</InputAdornment>
+										),
+									},
+								}}
+							/>
+
+							<Button
+								data-testid='signin-continue'
+								variant='contained'
+								type='submit'
+								fullWidth
+								sx={{ textTransform: 'none' }}
+								disabled={isLoading || !canContinue}>
+								Continue
+							</Button>
+						</Stack>
+					</Box>
+				)}
+
+				{/* Step 2: password */}
+				{providers.credentials && step === 2 && (
+					<Box
+						component='form'
+						onSubmit={handleEmailSignIn}
+						sx={{ width: '100%', maxWidth: 320 }}>
+						<Stack spacing={2}>
+							<Box>
+								<Typography variant='body2' sx={{ overflowWrap: 'anywhere' }}>
+									Signing in as <strong>{trimmedEmail}</strong>
+								</Typography>
+								<MuiLink
+									component='button'
+									type='button'
+									onClick={handleChangeEmail}
+									disabled={isLoading}>
+									Change email
+								</MuiLink>
+							</Box>
+							<TextField
+								autoFocus
+								label='Password'
+								name='password'
+								type='password'
+								required
+								fullWidth
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+								autoComplete='current-password'
+								slotProps={{
+									htmlInput: {
+										'data-testid': 'signin-password',
+									},
+									input: {
+										startAdornment: (
+											<InputAdornment position='start'>
+												<LockOutlinedIcon fontSize='small' />
+											</InputAdornment>
+										),
+									},
+								}}
+							/>
+
+							<Stack sx={{ width: '100%' }} alignItems='center'>
+								<MuiLink
+									href='/recipes/forgot-password'
+									underline='hover'
+									variant='body2'>
+									Forgotten your password?
+								</MuiLink>
+							</Stack>
+							{needsVerification && (
+								<Button
+									data-testid='signin-resend-verification'
+									variant='outlined'
+									disabled={isLoading || !canContinue}
+									onClick={async () => {
+										try {
+											setPendingAction('resend');
+											await resendVerificationEmail(trimmedEmail);
+											toast.success(
+												"If your account exists and isn't verified, we've sent a new verification email.",
+											);
+										} catch {
+											setLoginError(
+												'We couldn’t request that email just now. Please try again.',
+											);
+										} finally {
+											setPendingAction(null);
+										}
+									}}
+									sx={{ textTransform: 'none' }}>
+									{pendingAction === 'resend'
+										? 'Sending…'
+										: 'Resend verification email'}
+								</Button>
+							)}
+							<Button
+								data-testid='signin-submit'
+								variant='contained'
+								type='submit'
+								fullWidth
+								sx={{ textTransform: 'none' }}
+								disabled={isLoading || !canSubmit}>
+								{pendingAction === 'credentials' ? 'Signing in…' : 'Sign in'}
+							</Button>
+						</Stack>
+					</Box>
+				)}
+
+				{/* Sign up link */}
+				<Box sx={{ mt: 1 }}>
+					<Typography variant='body2' color='textSecondary'>
+						Don&apos;t have an account?{' '}
+						<Link href='/recipes/register' passHref>
+							<Typography
+								component='span'
+								sx={{
+									color: 'primary.main',
+									textDecoration: 'underline',
+									cursor: 'pointer',
+								}}>
+								Register
+							</Typography>
+						</Link>
+					</Typography>
+				</Box>
+			</Stack>
+		);
+	} else if (providerState.status === 'error') {
+		signInContent = (
+			<Stack spacing={2}>
+				<Alert severity='error'>
+					We couldn’t load the sign-in options. Please try again.
+				</Alert>
+				<Button
+					variant='outlined'
+					onClick={() => {
+						setProviderState({ status: 'loading', providers: null });
+						setProviderAttempt((attempt) => attempt + 1);
+					}}>
+					Try again
+				</Button>
+			</Stack>
+		);
+	} else {
+		signInContent = (
+			<Typography variant='body2' color='text.secondary' role='status'>
+				Loading sign-in options…
+			</Typography>
+		);
+	}
+
 	return (
 		<Box
-			data-testid="signin-page"
-			sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mt: 4 }}
-		>
+			data-testid='signin-page'
+			sx={{
+				display: 'flex',
+				justifyContent: 'center',
+				alignItems: 'center',
+				mt: 4,
+			}}>
 			<Paper sx={{ p: 4, width: '100%', maxWidth: 420, textAlign: 'center' }}>
-				<Typography variant="h4" gutterBottom>
+				<Typography variant='h4' gutterBottom>
 					Sign in to Rebekah’s Recipes
 				</Typography>
 
 				{(registered || verifyPending) && !needsVerification && (
-					<Typography color="success.main" sx={{ textAlign: 'center', mb: 2 }}>
-						Account created — please verify your email before signing in. We’ve sent you a verification link.
+					<Typography color='success.main' sx={{ textAlign: 'center', mb: 2 }}>
+						Account created — please verify your email before signing in. We’ve
+						sent you a verification link.
 					</Typography>
 				)}
 
 				{displayedError && (
-					<Alert severity="error" sx={{ textAlign: 'left', mb: 2 }}>
+					<Alert severity='error' sx={{ textAlign: 'left', mb: 2 }}>
 						{displayedError}
 					</Alert>
 				)}
 				{pendingAction === 'google' && (
-					<Typography variant="body2" role="status">Connecting to Google…</Typography>
-				)}
-
-				{providers ? (
-					<Stack spacing={2} sx={{ mt: 2, alignItems: 'center' }}>
-						{/* Google sign-in */}
-						{providers.google && (
-							<GoogleButton
-								onClick={handleGoogleSignIn}
-								disabled={isLoading}
-							/>
-						)}
-
-						<Divider>or</Divider>
-
-						{/* Step 1: email */}
-						{providers.credentials && step === 1 && (
-							<Box
-								component="form"
-								onSubmit={handleContinue}
-								sx={{ width: '100%', maxWidth: 320 }}
-							>
-								<Stack spacing={2}>
-									<TextField
-										label="Email"
-										name="email"
-										inputRef={(input) => {
-											if (input && shouldFocusEmail.current) {
-												input.focus();
-												shouldFocusEmail.current = false;
-											}
-										}}
-										type="email"
-										required
-										fullWidth
-										value={email}
-										onChange={(e) => {
-											setEmail(e.target.value);
-											setNeedsVerification(false);
-										}}
-										autoComplete="email"
-										inputProps={{ 'data-testid': 'signin-email' }}
-										slotProps={{
-											input: {
-												startAdornment: (
-													<InputAdornment position="start">
-														<MailOutlineIcon fontSize="small" />
-													</InputAdornment>
-												),
-											},
-										}}
-									/>
-
-									<Button data-testid="signin-continue"
-										variant="contained"
-										type="submit"
-										fullWidth
-										sx={{ textTransform: 'none' }}
-										disabled={isLoading || !canContinue}
-									>
-										Continue
-									</Button>
-								</Stack>
-							</Box>
-						)}
-
-						{/* Step 2: password */}
-						{providers.credentials && step === 2 && (
-							<Box
-								component="form"
-								onSubmit={handleEmailSignIn}
-								sx={{ width: '100%', maxWidth: 320 }}
-							>
-								<Stack spacing={2}>
-									<Box>
-										<Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>
-											Signing in as <strong>{trimmedEmail}</strong>
-										</Typography>
-										<MuiLink component="button" type="button" onClick={handleChangeEmail} disabled={isLoading}>
-											Change email
-										</MuiLink>
-									</Box>
-									<TextField
-										autoFocus
-										label="Password"
-										name="password"
-										type="password"
-										required
-										fullWidth
-										value={password}
-										onChange={(e) => setPassword(e.target.value)}
-										autoComplete="current-password"
-										inputProps={{ 'data-testid': 'signin-password' }}
-										slotProps={{
-											input: {
-												startAdornment: (
-													<InputAdornment position="start">
-														<LockOutlinedIcon fontSize="small" />
-													</InputAdornment>
-												),
-											},
-										}}
-									/>
-
-									<Stack direction="row" justifyContent="space-between" alignItems="center">
-										<MuiLink href="/recipes/forgot-password" underline="hover" variant="body2">
-											Forgotten your password?
-										</MuiLink>
-									</Stack>
-									{needsVerification && (
-										<Button data-testid="signin-resend-verification"
-											variant="outlined"
-											disabled={isLoading || !canContinue}
-											onClick={async () => {
-												try {
-													setPendingAction('resend');
-													await resendVerificationEmail(trimmedEmail);
-													toast.success("If your account exists and isn't verified, we've sent a new verification email.");
-												} catch {
-													setLoginError('We couldn’t request that email just now. Please try again.');
-												} finally {
-													setPendingAction(null);
-												}
-											}}
-											sx={{ textTransform: 'none' }}
-										>
-											{pendingAction === 'resend' ? 'Sending…' : 'Resend verification email'}
-										</Button>
-									)}
-									<Button data-testid="signin-submit"
-										variant="contained"
-										type="submit"
-										fullWidth
-										sx={{ textTransform: 'none' }}
-										disabled={isLoading || !canSubmit}
-									>
-										{pendingAction === 'credentials' ? 'Signing in…' : 'Sign in'}
-									</Button>
-								</Stack>
-							</Box>
-						)}
-
-						{/* Sign up link */}
-						<Box sx={{ mt: 1 }}>
-							<Typography variant="body2" color="textSecondary">
-								Don&apos;t have an account?{' '}
-								<Link href="/recipes/register" passHref>
-									<Typography
-										component="span"
-										sx={{
-											color: 'primary.main',
-											textDecoration: 'underline',
-											cursor: 'pointer',
-										}}
-									>
-										Register
-									</Typography>
-								</Link>
-							</Typography>
-						</Box>
-					</Stack>
-				) : providerState.status === 'error' ? (
-					<Stack spacing={2}>
-						<Alert severity="error">We couldn’t load the sign-in options. Please try again.</Alert>
-						<Button variant="outlined" onClick={() => {
-							setProviderState({ status: 'loading', providers: null });
-							setProviderAttempt(attempt => attempt + 1);
-						}}>Try again</Button>
-					</Stack>
-				) : (
-					<Typography variant="body2" color="text.secondary" role="status">
-						Loading sign-in options…
+					<Typography variant='body2' role='status'>
+						Connecting to Google…
 					</Typography>
 				)}
+
+				{signInContent}
 			</Paper>
 		</Box>
 	);

@@ -1,7 +1,7 @@
 // components/RecipeCard.jsx
 'use client';
 
-import { Card, CardContent, Typography, Box } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import Image from 'next/image';
 import PropTypes from 'prop-types';
 import { pluraliseUnit } from '@/utils/pluraliseUnit';
@@ -53,130 +53,129 @@ export default function RecipeCard({ recipe }) {
 	const displaySteps = getDisplaySteps(recipe);
 
 	return (
-		<Card
-			sx={{
-				width: '100%',
-				maxWidth: '100%',
-				marginBottom: 2,
-				boxShadow: '4px 4px 20px 0px rgba(0, 0, 0, 0.2)', // Increased and softened shadow
+		<Box component='article' sx={{ width: '100%', color: 'text.primary' }}>
+			<Box sx={{
+				display: 'flex', flexWrap: 'wrap', columnGap: 3, rowGap: 1,
+				pb: 3, mb: 4, borderBottom: '1px solid', borderColor: 'divider',
 			}}>
-			<CardContent>
-				<Box
-					sx={{
-						display: 'flex',
-						flexDirection: { xs: 'column', md: 'row' },
-						gap: 2,
-						width: '100%',
-					}}
-				>
-					{/* Left Section: Image and Ingredients */}
-					<Box sx={{ flex: 1, minWidth: 0, width: '100%' }}>
-						{/* Recipe Image */}
-						<Box mb={2} display='flex' justifyContent='center'>
-							<Image
-								src={
-									recipe.image ||
-									'https://res.cloudinary.com/dqeszgo28/image/upload/v1728739432/300_bebabf.png'
-								} // Provide a default image URL
-								alt={recipe.name || 'Recipe Image'}
-								width={300}
-								height={187}
-								loading='eager'
-								style={{
-									width: 'auto',
-									maxWidth: '100%',
-									height: 'auto',
-									objectFit: 'cover',
-								}}
-							/>
-						</Box>
+				<Typography variant='body2' color='text.secondary'>
+					Prep Time: {recipe.prepTime ? `${recipe.prepTime} minutes` : 'N/A'}
+				</Typography>
+				<Typography variant='body2' color='text.secondary'>
+					Cook Time: {recipe.cookTime ? `${recipe.cookTime} minutes` : 'N/A'}
+				</Typography>
+				<Typography variant='body2' color='text.secondary'>
+					Serves: {recipe.serves || 'N/A'}
+				</Typography>
+			</Box>
+			<Box
+				sx={{
+					display: 'flex',
+					flexDirection: { xs: 'column', md: 'row' },
+					gap: { xs: 4, md: 6 },
+					width: '100%',
+				}}
+			>
+				{/* Left Section: Image and Ingredients */}
+				<Box sx={{ flex: 1, minWidth: 0, width: '100%' }}>
+					{/* Recipe Image */}
+					<Box sx={{
+						mb: 4, position: 'relative', aspectRatio: '8 / 5',
+						borderRadius: 3, overflow: 'hidden', bgcolor: 'background.paper',
+					}}>
+						<Image
+							src={
+								recipe.image ||
+								'https://res.cloudinary.com/dqeszgo28/image/upload/v1728739432/300_bebabf.png'
+							} // Provide a default image URL
+							alt={recipe.name || 'Recipe Image'}
+							fill
+							sizes='(max-width: 639px) calc(100vw - 32px), (max-width: 1023px) calc(100vw - 48px), (max-width: 1199px) calc(50vw - 48px), 552px'
+							loading='eager'
+							style={{
+								objectFit: 'cover',
+							}}
+						/>
+					</Box>
 
-						{/* Ingredients */}
-						<Box mt={2} sx={{ paddingLeft: 2 }}>
-							<Typography variant='h6'>Ingredients:</Typography>
-							{Array.isArray(recipe.ingredients) &&
-							recipe.ingredients.length > 0 ? (
-								<ul>
-									{recipe.ingredients.map((ing, index) => {
-										const name = ing?.ingredient?.name ?? 'Unknown Ingredient';
-										const quantity = ing?.quantity;
-										const unit =
-											ing?.unit === 'other' ? ing?.customUnit : ing?.unit;
+					{/* Ingredients */}
+					<Box component='section' aria-labelledby='ingredients-heading'>
+						<Typography id='ingredients-heading' component='h2' variant='h6' sx={{ mb: 2, fontWeight: 600 }}>Ingredients:</Typography>
+						{Array.isArray(recipe.ingredients) &&
+						recipe.ingredients.length > 0 ? (
+							<Box component='ul' sx={{
+								pl: 2.5, m: 0, lineHeight: 1.75, overflowWrap: 'anywhere',
+								'& li': { pl: 0.5, mb: 1 },
+								'& li::marker': { color: 'text.secondary' },
+							}}>
+								{recipe.ingredients.map((ing, index) => {
+									const name = ing?.ingredient?.name ?? 'Unknown Ingredient';
+									const quantity = ing?.quantity;
+									const unit =
+										ing?.unit === 'other' ? ing?.customUnit : ing?.unit;
 
-										// Hide legacy placeholder values that were previously injected for scraped recipes
-										const isLegacyDefault = quantity === 1 && unit === 'unit';
+									// Hide legacy placeholder values that were previously injected for scraped recipes
+									const isLegacyDefault = quantity === 1 && unit === 'unit';
 
-										// No meaningful quantity/unit -> just show the ingredient name
-										if (quantity == null || isLegacyDefault) {
-											return <li key={getIngredientKey(ing, index)}>{name}</li>;
-										}
+									// No meaningful quantity/unit -> just show the ingredient name
+									if (quantity == null || isLegacyDefault) {
+										return <li key={getIngredientKey(ing, index)}>{name}</li>;
+									}
 
-										// Quantity but no unit -> "2 chicken"
-										if (!unit) {
-											return (
-												<li key={getIngredientKey(ing, index)}>
-													{formatQuantity(quantity)} {name}
-												</li>
-											);
-										}
-
-										// Quantity + unit -> pluralised correctly
+									// Quantity but no unit -> "2 chicken"
+									if (!unit) {
 										return (
 											<li key={getIngredientKey(ing, index)}>
-												{formatQuantity(quantity)} {pluraliseUnit(unit, quantity)} {name}
+												{formatQuantity(quantity)} {name}
 											</li>
 										);
-									})}
-								</ul>
-							) : (
-								<Typography variant='body2'>No Ingredients Found</Typography>
-							)}
-						</Box>
-					</Box>
+									}
 
-					{/* Right Section: Recipe steps */}
-					<Box sx={{ flex: 1, minWidth: 0, width: '100%' }}>
-						<Typography variant='h6' gutterBottom>
-							Steps:
-						</Typography>
-						{displaySteps.length > 0 ? (
-							<Box
-								component='ol'
-								sx={{
-									pl: 3,
-									m: 0,
-									width: '100%',
-									overflow: 'visible',
-								}}
-							>
-								{displaySteps.map((step) => (
-									<li key={getStepKey(step)}>{step}</li>
-								))}
+									// Quantity + unit -> pluralised correctly
+									return (
+										<li key={getIngredientKey(ing, index)}>
+											{formatQuantity(quantity)} {pluraliseUnit(unit, quantity)} {name}
+										</li>
+									);
+								})}
 							</Box>
 						) : (
-							<Typography variant='body2' color='text.secondary'>
-								No steps provided
-							</Typography>
+							<Typography variant='body2'>No Ingredients Found</Typography>
 						)}
-
-						{/* Additional Information */}
-						<Box mt={2}>
-							<Typography variant='body2' color='text.secondary'>
-								Prep Time:{' '}
-								{recipe.prepTime ? `${recipe.prepTime} minutes` : 'N/A'}
-							</Typography>
-							<Typography variant='body2' color='text.secondary'>
-								Cook Time:{' '}
-								{recipe.cookTime ? `${recipe.cookTime} minutes` : 'N/A'}
-							</Typography>
-							<Typography variant='body2' color='text.secondary'>
-								Serves: {recipe.serves || 'N/A'}
-							</Typography>
-						</Box>
 					</Box>
 				</Box>
-			</CardContent>
-		</Card>
+
+				{/* Right Section: Recipe steps */}
+				<Box component='section' aria-labelledby='method-heading' sx={{ flex: 1, minWidth: 0, width: '100%' }}>
+					<Typography id='method-heading' component='h2' variant='h6' sx={{ mb: 2, fontWeight: 600 }}>
+						Steps:
+					</Typography>
+					{displaySteps.length > 0 ? (
+						<Box
+							component='ol'
+							sx={{
+								pl: 3,
+								m: 0,
+								width: '100%',
+								overflow: 'visible',
+								lineHeight: 1.75,
+								overflowWrap: 'anywhere',
+								'& li': { pl: 1, mb: 2.5 },
+								'& li::marker': { color: 'text.secondary', fontWeight: 600 },
+							}}
+						>
+							{displaySteps.map((step) => (
+								<li key={getStepKey(step)}>{step}</li>
+							))}
+						</Box>
+					) : (
+						<Typography variant='body2' color='text.secondary'>
+							No steps provided
+						</Typography>
+					)}
+				</Box>
+			</Box>
+		</Box>
 	);
 }
 

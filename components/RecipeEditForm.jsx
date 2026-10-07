@@ -197,97 +197,24 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 	};
 
 	return (
-		<Box sx={{ width: '100%', maxWidth: 800, mx: 'auto', px: { xs: 0, sm: 3 }, py: 3 }}>
+		<Box sx={{ width: '100%' }}>
 			<form onSubmit={updateRecipeById}>
 				<Stack spacing={4}>
-					<Stack spacing={1}>
-						<Typography
-							variant='subtitle2'
-							color='text.secondary'
-							align='center'>
-							Update your recipe details below
-						</Typography>
-					</Stack>
-
-					{/* Current image preview */}
-					<Box
-						sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-						<Image
-							src={deleteImage ? DEFAULT_IMAGE : recipe.image || DEFAULT_IMAGE}
-							alt={recipe?.name || 'Recipe Image'}
-							width={300}
-							height={187}
-							style={{ objectFit: 'cover', borderRadius: 12, maxWidth: '100%', height: 'auto' }}
-						/>
-					</Box>
-
-					{/* Image upload */}
-					<Stack spacing={2} sx={{ width: '100%' }}>
-						<Button
-							component='label'
-							variant='contained'
-							fullWidth
-							startIcon={<AddIcon />}
-							sx={{
-								backgroundColor: '#d32f2f',
-								color: '#fff',
-								fontWeight: 600,
-								fontSize: '1rem',
-								height: 40,
-								minHeight: 40,
-								'&:hover': { backgroundColor: '#b71c1c' },
-							}}>
-							Upload New Image (optional)
-							<VisuallyHiddenInput
-								name='imageFile'
-								accept='image/*'
-								type='file'
-								onChange={handleImageChange}
-							/>
-						</Button>
-
-						{selectedImageName && (
-							<Typography variant='body2' color='text.secondary' sx={{ pl: 1 }}>
-								Selected: {selectedImageName}
-							</Typography>
-						)}
-
-						<FormControlLabel
-							control={
-								<Checkbox
-									checked={deleteImage}
-									onChange={handleDeleteImageChange}
-								/>
-							}
-							label='Delete current image and use default image'
-						/>
-					</Stack>
-
 					{/* Name */}
 					<Stack spacing={2}>
-						<Typography variant='h6' align='left'>
-							Recipe Name
-						</Typography>
 						<TextField
 							name='name'
+							label='Recipe Name'
 							placeholder='e.g. Classic Lasagna'
 							variant='outlined'
 							fullWidth
 							required
 							defaultValue={recipe?.name ?? ''}
-							sx={{
-								fontWeight: 600,
-								fontSize: '1.1rem',
-
-							}}
 						/>
 					</Stack>
 
 					{/* Category */}
 					<Stack spacing={2} sx={{ width: '100%' }}>
-						<Typography variant='body2' align='left'>
-							Select a Category
-						</Typography>
 						<FormControl fullWidth required>
 							<InputLabel id='category-label'>Category</InputLabel>
 							<Select
@@ -311,9 +238,57 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 						</FormControl>
 					</Stack>
 
+					<Stack component='section' aria-labelledby='recipe-image-heading' spacing={2} sx={{ pt: 3, borderTop: 1, borderColor: 'divider' }}>
+						<Typography id='recipe-image-heading' variant='h5' component='h2'>Recipe image</Typography>
+						{/* Current image preview */}
+						<Box
+							sx={{ width: '100%', '& img': { objectFit: 'cover', borderRadius: 2, maxWidth: '100%', height: 'auto' } }}>
+							<Image
+								src={deleteImage ? DEFAULT_IMAGE : recipe.image || DEFAULT_IMAGE}
+								alt={recipe?.name || 'Recipe Image'}
+								width={300}
+								height={187}
+							/>
+						</Box>
+
+						{/* Image upload */}
+						<Stack spacing={2} sx={{ width: '100%' }}>
+							<Button
+								component='label'
+								variant='outlined'
+								startIcon={<AddIcon />}
+								sx={{ alignSelf: 'flex-start', minHeight: 44 }}>
+								Upload New Image (optional)
+								<VisuallyHiddenInput
+									name='imageFile'
+									accept='image/*'
+									type='file'
+									onChange={handleImageChange}
+								/>
+							</Button>
+
+							{selectedImageName && (
+								<Typography variant='body2' color='text.secondary' sx={{ overflowWrap: 'anywhere' }}>
+									Selected: {selectedImageName}
+								</Typography>
+							)}
+
+							<FormControlLabel
+								control={
+									<Checkbox
+										checked={deleteImage}
+										onChange={handleDeleteImageChange}
+									/>
+								}
+								label='Delete current image and use default image'
+							/>
+						</Stack>
+
+					</Stack>
+
 					{/* Times & Serves */}
-					<Stack spacing={4} sx={{ mt: 1 }}>
-						<Typography variant='h5'>Times & Serves</Typography>
+					<Stack component='section' aria-labelledby='recipe-timing-heading' spacing={3} sx={{ pt: 3, borderTop: 1, borderColor: 'divider' }}>
+						<Typography id='recipe-timing-heading' variant='h5' component='h2'>Timing and servings</Typography>
 						<Stack spacing={2} useFlexGap direction={{ xs: 'column', sm: 'row' }}>
 							<TextField
 								label='Prep Time (mins)'
@@ -349,11 +324,12 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 					</Stack>
 
 					{/* Ingredients */}
-					<Stack spacing={1}>
-						<Typography variant='h5'>Ingredients</Typography>
+					<Stack component='section' aria-labelledby='recipe-ingredients-heading' spacing={3} sx={{ pt: 3, borderTop: 1, borderColor: 'divider' }}>
+						<Typography id='recipe-ingredients-heading' variant='h5' component='h2'>Ingredients</Typography>
 						<Stack spacing={3}>
 							{ingredients.map((ingredient, index) => (
 								<IngredientInputRow
+									appearance='edit'
 									key={ingredient.rowId}
 									index={index}
 									ingredient={ingredient}
@@ -364,7 +340,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 							))}
 
 							<Button
-								variant='contained'
+								variant='outlined'
 								onClick={handleAddIngredient}
 								type='button'
 								sx={{ width: { xs: '100%', sm: 'auto' }, alignSelf: { sm: 'flex-start' }, minHeight: 44 }}>
@@ -374,11 +350,12 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 					</Stack>
 
 					{/* Steps */}
-					<Stack spacing={1}>
-						<Typography variant='h5'>Steps</Typography>
+					<Stack component='section' aria-labelledby='recipe-method-heading' spacing={3} sx={{ pt: 3, borderTop: 1, borderColor: 'divider' }}>
+						<Typography id='recipe-method-heading' variant='h5' component='h2'>Method</Typography>
 						<Stack spacing={2}>
 							{steps.map((step, index) => (
 								<StepsInputRow
+									appearance='edit'
 									key={step.rowId}
 									index={index}
 									step={step.value}
@@ -387,7 +364,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 								/>
 							))}
 							<Button
-								variant='contained'
+								variant='outlined'
 								onClick={handleAddStep}
 								type='button'
 								sx={{ width: { xs: '100%', sm: 'auto' }, alignSelf: { sm: 'flex-start' }, minHeight: 44 }}>
@@ -400,8 +377,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 						type='submit'
 						variant='contained'
 						size='large'
-						fullWidth
-						sx={{ mt: 1 }}>
+						sx={{ alignSelf: { sm: 'flex-start' }, width: { xs: '100%', sm: 'auto' }, minHeight: 48, px: 4 }}>
 						Update Recipe
 					</Button>
 				</Stack>

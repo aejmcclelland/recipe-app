@@ -21,6 +21,11 @@ const nextConfig = {
 			},
 			{
 				protocol: 'https',
+
+				hostname: 'ichef.bbci.co.uk',
+			},
+			{
+				protocol: 'https',
 				hostname: 'cdn.sanity.io', // ✅ Add this
 				pathname: '/**',
 			},
