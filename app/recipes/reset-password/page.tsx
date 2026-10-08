@@ -1,8 +1,6 @@
 'use client';
 
-import { Suspense, useRef, useState } from 'react';
-import Link from 'next/link';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { resetPassword } from '@/app/actions/resetPassword';
 import {
 	Alert,
 	Box,
@@ -13,8 +11,9 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import { resetPassword } from '@/app/actions/resetPassword';
 
 function ResetPasswordForm() {
 	const router = useRouter();
@@ -63,9 +62,11 @@ function ResetPasswordForm() {
 			} else if (result.error === 'INVALID_PASSWORD') {
 				setPasswordError('Password must be at least 8 characters.');
 			} else {
-				setError(result.error === 'RATE_LIMITED'
-					? 'Too many attempts. Please try again later.'
-					: 'We couldn’t update your password right now. Please try again.');
+				setError(
+					result.error === 'RATE_LIMITED'
+						? 'Too many attempts. Please try again later.'
+						: 'We couldn’t update your password right now. Please try again.',
+				);
 			}
 		} catch {
 			setError('We couldn’t update your password right now. Please try again.');
@@ -166,15 +167,22 @@ export default function ResetPasswordPage() {
 	return (
 		<Suspense
 			fallback={
-				<Container maxWidth="sm" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center',justifyContent: 'center', p: 3 }}>
+				<Container
+					maxWidth='sm'
+					sx={{
+						minHeight: '100vh',
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'center',
+						p: 3,
+					}}>
 					<Paper sx={{ p: 4, width: '100%', maxWidth: 520 }}>
-						<Typography variant="body2" color="text.secondary">
+						<Typography variant='body2' color='text.secondary'>
 							Loading…
 						</Typography>
 					</Paper>
 				</Container>
-			}
-		>
+			}>
 			<ResetPasswordForm />
 		</Suspense>
 	);

@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { mkdir } from 'node:fs/promises';
+import { collectBrowserErrors } from './helpers/browserErrors';
 
 // Use the existing authenticated-home fixture pattern to exercise the actual
 // detail page and shared controls without database writes or a real account.
@@ -45,7 +46,7 @@ test.beforeAll(async () => {
 });
 test.beforeEach(async ({ page }) => {
 	browserErrors = [];
-	page.on('pageerror', error => browserErrors.push(error.message));
+	collectBrowserErrors(page, browserErrors);
 	await page.goto('/');
 	await expect(page.locator('.site-appbar img')).toBeVisible();
 	const appearance = await page.evaluate(() => ({
@@ -156,8 +157,9 @@ for (const [name, width] of [['desktop', 1440], ['mobile', 390], ['tablet', 1023
 		await page.setViewportSize({ width, height: 900 });
 		await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
 		await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-		await page.evaluate(() => document.fonts.ready);
-		await page.waitForFunction(() => [...document.querySelectorAll<HTMLImageElement>('main img')].every(image => image.complete && image.naturalWidth > 0));
+		const recipeImage = page.locator('main img').first();
+		await expect(recipeImage).toBeVisible();
+
 		const ingredients = await page.getByRole('region', { name: 'Ingredients:' }).boundingBox();
 		const method = await page.getByRole('region', { name: 'Steps:' }).boundingBox();
 		if (width < 1024) expect(method!.y).toBeGreaterThan(ingredients!.y + ingredients!.height);

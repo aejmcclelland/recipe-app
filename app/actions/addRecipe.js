@@ -54,7 +54,7 @@ export default async function addRecipe(formData) {
 		});
 		imageUrl = result.secure_url;
 	} else {
-		imageUrl = '/images/recipes/default-recipe.jpg';
+		imageUrl = '/default-recipe.jpg';
 	}
 
 	// Ingredients array (safe parse)

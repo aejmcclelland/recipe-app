@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { mkdir } from 'node:fs/promises';
+import { collectBrowserErrors } from './helpers/browserErrors';
 
 // Render the actual import route and shell with isolated data/action boundaries.
 // No real scraping or recipe writes take place.
@@ -43,7 +44,7 @@ test.beforeAll(async () => {
 });
 test.beforeEach(async ({ page }) => {
 	browserErrors = [];
-	page.on('pageerror', error => browserErrors.push(error.message));
+	collectBrowserErrors(page, browserErrors);
 	await page.goto('/');
 	await expect(page.locator('.site-appbar img')).toBeVisible();
 	const appearance = await page.evaluate(() => ({
