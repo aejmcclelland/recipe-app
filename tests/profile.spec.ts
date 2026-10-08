@@ -203,7 +203,16 @@ for (const [name, width] of [['desktop', 1440], ['mobile', 390], ['small-mobile'
 		await page.goto(profilePath);
 		await expect(page.getByRole('heading', { level: 1 })).toHaveText('Your profile');
 		await page.evaluate(() => document.fonts.ready);
-		await page.waitForFunction(() => [...document.querySelectorAll<HTMLImageElement>('main img')].every(image => image.complete && image.naturalWidth > 0));
+		const images = page.locator('main img');
+		await expect(images).toHaveCount(4);
+		for (let index = 0; index < 4; index++) {
+			const image = images.nth(index);
+			await image.scrollIntoViewIfNeeded();
+			await expect.poll(() => image.evaluate(element => (element as HTMLImageElement).naturalWidth), {
+				message: `Profile recipe image ${index + 1} should load`,
+			}).toBeGreaterThan(0);
+		}
+		await page.evaluate(() => scrollTo(0, 0));
 		await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(248, 245, 238)');
 		await expect(page.locator('.site-appbar img').first()).toHaveAttribute('src', /logo-face/);
 		for (const card of await page.locator('main .MuiCard-root').all()) await expect(card).toHaveCSS('box-shadow', 'none');
@@ -213,7 +222,7 @@ for (const [name, width] of [['desktop', 1440], ['mobile', 390], ['small-mobile'
 		}).map(node => node.tagName));
 		expect(overflow).toEqual([]);
 		const upload = page.getByLabel('Change profile picture', { exact: true });
-		await expect(upload).toHaveCSS('width', '44px');
+		await expect(upload).toHaveCSS('width', width < 600 ? '28px' : '30px');
 		await expect(upload).toHaveCSS('box-shadow', 'none');
 		const cards = await page.getByRole('region', { name: 'Bookmarked Recipes', exact: true }).locator('.MuiCard-root').evaluateAll(nodes => nodes.map(node => ({ x: node.getBoundingClientRect().x, y: node.getBoundingClientRect().y })));
 		if (width < 640) expect(cards[1].y).toBeGreaterThan(cards[0].y);
@@ -224,4 +233,3 @@ for (const [name, width] of [['desktop', 1440], ['mobile', 390], ['small-mobile'
 		}
 	});
 }
-
