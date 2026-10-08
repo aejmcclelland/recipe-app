@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { RecipeResult } from '@/types/recipe';
@@ -22,7 +22,17 @@ const CopyWebClient: React.FC<CopyWebClientProps> = ({ categories, initialUrl })
 	const [data, setData] = useState<RecipeResult | null>(null);
 	const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
 	const [save, setSave] = useState(false);
+	const reviewSectionRef = useRef<HTMLElement>(null);
+	const reviewHeadingRef = useRef<HTMLHeadingElement>(null);
 	const router = useRouter();
+
+	useEffect(() => {
+		if (!data) return;
+
+		// Wait until the successful import's review UI has been committed.
+		reviewSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		reviewHeadingRef.current?.focus({ preventScroll: true });
+	}, [data]);
 
 	useEffect(() => {
 		console.log('CopyWebClient mounted');
@@ -74,11 +84,11 @@ const CopyWebClient: React.FC<CopyWebClientProps> = ({ categories, initialUrl })
 			</Box>
 
 			{data && (
-				<Box component='section' aria-labelledby='imported-recipe-title' sx={{ mt: 5, pt: 4, borderTop: 1, borderColor: 'divider' }}>
+				<Box ref={reviewSectionRef} component='section' aria-labelledby='imported-recipe-title' sx={{ mt: 5, pt: 4, borderTop: 1, borderColor: 'divider' }}>
 					<Typography className='no-print' variant='overline' color='text.secondary'>
 						2. Review and save
 					</Typography>
-					<Typography id='imported-recipe-title' role='status' variant='h3' component='h2' sx={{ mt: 1, mb: 2, overflowWrap: 'anywhere' }}>
+					<Typography ref={reviewHeadingRef} tabIndex={-1} id='imported-recipe-title' role='status' variant='h3' component='h2' sx={{ mt: 1, mb: 2, overflowWrap: 'anywhere' }}>
 						{data.title}
 					</Typography>
 					<Typography className='no-print' color='text.secondary' sx={{ mb: 3 }}>
