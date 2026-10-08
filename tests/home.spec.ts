@@ -49,8 +49,17 @@ test('guest menu keeps its public treatment on sign-in and legal navigation', as
 	await expect(page.locator('.site-appbar img')).toHaveAttribute('src', /logo-face\.png/);
 	await page.getByRole('textbox', { name: 'Email', exact: true }).fill('theme@example.test');
 	await expect(page.getByRole('button', { name: 'Continue', exact: true })).toHaveCSS('background-color', 'rgb(26, 32, 39)');
-	await page.locator('.site-footer').getByRole('link', { name: 'Privacy Policy' }).click();
-	await expect(page).toHaveURL(/\/privacy-policy$/);
+	
+	const privacyLink = page
+		.locator('.site-footer')
+		.getByRole('link', { name: 'Privacy Policy' });
+
+	await expect(privacyLink).toHaveAttribute('href', '/privacy-policy');
+
+	await Promise.all([
+		page.waitForURL(/\/privacy-policy$/),
+		privacyLink.click(),
+	]);
 	await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(248, 245, 238)');
 	await expect(page.locator('.site-footer img')).toHaveAttribute('src', /logo-face\.png/);
 });
@@ -113,10 +122,16 @@ test('signed-out home shows the recipe proposition and both image slots', async 
 
 test('logged-out sign-up CTA opens registration directly', async ({ page }) => {
 	await page.goto('/');
-	const signUp = page.getByTestId('welcome-section').getByRole('link', { name: 'Sign up for free' }).first();
+
+	const signUp = page
+		.getByTestId('welcome-section')
+		.getByRole('link', { name: 'Sign up for free' })
+		.first();
+
 	await expect(signUp).toHaveAttribute('href', '/recipes/register');
-	await signUp.click();
-	await expect(page).toHaveURL(/\/recipes\/register$/);
+
+	await Promise.all([page.waitForURL(/\/recipes\/register$/), signUp.click()]);
+
 	await expect(page.getByLabel('First Name')).toBeVisible();
 });
 

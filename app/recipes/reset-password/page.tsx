@@ -11,8 +11,9 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material';
+
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useRef, useState } from 'react';
+import { Suspense, useRef, useState, type SyntheticEvent } from 'react';
 import { toast } from 'react-toastify';
 
 function ResetPasswordForm() {
@@ -32,7 +33,7 @@ function ResetPasswordForm() {
 	const [passwordError, setPasswordError] = useState('');
 	const [confirmError, setConfirmError] = useState('');
 
-	async function handleSubmit(e: React.FormEvent) {
+	async function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
 		e.preventDefault();
 		if (pending.current || missingLink || invalidLink) return;
 		setError('');
