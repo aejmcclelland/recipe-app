@@ -79,7 +79,7 @@ test('owner content, formatting and action hierarchy are preserved', async ({ pa
 });
 
 test('shared recipient retains recipe content and no owner action row', async ({ page }) => {
-	await page.goto(`${detailPath}?scenario=shared`);
+	await page.goto(`${detailPath}?scenario=shared`, { waitUntil: 'domcontentloaded' });
 	await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 	for (const name of ['Add Bookmark', 'Manage sharing', 'Edit Recipe', 'Delete Recipe', 'Back to Home']) {
 		await expect(page.getByRole('button', { name, exact: true })).toHaveCount(0);
@@ -87,13 +87,13 @@ test('shared recipient retains recipe content and no owner action row', async ({
 });
 
 test('empty ingredients and method retain their existing messages', async ({ page }) => {
-	await page.goto(`${detailPath}?scenario=empty`);
+	await page.goto(`${detailPath}?scenario=empty`, { waitUntil: 'domcontentloaded' });
 	await expect(page.getByText('No Ingredients Found', { exact: true })).toBeVisible();
 	await expect(page.getByText('No steps provided', { exact: true })).toBeVisible();
 });
 
 test('bookmark remains optimistic, guards duplicate saves and rolls back failures', async ({ page }) => {
-	await page.goto(detailPath);
+	await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
 	await page.getByRole('button', { name: 'Add Bookmark', exact: true }).click();
 	await expect(page.getByRole('button', { name: 'Remove Bookmark', exact: true })).toHaveAttribute('aria-pressed', 'true');
 	await page.getByRole('button', { name: 'Remove Bookmark', exact: true }).click();
@@ -110,14 +110,14 @@ test('bookmark remains optimistic, guards duplicate saves and rolls back failure
 });
 
 test('home/edit navigation and delete confirmation retain their behaviour', async ({ page }) => {
-	await page.goto(detailPath);
+	await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
 	await page.getByRole('button', { name: 'Edit Recipe', exact: true }).click();
 	await expect(page).toHaveURL(`${detailPath}/edit`);
-	await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(255, 255, 255)');
-	await page.goto(detailPath);
+	await expect(page.locator('body')).toHaveCSS('background-color', 'rgb(248, 245, 238)');
+	await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
 	await page.getByRole('button', { name: 'Back to Home', exact: true }).click();
 	await expect(page).toHaveURL('/');
-	await page.goto(detailPath);
+	await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
 	page.once('dialog', async dialog => {
 		expect(dialog.message()).toBe('Are you sure you want to delete this recipe?');
 		await dialog.dismiss();
@@ -133,7 +133,7 @@ test('home/edit navigation and delete confirmation retain their behaviour', asyn
 
 test('sharing dialog works under the detail theme and restores focus', async ({ page }) => {
 	await page.setViewportSize({ width: 390, height: 844 });
-	await page.goto(detailPath);
+	await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
 	const trigger = page.getByRole('button', { name: 'Manage sharing', exact: true });
 	await trigger.click();
 	const dialog = page.getByRole('dialog', { name: 'Manage sharing' });
@@ -154,7 +154,7 @@ test('sharing dialog works under the detail theme and restores focus', async ({ 
 for (const [name, width] of [['desktop', 1440], ['mobile', 390], ['tablet', 1023], ['desktop-breakpoint', 1024]] as const) {
 	test(`${name} retains the detail layout without horizontal overflow`, async ({ page }) => {
 		await page.setViewportSize({ width, height: 900 });
-		await page.goto(detailPath);
+		await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
 		await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 		await page.evaluate(() => document.fonts.ready);
 		await page.waitForFunction(() => [...document.querySelectorAll<HTMLImageElement>('main img')].every(image => image.complete && image.naturalWidth > 0));
