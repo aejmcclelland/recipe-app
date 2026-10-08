@@ -12,7 +12,8 @@
     "dev:test": "next dev --webpack --port 3000",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "portfolio:screenshots": "node --import tsx scripts/portfolio-screenshots.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

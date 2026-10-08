@@ -54,10 +54,17 @@ export default function RecipeCard({ recipe }) {
 
 	return (
 		<Box component='article' sx={{ width: '100%', color: 'text.primary' }}>
-			<Box sx={{
-				display: 'flex', flexWrap: 'wrap', columnGap: 3, rowGap: 1,
-				pb: 3, mb: 4, borderBottom: '1px solid', borderColor: 'divider',
-			}}>
+			<Box
+				sx={{
+					display: 'flex',
+					flexWrap: 'wrap',
+					columnGap: 3,
+					rowGap: 1,
+					pb: 3,
+					mb: 4,
+					borderBottom: '1px solid',
+					borderColor: 'divider',
+				}}>
 				<Typography variant='body2' color='text.secondary'>
 					Prep Time: {recipe.prepTime ? `${recipe.prepTime} minutes` : 'N/A'}
 				</Typography>
@@ -74,20 +81,21 @@ export default function RecipeCard({ recipe }) {
 					flexDirection: { xs: 'column', md: 'row' },
 					gap: { xs: 4, md: 6 },
 					width: '100%',
-				}}
-			>
+				}}>
 				{/* Left Section: Image and Ingredients */}
 				<Box sx={{ flex: 1, minWidth: 0, width: '100%' }}>
 					{/* Recipe Image */}
-					<Box sx={{
-						mb: 4, position: 'relative', aspectRatio: '8 / 5',
-						borderRadius: 3, overflow: 'hidden', bgcolor: 'background.paper',
-					}}>
+					<Box
+						sx={{
+							mb: 4,
+							position: 'relative',
+							aspectRatio: '8 / 5',
+							borderRadius: 3,
+							overflow: 'hidden',
+							bgcolor: 'background.paper',
+						}}>
 						<Image
-							src={
-								recipe.image ||
-								'https://res.cloudinary.com/dqeszgo28/image/upload/v1728739432/300_bebabf.png'
-							} // Provide a default image URL
+							src={recipe.image || '/images/recipes/default-recipe.jpg'} // Provide a default image URL
 							alt={recipe.name || 'Recipe Image'}
 							fill
 							sizes='(max-width: 639px) calc(100vw - 32px), (max-width: 1023px) calc(100vw - 48px), (max-width: 1199px) calc(50vw - 48px), 552px'
@@ -100,14 +108,25 @@ export default function RecipeCard({ recipe }) {
 
 					{/* Ingredients */}
 					<Box component='section' aria-labelledby='ingredients-heading'>
-						<Typography id='ingredients-heading' component='h2' variant='h6' sx={{ mb: 2, fontWeight: 600 }}>Ingredients:</Typography>
+						<Typography
+							id='ingredients-heading'
+							component='h2'
+							variant='h6'
+							sx={{ mb: 2, fontWeight: 600 }}>
+							Ingredients:
+						</Typography>
 						{Array.isArray(recipe.ingredients) &&
 						recipe.ingredients.length > 0 ? (
-							<Box component='ul' sx={{
-								pl: 2.5, m: 0, lineHeight: 1.75, overflowWrap: 'anywhere',
-								'& li': { pl: 0.5, mb: 1 },
-								'& li::marker': { color: 'text.secondary' },
-							}}>
+							<Box
+								component='ul'
+								sx={{
+									pl: 2.5,
+									m: 0,
+									lineHeight: 1.75,
+									overflowWrap: 'anywhere',
+									'& li': { pl: 0.5, mb: 1 },
+									'& li::marker': { color: 'text.secondary' },
+								}}>
 								{recipe.ingredients.map((ing, index) => {
 									const name = ing?.ingredient?.name ?? 'Unknown Ingredient';
 									const quantity = ing?.quantity;
@@ -134,7 +153,8 @@ export default function RecipeCard({ recipe }) {
 									// Quantity + unit -> pluralised correctly
 									return (
 										<li key={getIngredientKey(ing, index)}>
-											{formatQuantity(quantity)} {pluraliseUnit(unit, quantity)} {name}
+											{formatQuantity(quantity)} {pluraliseUnit(unit, quantity)}{' '}
+											{name}
 										</li>
 									);
 								})}
@@ -146,8 +166,15 @@ export default function RecipeCard({ recipe }) {
 				</Box>
 
 				{/* Right Section: Recipe steps */}
-				<Box component='section' aria-labelledby='method-heading' sx={{ flex: 1, minWidth: 0, width: '100%' }}>
-					<Typography id='method-heading' component='h2' variant='h6' sx={{ mb: 2, fontWeight: 600 }}>
+				<Box
+					component='section'
+					aria-labelledby='method-heading'
+					sx={{ flex: 1, minWidth: 0, width: '100%' }}>
+					<Typography
+						id='method-heading'
+						component='h2'
+						variant='h6'
+						sx={{ mb: 2, fontWeight: 600 }}>
 						Steps:
 					</Typography>
 					{displaySteps.length > 0 ? (
@@ -162,8 +189,7 @@ export default function RecipeCard({ recipe }) {
 								overflowWrap: 'anywhere',
 								'& li': { pl: 1, mb: 2.5 },
 								'& li::marker': { color: 'text.secondary', fontWeight: 600 },
-							}}
-						>
+							}}>
 							{displaySteps.map((step) => (
 								<li key={getStepKey(step)}>{step}</li>
 							))}

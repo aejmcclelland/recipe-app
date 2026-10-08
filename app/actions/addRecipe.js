@@ -1,14 +1,14 @@
 // app/actions/addRecipe.js
 'use server';
-import { redirect } from 'next/navigation';
-import Category from '@/models/Category';
-import connectDB from '@/config/database';
 import cloudinary from '@/config/cloudinary';
-import Recipe from '@/models/Recipe';
+import connectDB from '@/config/database';
+import Category from '@/models/Category';
 import Ingredient from '@/models/Ingredient';
+import Recipe from '@/models/Recipe';
 import { getSessionUser } from '@/utils/getSessionUser';
-import { requireVerifiedEmail } from '@/utils/requireVerifiedEmail';
 import { enforceRateLimit } from '@/utils/rateLimit';
+import { requireVerifiedEmail } from '@/utils/requireVerifiedEmail';
+import { redirect } from 'next/navigation';
 
 export default async function addRecipe(formData) {
 	await connectDB();
@@ -54,8 +54,7 @@ export default async function addRecipe(formData) {
 		});
 		imageUrl = result.secure_url;
 	} else {
-		imageUrl =
-			'https://res.cloudinary.com/dqeszgo28/image/upload/v1744456700/recipes/placeholder-food.jpg';
+		imageUrl = '/images/recipes/default-recipe.jpg';
 	}
 
 	// Ingredients array (safe parse)
@@ -118,7 +117,7 @@ export default async function addRecipe(formData) {
 					quantity,
 					unit: unit || undefined,
 				};
-			})
+			}),
 		)
 	).filter(Boolean);
 

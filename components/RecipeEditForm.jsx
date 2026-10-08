@@ -27,8 +27,7 @@ import { toast } from 'react-toastify';
 import IngredientInputRow from './IngredientInputRow';
 import StepsInputRow from './StepsInputRow';
 
-const DEFAULT_IMAGE =
-	'https://res.cloudinary.com/dqeszgo28/image/upload/v1728739432/300_bebabf.png';
+const DEFAULT_IMAGE = '/images/recipes/default-recipe.jpg';
 
 const VisuallyHiddenInput = styled('input')({
 	clip: 'rect(0 0 0 0)',
@@ -165,7 +164,9 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 		formData.set('serves', String(serves));
 
 		const result = validateAndCleanRecipeForm({
-			ingredients: ingredients.map(({ rowId: _rowId, ...ingredient }) => ingredient),
+			ingredients: ingredients.map(
+				({ rowId: _rowId, ...ingredient }) => ingredient,
+			),
 			steps: steps.map((step) => step.value),
 			fractionToDecimal,
 		});
@@ -238,13 +239,29 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 						</FormControl>
 					</Stack>
 
-					<Stack component='section' aria-labelledby='recipe-image-heading' spacing={2} sx={{ pt: 3, borderTop: 1, borderColor: 'divider' }}>
-						<Typography id='recipe-image-heading' variant='h5' component='h2'>Recipe image</Typography>
+					<Stack
+						component='section'
+						aria-labelledby='recipe-image-heading'
+						spacing={2}
+						sx={{ pt: 3, borderTop: 1, borderColor: 'divider' }}>
+						<Typography id='recipe-image-heading' variant='h5' component='h2'>
+							Recipe image
+						</Typography>
 						{/* Current image preview */}
 						<Box
-							sx={{ width: '100%', '& img': { objectFit: 'cover', borderRadius: 2, maxWidth: '100%', height: 'auto' } }}>
+							sx={{
+								width: '100%',
+								'& img': {
+									objectFit: 'cover',
+									borderRadius: 2,
+									maxWidth: '100%',
+									height: 'auto',
+								},
+							}}>
 							<Image
-								src={deleteImage ? DEFAULT_IMAGE : recipe.image || DEFAULT_IMAGE}
+								src={
+									deleteImage ? DEFAULT_IMAGE : recipe.image || DEFAULT_IMAGE
+								}
 								alt={recipe?.name || 'Recipe Image'}
 								width={300}
 								height={187}
@@ -268,7 +285,10 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 							</Button>
 
 							{selectedImageName && (
-								<Typography variant='body2' color='text.secondary' sx={{ overflowWrap: 'anywhere' }}>
+								<Typography
+									variant='body2'
+									color='text.secondary'
+									sx={{ overflowWrap: 'anywhere' }}>
 									Selected: {selectedImageName}
 								</Typography>
 							)}
@@ -283,13 +303,21 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 								label='Delete current image and use default image'
 							/>
 						</Stack>
-
 					</Stack>
 
 					{/* Times & Serves */}
-					<Stack component='section' aria-labelledby='recipe-timing-heading' spacing={3} sx={{ pt: 3, borderTop: 1, borderColor: 'divider' }}>
-						<Typography id='recipe-timing-heading' variant='h5' component='h2'>Timing and servings</Typography>
-						<Stack spacing={2} useFlexGap direction={{ xs: 'column', sm: 'row' }}>
+					<Stack
+						component='section'
+						aria-labelledby='recipe-timing-heading'
+						spacing={3}
+						sx={{ pt: 3, borderTop: 1, borderColor: 'divider' }}>
+						<Typography id='recipe-timing-heading' variant='h5' component='h2'>
+							Timing and servings
+						</Typography>
+						<Stack
+							spacing={2}
+							useFlexGap
+							direction={{ xs: 'column', sm: 'row' }}>
 							<TextField
 								label='Prep Time (mins)'
 								name='prepTime'
@@ -324,8 +352,17 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 					</Stack>
 
 					{/* Ingredients */}
-					<Stack component='section' aria-labelledby='recipe-ingredients-heading' spacing={3} sx={{ pt: 3, borderTop: 1, borderColor: 'divider' }}>
-						<Typography id='recipe-ingredients-heading' variant='h5' component='h2'>Ingredients</Typography>
+					<Stack
+						component='section'
+						aria-labelledby='recipe-ingredients-heading'
+						spacing={3}
+						sx={{ pt: 3, borderTop: 1, borderColor: 'divider' }}>
+						<Typography
+							id='recipe-ingredients-heading'
+							variant='h5'
+							component='h2'>
+							Ingredients
+						</Typography>
 						<Stack spacing={3}>
 							{ingredients.map((ingredient, index) => (
 								<IngredientInputRow
@@ -343,15 +380,25 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 								variant='outlined'
 								onClick={handleAddIngredient}
 								type='button'
-								sx={{ width: { xs: '100%', sm: 'auto' }, alignSelf: { sm: 'flex-start' }, minHeight: 44 }}>
+								sx={{
+									width: { xs: '100%', sm: 'auto' },
+									alignSelf: { sm: 'flex-start' },
+									minHeight: 44,
+								}}>
 								+ Add Ingredient
 							</Button>
 						</Stack>
 					</Stack>
 
 					{/* Steps */}
-					<Stack component='section' aria-labelledby='recipe-method-heading' spacing={3} sx={{ pt: 3, borderTop: 1, borderColor: 'divider' }}>
-						<Typography id='recipe-method-heading' variant='h5' component='h2'>Method</Typography>
+					<Stack
+						component='section'
+						aria-labelledby='recipe-method-heading'
+						spacing={3}
+						sx={{ pt: 3, borderTop: 1, borderColor: 'divider' }}>
+						<Typography id='recipe-method-heading' variant='h5' component='h2'>
+							Method
+						</Typography>
 						<Stack spacing={2}>
 							{steps.map((step, index) => (
 								<StepsInputRow
@@ -367,7 +414,11 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 								variant='outlined'
 								onClick={handleAddStep}
 								type='button'
-								sx={{ width: { xs: '100%', sm: 'auto' }, alignSelf: { sm: 'flex-start' }, minHeight: 44 }}>
+								sx={{
+									width: { xs: '100%', sm: 'auto' },
+									alignSelf: { sm: 'flex-start' },
+									minHeight: 44,
+								}}>
 								+ Add Step
 							</Button>
 						</Stack>
@@ -377,7 +428,12 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 						type='submit'
 						variant='contained'
 						size='large'
-						sx={{ alignSelf: { sm: 'flex-start' }, width: { xs: '100%', sm: 'auto' }, minHeight: 48, px: 4 }}>
+						sx={{
+							alignSelf: { sm: 'flex-start' },
+							width: { xs: '100%', sm: 'auto' },
+							minHeight: 48,
+							px: 4,
+						}}>
 						Update Recipe
 					</Button>
 				</Stack>

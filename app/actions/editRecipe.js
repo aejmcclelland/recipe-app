@@ -54,8 +54,7 @@ async function updateRecipe(recipeId, formData) {
 		});
 		imageUrl = result.secure_url;
 	} else if (deleteImage) {
-		imageUrl =
-			'https://res.cloudinary.com/dqeszgo28/image/upload/v1744456700/recipes/placeholder-food.jpg';
+		imageUrl = '/images/recipes/default-recipe.jpg';
 	}
 
 	// Handle ingredients data

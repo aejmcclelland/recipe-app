@@ -2,11 +2,11 @@
 
 import connectDB from '@/config/database';
 import Recipe from '@/models/Recipe';
+import { convertToSerializeableObject } from '@/utils/convertToObject';
 import { getSessionUser } from '@/utils/getSessionUser';
 import { parseScrapedRecipe } from '@/utils/parseScrapedRecipes';
-import { convertToSerializeableObject } from '@/utils/convertToObject';
-import { requireVerifiedEmail } from '@/utils/requireVerifiedEmail';
 import { enforceRateLimit } from '@/utils/rateLimit';
+import { requireVerifiedEmail } from '@/utils/requireVerifiedEmail';
 
 // Treat scraped input as untrusted external data.
 type RawScrapedRecipe = {
@@ -59,7 +59,10 @@ function getOptionalString(input: unknown, key: string): string | undefined {
 	return typeof value === 'string' && value.trim() ? value.trim() : undefined;
 }
 
-function getOptionalPositiveNumber(input: unknown, key: string): number | undefined {
+function getOptionalPositiveNumber(
+	input: unknown,
+	key: string,
+): number | undefined {
 	if (!isRecord(input)) return undefined;
 
 	const value = input[key];
@@ -97,7 +100,8 @@ export async function saveScrapedRecipe(data: unknown, categoryId: string) {
 	await connectDB();
 	const sessionUser = await requireVerifiedEmail(await getSessionUser());
 	await enforceRateLimit('recipe-import', `${sessionUser.id}:import`);
-	const safeCategoryId = typeof categoryId === 'string' ? categoryId.trim() : '';
+	const safeCategoryId =
+		typeof categoryId === 'string' ? categoryId.trim() : '';
 
 	if (!safeCategoryId) {
 		throw new Error('Missing category');
@@ -117,9 +121,7 @@ export async function saveScrapedRecipe(data: unknown, categoryId: string) {
 		prepTime: getOptionalPositiveNumber(data, 'prepTime') ?? 10,
 		cookTime: getOptionalPositiveNumber(data, 'cookTime') ?? 20,
 		serves: getOptionalPositiveNumber(data, 'serves') ?? 2,
-		image:
-			getImageUrl(data) ??
-			'https://res.cloudinary.com/dqeszgo28/image/upload/v1744456700/recipes/placeholder-food.jpg',
+		image: getImageUrl(data) ?? '/images/recipes/default-recipe.jpg',
 		sourceUrl: getOptionalString(data, 'sourceUrl'),
 		user: sessionUser.id,
 	});
