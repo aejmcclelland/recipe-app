@@ -62,7 +62,7 @@ test.beforeEach(async ({ page }) => {
 test.afterEach(() => expect(browserErrors).toEqual([]));
 
 test('owner content, formatting and action hierarchy are preserved', async ({ page }) => {
-	await page.goto(detailPath);
+	await page.goto(detailPath, { waitUntil: 'domcontentloaded' });
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Weeknight pesto pasta');
 	await expect(page.locator('article')).toHaveCSS('box-shadow', 'none');
 	await expect(page.getByRole('region', { name: 'Ingredients:' }).locator('li')).toHaveText([
