@@ -88,7 +88,29 @@ export default async function Home() {
 
 	function renderHomeContent() {
 		if (!sessionUser) {
-			return <WelcomeSection />;
+			return (
+				<>
+					<WelcomeSection />
+					<Box
+						component='section'
+						sx={{
+							px: { xs: 3, sm: 5, lg: 7 },
+							py: { xs: 4, md: 5 },
+							backgroundColor: '#f8f5ee',
+							color: '#1a2027',
+							textAlign: 'center',
+						}}>
+						<Typography
+							component='p'
+							sx={{ maxWidth: 900, mx: 'auto', fontWeight: 700 }}>
+							Rebekah’s Recipes is a personal recipe organiser for saving recipes
+							from supported websites, adding your own recipes, organising
+							favourites, bookmarking recipes and sharing them with family and
+							friends.
+						</Typography>
+					</Box>
+				</>
+			);
 		}
 
 		if (!hasRecipes) {
