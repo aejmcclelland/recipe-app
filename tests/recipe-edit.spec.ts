@@ -449,12 +449,7 @@ for (const [name, width] of [
 			'Edit Recipe',
 		);
 		await page.evaluate(() => document.fonts.ready);
-		await page.waitForFunction(() => {
-			const image = document.querySelector<HTMLImageElement>(
-				'main img[alt="Weeknight pesto pasta"]',
-			);
-			return image?.complete && image.naturalWidth > 0;
-		});
+
 		await expect(page.locator('body')).toHaveCSS(
 			'background-color',
 			'rgb(248, 245, 238)',

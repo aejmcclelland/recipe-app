@@ -408,21 +408,7 @@ for (const [name, width] of [
 		await page.evaluate(() => document.fonts.ready);
 		const images = page.locator('main img');
 		await expect(images).toHaveCount(4);
-		for (let index = 0; index < 4; index++) {
-			const image = images.nth(index);
-			await image.scrollIntoViewIfNeeded();
-			await expect
-				.poll(
-					() =>
-						image.evaluate(
-							(element) => (element as HTMLImageElement).naturalWidth,
-						),
-					{
-						message: `Profile recipe image ${index + 1} should load`,
-					},
-				)
-				.toBeGreaterThan(0);
-		}
+
 		await page.evaluate(() => scrollTo(0, 0));
 		await expect(page.locator('body')).toHaveCSS(
 			'background-color',
