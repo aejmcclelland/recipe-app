@@ -1,0 +1,619 @@
+$ playwright test --workers=2 --reporter=line
+[WebServer] $ next dev --webpack --port 3000
+
+✔ resolveSupportedScrapeTarget only allows supported recipe hosts (0.740709ms)
+
+Running 354 tests using 2 workers
+
+[1/354] [chromium] › tests/authenticated-home.spec.ts:117:1 › owned/shared collections, category selection and bookmark state remain functional
+[2/354] [chromium] › tests/authenticated-home.spec.ts:223:2 › shared-only retains the expected collections and add/import actions
+[3/354] [chromium] › tests/authenticated-home.spec.ts:223:2 › owned-only retains the expected collections and add/import actions
+[4/354] [chromium] › tests/authenticated-home.spec.ts:149:1 › bookmark stays optimistic, guards duplicate saves and rolls back failed requests
+[5/354] [chromium] › tests/authenticated-home.spec.ts:264:2 › desktop home preserves responsive layout and captures the first pass
+[6/354] [chromium] › tests/authenticated-home.spec.ts:184:1 › search preserves its URL and switches back to the legacy route theme
+[7/354] [chromium] › tests/authenticated-home.spec.ts:264:2 › mobile home preserves responsive layout and captures the first pass
+[8/354] [chromium] › tests/authenticated-home.spec.ts:223:2 › empty retains the expected collections and add/import actions
+[9/354] [chromium] › tests/home.spec.ts:4:1 › public theme is limited to guest home and explicit account/legal routes
+[10/354] [chromium] › tests/home.spec.ts:26:1 › guest shell has its public theme and brand before JavaScript loads
+[11/354] [chromium] › tests/home.spec.ts:39:1 › guest menu keeps its public treatment on sign-in and legal navigation
+[12/354] [chromium] › tests/home.spec.ts:67:1 › home theme follows a session refresh and keeps the approved branding
+[WebServer] [browser] [next-auth][error][CLIENT_FETCH_ERROR] 
+[WebServer] https://next-auth.js.org/errors#client_fetch_error Cannot convert undefined or null to object {
+[WebServer]   error: {
+[WebServer]     message: 'Cannot convert undefined or null to object',
+[WebServer]     name: 'TypeError',
+[WebServer]     stack: 'TypeError: Cannot convert undefined or null to object\n' +
+[WebServer]       '    at Object.keys (<anonymous>)\n' +
+[WebServer]       '    at _callee$ (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next-auth@4.24.15_next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test_b8230157850d86ad366d12d12118a10d/node_modules/next-auth/client/_utils.js:62:51)\n' +
+[WebServer]       '    at eval (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regeneratorRuntime.js:52:18)\n' +
+[WebServer]       '    at Generator.eval (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regenerator.js:52:51)\n' +
+[WebServer]       '    at Generator.eval [as next] (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regeneratorDefine.js:11:21)\n' +
+[WebServer]       '    at asyncGeneratorStep (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17)\n' +
+[WebServer]       '    at _next (webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:9)'
+[WebServer]   },
+[WebServer]   message: 'Cannot convert undefined or null to object',
+[WebServer]   url: '/api/auth/session'
+[WebServer] } 
+[WebServer]     at new Promise (<anonymous>) (<anonymous>)
+
+[13/354] [chromium] › tests/home.spec.ts:93:1 › signed-out home shows the recipe proposition and both image slots
+[14/354] [chromium] › tests/home.spec.ts:123:1 › logged-out sign-up CTA opens registration directly
+[WebServer] [browser] Image with src "/images/branding/logo-face.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+
+[15/354] [chromium] › tests/home.spec.ts:138:1 › landing Sign In action opens the sign-in page
+[16/354] [chromium] › tests/home.spec.ts:147:1 › home page preserves the signed-in experience
+[17/354] [chromium] › tests/onboarding.spec.ts:4:2 › verification handoff when initial sending succeeded
+  1) [chromium] › tests/home.spec.ts:39:1 › guest menu keeps its public treatment on sign-in and legal navigation 
+
+    Error: expect(locator).toHaveCSS(expected) failed
+
+    Locator:  getByRole('button', { name: 'Continue', exact: true })
+    Expected: "rgb(26, 32, 39)"
+    Received: "rgba(0, 0, 0, 0.12)"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCSS" getByRole('button', { name: 'Continue', exact: true }) with timeout 5000ms
+      - waiting for getByRole('button', { name: 'Continue', exact: true })
+        - waiting for "http://localhost:3000/recipes/signin" navigation to finish...
+        - navigated to "http://localhost:3000/recipes/signin"
+        7 × locator resolved to <button disabled tabindex="-1" type="submit" data-testid="signin-continue" class="MuiButtonBase-root Mui-disabled MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorPrimary MuiButton-disableElevation MuiButton-fullWidth mui-3oa1xu-MuiButtonBase-root-MuiButton-root">Continue</button>
+          - unexpected value "rgba(0, 0, 0, 0.12)"
+
+
+      49 | 	await expect(page.locator('.site-appbar img')).toHaveAttribute('src', /logo-face\.png/);
+      50 | 	await page.getByRole('textbox', { name: 'Email', exact: true }).fill('theme@example.test');
+    > 51 | 	await expect(page.getByRole('button', { name: 'Continue', exact: true })).toHaveCSS('background-color', 'rgb(26, 32, 39)');
+         | 	                                                                          ^
+      52 | 	
+      53 | 	const privacyLink = page
+      54 | 		.locator('.site-footer')
+        at /Users/andrewmcclelland/Documents/rebekahs-recipes/tests/home.spec.ts:51:76
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/home-guest-menu-keeps-its--7927a-ign-in-and-legal-navigation-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/home-guest-menu-keeps-its--7927a-ign-in-and-legal-navigation-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/home-guest-menu-keeps-its--7927a-ign-in-and-legal-navigation-chromium/error-context.md
+
+
+[18/354] [chromium] › tests/onboarding.spec.ts:4:2 › verification handoff when initial sending failed
+[19/354] [chromium] › tests/onboarding.spec.ts:26:1 › verification handoff handles repeated and missing query values
+[20/354] [chromium] › tests/onboarding.spec.ts:47:2 › registration › shows the password requirement before submission and links directly to sign-in
+[WebServer] [browser] Image with src "/images/branding/logo-face.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+
+[21/354] [chromium] › tests/onboarding.spec.ts:57:2 › registration › keeps password errors associated with their fields and preserves input
+[22/354] [chromium] › tests/password-recovery.spec.ts:46:1 › accepted request replaces the form with persistent neutral confirmation and deliberate resend
+[WebServer] [browser] Image with src "/images/branding/logo-face.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+
+[23/354] [chromium] › tests/password-recovery.spec.ts:77:2 › request UNAVAILABLE failure recovers pending state and allows retry without false success
+[24/354] [chromium] › tests/password-recovery.spec.ts:77:2 › request RATE_LIMITED failure recovers pending state and allows retry without false success
+[25/354] [chromium] › tests/password-recovery.spec.ts:77:2 › request network failure recovers pending state and allows retry without false success
+[26/354] [chromium] › tests/password-recovery.spec.ts:77:2 › request server failure recovers pending state and allows retry without false success
+[27/354] [chromium] › tests/password-recovery.spec.ts:114:2 › missing reset parameters show recovery instead of a password form: 
+[28/354] [chromium] › tests/password-recovery.spec.ts:114:2 › missing reset parameters show recovery instead of a password form: ?email=cook%40example.com
+[29/354] [chromium] › tests/password-recovery.spec.ts:114:2 › missing reset parameters show recovery instead of a password form: ?token=test-token
+[30/354] [chromium] › tests/password-recovery.spec.ts:114:2 › missing reset parameters show recovery instead of a password form: ?email=%20&token=%20
+[31/354] [chromium] › tests/password-recovery.spec.ts:125:1 › invalid, expired or used link result removes the form and provides persistent recovery
+[32/354] [chromium] › tests/password-recovery.spec.ts:140:2 › password update UNAVAILABLE failure recovers controls and successful retry still reaches sign-in
+[33/354] [chromium] › tests/password-recovery.spec.ts:140:2 › password update RATE_LIMITED failure recovers controls and successful retry still reaches sign-in
+[34/354] [chromium] › tests/password-recovery.spec.ts:140:2 › password update network failure recovers controls and successful retry still reaches sign-in
+[35/354] [chromium] › tests/password-recovery.spec.ts:168:1 › password validation stays visible and does not submit invalid input
+[36/354] [chromium] › tests/profile.spec.ts:148:1 › account details, inputs, actions and owned/bookmarked recipes retain their content
+[37/354] [chromium] › tests/profile.spec.ts:388:2 › signed-out retains the existing message
+[38/354] [chromium] › tests/profile.spec.ts:199:1 › save retains pending, failure and successful refresh behaviour
+[39/354] [chromium] › tests/profile.spec.ts:388:2 › missing retains the existing message
+[40/354] [chromium] › tests/profile.spec.ts:230:1 › email change retains verification help and sign-out destination
+[41/354] [chromium] › tests/profile.spec.ts:388:2 › error retains the existing message
+[42/354] [chromium] › tests/profile.spec.ts:251:1 › avatar upload preserves disabled input, preview, parent and real session updates
+[43/354] [chromium] › tests/profile.spec.ts:400:2 › desktop profile stays within the viewport and captures the first pass
+[44/354] [chromium] › tests/profile.spec.ts:278:1 › avatar upload failure keeps the fallback and permits retry
+[45/354] [chromium] › tests/profile.spec.ts:400:2 › mobile profile stays within the viewport and captures the first pass
+[46/354] [chromium] › tests/profile.spec.ts:299:1 › account deletion retains confirmation, pending, failure and sign-out behaviour
+[47/354] [chromium] › tests/profile.spec.ts:400:2 › small-mobile profile stays within the viewport and captures the first pass
+[48/354] [chromium] › tests/profile.spec.ts:346:1 › bookmarked cards retain optimistic toggle, rollback and recipe links
+[49/354] [chromium] › tests/profile.spec.ts:400:2 › tablet-breakpoint profile stays within the viewport and captures the first pass
+[50/354] [chromium] › tests/profile.spec.ts:388:2 › empty retains the existing message
+[51/354] [chromium] › tests/recipe-add.spec.ts:163:1 › initial hierarchy, required fields, empty rows and quiet actions
+[52/354] [chromium] › tests/recipe-add.spec.ts:388:2 › desktop initial/populated/validation layouts remain usable without overflow
+[53/354] [chromium] › tests/recipe-add.spec.ts:203:1 › server-action form receives the same hidden JSON, fractions, category and file payload
+[54/354] [chromium] › tests/recipe-add.spec.ts:388:2 › mobile initial/populated/validation layouts remain usable without overflow
+[55/354] [chromium] › tests/recipe-add.spec.ts:271:1 › validation blocks submission and retains field values and inline error clearing
+[56/354] [chromium] › tests/recipe-add.spec.ts:388:2 › small-mobile initial/populated/validation layouts remain usable without overflow
+[57/354] [chromium] › tests/recipe-add.spec.ts:323:1 › add/remove callbacks retain remaining row values and single-line steps
+[58/354] [chromium] › tests/recipe-add.spec.ts:388:2 › tablet initial/populated/validation layouts remain usable without overflow
+[59/354] [chromium] › tests/recipe-add.spec.ts:369:1 › empty-category fallback and Home destination stay unchanged
+[60/354] [chromium] › tests/recipe-detail.spec.ts:65:1 › owner content, formatting and action hierarchy are preserved
+[61/354] [chromium] › tests/recipe-detail.spec.ts:82:1 › shared recipient retains recipe content and no owner action row
+[62/354] [chromium] › tests/recipe-detail.spec.ts:135:1 › sharing dialog works under the detail theme and restores focus
+[63/354] [chromium] › tests/recipe-detail.spec.ts:90:1 › empty ingredients and method retain their existing messages
+[64/354] [chromium] › tests/recipe-detail.spec.ts:156:2 › desktop retains the detail layout without horizontal overflow
+[65/354] [chromium] › tests/recipe-detail.spec.ts:96:1 › bookmark remains optimistic, guards duplicate saves and rolls back failures
+[66/354] [chromium] › tests/recipe-detail.spec.ts:156:2 › mobile retains the detail layout without horizontal overflow
+[67/354] [chromium] › tests/recipe-detail.spec.ts:113:1 › home/edit navigation and delete confirmation retain their behaviour
+[68/354] [chromium] › tests/recipe-detail.spec.ts:156:2 › tablet retains the detail layout without horizontal overflow
+[69/354] [chromium] › tests/recipe-edit.spec.ts:154:1 › fields, category, image and action hierarchy retain their data
+[70/354] [chromium] › tests/recipe-detail.spec.ts:156:2 › desktop-breakpoint retains the detail layout without horizontal overflow
+[71/354] [chromium] › tests/recipe-edit.spec.ts:202:1 › update keeps the FormData shape, fraction conversion, feedback and navigation
+[72/354] [chromium] › tests/recipe-edit.spec.ts:396:1 › back navigation and delete confirmation, pending, retry and home navigation remain intact
+[73/354] [chromium] › tests/recipe-edit.spec.ts:268:1 › ingredient validation still blocks submission and clears edited field errors
+[74/354] [chromium] › tests/recipe-edit.spec.ts:443:2 › desktop layout preserves usable inputs without overflow
+[75/354] [chromium] › tests/recipe-edit.spec.ts:304:1 › row editing/removal retains values and unknown units retain their custom-unit handling
+[76/354] [chromium] › tests/recipe-edit.spec.ts:443:2 › mobile layout preserves usable inputs without overflow
+[77/354] [chromium] › tests/recipe-edit.spec.ts:344:1 › image selection/removal retains the existing preview and payload semantics
+[78/354] [chromium] › tests/recipe-edit.spec.ts:443:2 › small-mobile layout preserves usable inputs without overflow
+[79/354] [chromium] › tests/recipe-import-visual.spec.ts:75:1 › import remains explicit and transfers primary emphasis to save
+[80/354] [chromium] › tests/recipe-edit.spec.ts:443:2 › tablet layout preserves usable inputs without overflow
+[81/354] [chromium] › tests/recipe-import-visual.spec.ts:119:2 › mobile initial and preview states stay within the viewport
+[82/354] [chromium] › tests/recipe-import-visual.spec.ts:103:1 › preview reset, print and PDF retain their actions
+[83/354] [chromium] › tests/recipe-import-visual.spec.ts:119:2 › small-mobile initial and preview states stay within the viewport
+[84/354] [chromium] › tests/recipe-import-visual.spec.ts:119:2 › desktop initial and preview states stay within the viewport
+[85/354] [chromium] › tests/recipe-import-visual.spec.ts:119:2 › tablet initial and preview states stay within the viewport
+[86/354] [chromium] › tests/recipe-import.spec.ts:39:1 › incoming recipe link is decoded once, editable, and waits for explicit import
+[87/354] [chromium] › tests/recipe-import.spec.ts:58:2 › empty or repeated incoming values leave manual entry available: ?url=%20
+[88/354] [chromium] › tests/recipe-import.spec.ts:58:2 › empty or repeated incoming values leave manual entry available: ?url=https://example.com/one&url=https://example.com/two
+[89/354] [chromium] › tests/recipe-import.spec.ts:65:1 › manual import clears the old preview on retry, shows safe failure feedback and preserves the link
+[90/354] [chromium] › tests/recipe-import.spec.ts:98:1 › clipboard is read only on a button press and populates the field without importing
+[91/354] [chromium] › tests/recipe-import.spec.ts:120:2 › clipboard denied gives paste guidance and keeps manual input usable
+[92/354] [chromium] › tests/recipe-import.spec.ts:120:2 › clipboard unavailable gives paste guidance and keeps manual input usable
+[93/354] [chromium] › tests/recipe-import.spec.ts:120:2 › clipboard empty gives paste guidance and keeps manual input usable
+[94/354] [chromium] › tests/recipe-sharing.spec.ts:39:1 › owner can find, share, see existing access and revoke in the dialog
+[95/354] [chromium] › tests/recipe-sharing.spec.ts:60:1 › lookup states are accessible and recover after an action failure
+[96/354] [chromium] › tests/recipes.protected.spec.ts:3:1 › redirects to sign-in when visiting /recipes while logged out
+[97/354] [chromium] › tests/signin.spec.ts:26:1 › email stays visible and can be corrected with keyboard focus restored
+[98/354] [chromium] › tests/signin.spec.ts:52:2 › persistent, safe feedback for OAuthCallback
+[99/354] [chromium] › tests/signin.spec.ts:52:2 › persistent, safe feedback for OAuthAccountNotLinked
+[100/354] [chromium] › tests/signin.spec.ts:52:2 › persistent, safe feedback for account_exists
+[101/354] [chromium] › tests/signin.spec.ts:52:2 › persistent, safe feedback for CredentialsSignin
+[102/354] [chromium] › tests/signin.spec.ts:52:2 › persistent, safe feedback for SessionRequired
+[103/354] [chromium] › tests/signin.spec.ts:52:2 › persistent, safe feedback for unexpected_internal_database_error
+[104/354] [chromium] › tests/signin.spec.ts:63:1 › provider-loading failure has a working retry action
+[105/354] [chromium] › tests/signin.spec.ts:83:2 › credentials 401/CredentialsSignin stays on sign-in and allows retry
+[WebServer] [browser] [next-auth][error][CLIENT_FETCH_ERROR] 
+[WebServer] https://next-auth.js.org/errors#client_fetch_error undefined { error: null, url: '/api/auth/providers' } 
+[WebServer]     at new Promise (<anonymous>) (<anonymous>)
+
+[WebServer] [browser] [next-auth][error][CLIENT_FETCH_ERROR] 
+[WebServer] https://next-auth.js.org/errors#client_fetch_error undefined { error: null, url: '/api/auth/providers' } 
+[WebServer]     at new Promise (<anonymous>) (<anonymous>)
+
+[106/354] [chromium] › tests/signin.spec.ts:83:2 › credentials 200/CredentialsSignin stays on sign-in and allows retry
+[107/354] [chromium] › tests/signin.spec.ts:83:2 › credentials 429/RATE_LIMITED stays on sign-in and allows retry
+[108/354] [chromium] › tests/signin.spec.ts:83:2 › credentials 503/SERVICE_UNAVAILABLE stays on sign-in and allows retry
+[109/354] [chromium] › tests/signin.spec.ts:96:1 › rejected credentials request clears pending state and preserves input
+[110/354] [chromium] › tests/signin.spec.ts:117:2 › Google submits a safe callback and recovers from a rejected request: null
+[111/354] [chromium] › tests/signin.spec.ts:117:2 › Google submits a safe callback and recovers from a rejected request: /recipes/add
+[112/354] [chromium] › tests/signin.spec.ts:117:2 › Google submits a safe callback and recovers from a rejected request: https://untrusted.example/
+[113/354] [chromium] › tests/signin.spec.ts:133:2 › credentials navigate to validated destination: null
+[114/354] [chromium] › tests/signin.spec.ts:133:2 › credentials navigate to validated destination: /recipes/add?from=signin
+[115/354] [chromium] › tests/signin.spec.ts:133:2 › credentials navigate to validated destination: same-origin
+[116/354] [chromium] › tests/signin.spec.ts:133:2 › credentials navigate to validated destination: https://untrusted.example/
+[117/354] [chromium] › tests/signin.spec.ts:159:1 › protected-route middleware supplies the intended application destination
+[118/354] [chromium] › tests/signin.spec.ts:166:1 › destination validation rejects unsafe URLs and authentication loops
+[119/354] [firefox] › tests/authenticated-home.spec.ts:117:1 › owned/shared collections, category selection and bookmark state remain functional
+[120/354] [firefox] › tests/authenticated-home.spec.ts:223:2 › shared-only retains the expected collections and add/import actions
+[121/354] [firefox] › tests/authenticated-home.spec.ts:149:1 › bookmark stays optimistic, guards duplicate saves and rolls back failed requests
+[122/354] [firefox] › tests/authenticated-home.spec.ts:223:2 › owned-only retains the expected collections and add/import actions
+[123/354] [firefox] › tests/authenticated-home.spec.ts:264:2 › desktop home preserves responsive layout and captures the first pass
+[124/354] [firefox] › tests/authenticated-home.spec.ts:184:1 › search preserves its URL and switches back to the legacy route theme
+[WebServer] [browser] Image with src "/images/branding/logo-face.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/components/image#loading (app-pages-browser)
+
+[125/354] [firefox] › tests/authenticated-home.spec.ts:264:2 › mobile home preserves responsive layout and captures the first pass
+[126/354] [firefox] › tests/authenticated-home.spec.ts:223:2 › empty retains the expected collections and add/import actions
+[127/354] [firefox] › tests/home.spec.ts:4:1 › public theme is limited to guest home and explicit account/legal routes
+[128/354] [firefox] › tests/home.spec.ts:26:1 › guest shell has its public theme and brand before JavaScript loads
+[129/354] [firefox] › tests/home.spec.ts:39:1 › guest menu keeps its public treatment on sign-in and legal navigation
+[130/354] [firefox] › tests/home.spec.ts:67:1 › home theme follows a session refresh and keeps the approved branding
+[WebServer] [browser] [next-auth][error][CLIENT_FETCH_ERROR] 
+[WebServer] https://next-auth.js.org/errors#client_fetch_error can't convert null to object {
+[WebServer]   error: {
+[WebServer]     message: "can't convert null to object",
+[WebServer]     name: 'TypeError',
+[WebServer]     stack: '_callee$@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next-auth@4.24.15_next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test_b8230157850d86ad366d12d12118a10d/node_modules/next-auth/client/_utils.js:62:51\n' +
+[WebServer]       'a/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regeneratorRuntime.js:52:18\n' +
+[WebServer]       'i/</<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regenerator.js:52:51\n' +
+[WebServer]       'o/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regeneratorDefine.js:11:21\n' +
+[WebServer]       'asyncGeneratorStep@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17\n' +
+[WebServer]       '_next@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:27\n' +
+[WebServer]       'promise callback*asyncGeneratorStep@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:8:38\n' +
+[WebServer]       '_next@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:27\n' +
+[WebServer]       'promise callback*asyncGeneratorStep@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:8:38\n' +
+[WebServer]       '_next@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:27\n' +
+[WebServer]       '_asyncToGenerator/</<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:12\n' +
+[WebServer]       '_asyncToGenerator/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12\n' +
+[WebServer]       '_fetchData@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next-auth@4.24.15_next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test_b8230157850d86ad366d12d12118a10d/node_modules/next-auth/client/_utils.js:77:21\n' +
+[WebServer]       'fetchData@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next-auth@4.24.15_next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test_b8230157850d86ad366d12d12118a10d/node_modules/next-auth/client/_utils.js:17:21\n' +
+[WebServer]       '_callee3$@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next-auth@4.24.15_next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test_b8230157850d86ad366d12d12118a10d/node_modules/next-auth/react/index.js:127:39\n' +
+[WebServer]       'a/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regeneratorRuntime.js:52:18\n' +
+[WebServer]       'i/</<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regenerator.js:52:51\n' +
+[WebServer]       'o/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regeneratorDefine.js:11:21\n' +
+[WebServer]       'asyncGeneratorStep@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17\n' +
+[WebServer]       '_next@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:27\n' +
+[WebServer]       '_asyncToGenerator/</<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:12\n' +
+[WebServer]       '_asyncToGenerator/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12\n' +
+[WebServer]       '_getSession2@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next-auth@4.24.15_next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test_b8230157850d86ad366d12d12118a10d/node_modules/next-auth/react/index.js:145:23\n' +
+[WebServer]       'getSession@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next-auth@4.24.15_next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test_b8230157850d86ad366d12d12118a10d/node_modules/next-auth/react/index.js:117:23\n' +
+[WebServer]       '_callee$@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next-auth@4.24.15_next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test_b8230157850d86ad366d12d12118a10d/node_modules/next-auth/react/index.js:401:20\n' +
+[WebServer]       'a/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regeneratorRuntime.js:52:18\n' +
+[WebServer]       'i/</<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regenerator.js:52:51\n' +
+[WebServer]       'o/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regeneratorDefine.js:11:21\n' +
+[WebServer]       'asyncGeneratorStep@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17\n' +
+[WebServer]       '_next@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:27\n' +
+[WebServer]       '_asyncToGenerator/</<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:12\n' +
+[WebServer]       '_asyncToGenerator/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12\n' +
+[WebServer]       'SessionProvider/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next-auth@4.24.15_next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test_b8230157850d86ad366d12d12118a10d/node_modules/next-auth/react/index.js:437:16\n' +
+[WebServer]       'react_stack_bottom_frame@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test@1.64.1_@types+nod_948c9147bb25fabfcac19eea7e25ac68/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:28673:20\n' +
+[WebServer]       'runWithFiberInDEV@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test@1.64.1_@types+nod_948c9147bb25fabfcac19eea7e25ac68/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:1049:13\n' +
+[WebServer]       'commitHookEffectListMount@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test@1.64.1_@types+nod_948c9147bb25fabfcac19eea7e25ac68/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13749:29\n' +
+[WebServer]       'commitHookPassiveMountEffects@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test@1.64.1_@types+nod_948c9147bb25fabfcac19eea7e25ac68/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:13836:11\n' +
+[WebServer]       'reconnectPassiveEffects@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test@1.64.1_@types+nod_948c9147bb25fabfcac19eea7e25ac68/node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:17298:40\n'
+[WebServer]   },
+[WebServer]   message: "can't convert null to object",
+[WebServer]   url: '/api/auth/session'
+[WebServer] } 
+
+[WebServer] [browser] [next-auth][error][CLIENT_FETCH_ERROR] 
+[WebServer] https://next-auth.js.org/errors#client_fetch_error can't convert null to object {
+[WebServer]   error: {
+[WebServer]     message: "can't convert null to object",
+[WebServer]     name: 'TypeError',
+[WebServer]     stack: '_callee$@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next-auth@4.24.15_next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test_b8230157850d86ad366d12d12118a10d/node_modules/next-auth/client/_utils.js:62:51\n' +
+[WebServer]       'a/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regeneratorRuntime.js:52:18\n' +
+[WebServer]       'i/</<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regenerator.js:52:51\n' +
+[WebServer]       'o/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regeneratorDefine.js:11:21\n' +
+[WebServer]       'asyncGeneratorStep@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17\n' +
+[WebServer]       '_next@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:27\n' +
+[WebServer]       'promise callback*asyncGeneratorStep@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:8:38\n' +
+[WebServer]       '_next@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:27\n' +
+[WebServer]       'promise callback*asyncGeneratorStep@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:8:38\n' +
+[WebServer]       '_next@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:27\n' +
+[WebServer]       '_asyncToGenerator/</<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:12\n' +
+[WebServer]       '_asyncToGenerator/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12\n' +
+[WebServer]       'fetchData@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next-auth@4.24.15_next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test_b8230157850d86ad366d12d12118a10d/node_modules/next-auth/client/_utils.js:17:21\n' +
+[WebServer]       '_callee3$@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next-auth@4.24.15_next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test_b8230157850d86ad366d12d12118a10d/node_modules/next-auth/react/index.js:127:39\n' +
+[WebServer]       'a/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regeneratorRuntime.js:52:18\n' +
+[WebServer]       'i/</<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regenerator.js:52:51\n' +
+[WebServer]       'o/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regeneratorDefine.js:11:21\n' +
+[WebServer]       'asyncGeneratorStep@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17\n' +
+[WebServer]       '_next@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:27\n' +
+[WebServer]       '_asyncToGenerator/</<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:12\n' +
+[WebServer]       '_asyncToGenerator/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12\n' +
+[WebServer]       'getSession@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next-auth@4.24.15_next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test_b8230157850d86ad366d12d12118a10d/node_modules/next-auth/react/index.js:117:23\n' +
+[WebServer]       '_callee$@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next-auth@4.24.15_next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test_b8230157850d86ad366d12d12118a10d/node_modules/next-auth/react/index.js:401:20\n' +
+[WebServer]       'a/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regeneratorRuntime.js:52:18\n' +
+[WebServer]       'i/</<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regenerator.js:52:51\n' +
+[WebServer]       'o/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/regeneratorDefine.js:11:21\n' +
+[WebServer]       'asyncGeneratorStep@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:3:17\n' +
+[WebServer]       '_next@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:17:27\n' +
+[WebServer]       '_asyncToGenerator/</<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:22:12\n' +
+[WebServer]       '_asyncToGenerator/<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/@babel+runtime@7.29.10/node_modules/@babel/runtime/helpers/asyncToGenerator.js:14:12\n' +
+[WebServer]       'SessionProvider/</unsubscribe<@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next-auth@4.24.15_next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test_b8230157850d86ad366d12d12118a10d/node_modules/next-auth/react/index.js:446:25\n' +
+[WebServer]       'handler@webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next-auth@4.24.15_next@16.4.4_@babel+core@7.29.7_supports-color@7.2.0__@playwright+test_b8230157850d86ad366d12d12118a10d/node_modules/next-auth/client/_utils.js:97:18\n' +
+[WebServer]       '@debugger eval code line 370 > eval:1:14\n' +
+[WebServer]       'evaluate@debugger eval code:372:16\n' +
+[WebServer]       '@debugger eval code:1:44\n' +
+[WebServer]       '@debugger eval code:1:62\n'
+[WebServer]   },
+[WebServer]   message: "can't convert null to object",
+[WebServer]   url: '/api/auth/session'
+[WebServer] } 
+[WebServer]     at <unknown> (debugger eval code line 370 > eval:1:14)
+[WebServer]     at evaluate (debugger eval code:372:16)
+[WebServer]     at <unknown> (debugger eval code:1:44)
+[WebServer]     at <unknown> (debugger eval code:1:62) (debugger eval code line 370 > eval:1:14)
+
+[131/354] [firefox] › tests/home.spec.ts:93:1 › signed-out home shows the recipe proposition and both image slots
+[132/354] [firefox] › tests/home.spec.ts:123:1 › logged-out sign-up CTA opens registration directly
+[133/354] [firefox] › tests/home.spec.ts:138:1 › landing Sign In action opens the sign-in page
+[134/354] [firefox] › tests/home.spec.ts:147:1 › home page preserves the signed-in experience
+[135/354] [firefox] › tests/onboarding.spec.ts:4:2 › verification handoff when initial sending succeeded
+[136/354] [firefox] › tests/onboarding.spec.ts:4:2 › verification handoff when initial sending failed
+[WebServer] [browser] Image with src "/images/branding/logo-face.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/components/image#loading (app-pages-browser)
+
+[137/354] [firefox] › tests/onboarding.spec.ts:26:1 › verification handoff handles repeated and missing query values
+[138/354] [firefox] › tests/onboarding.spec.ts:47:2 › registration › shows the password requirement before submission and links directly to sign-in
+[WebServer] [browser] Image with src "/images/branding/logo-face.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/components/image#loading (app-pages-browser)
+
+[139/354] [firefox] › tests/onboarding.spec.ts:57:2 › registration › keeps password errors associated with their fields and preserves input
+[140/354] [firefox] › tests/password-recovery.spec.ts:46:1 › accepted request replaces the form with persistent neutral confirmation and deliberate resend
+[WebServer] [browser] Image with src "/images/branding/logo-face.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/components/image#loading (app-pages-browser)
+
+[141/354] [firefox] › tests/password-recovery.spec.ts:77:2 › request UNAVAILABLE failure recovers pending state and allows retry without false success
+[WebServer] [browser] Image with src "/images/branding/logo-face.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/components/image#loading (app-pages-browser)
+
+[142/354] [firefox] › tests/password-recovery.spec.ts:77:2 › request RATE_LIMITED failure recovers pending state and allows retry without false success
+[143/354] [firefox] › tests/password-recovery.spec.ts:77:2 › request network failure recovers pending state and allows retry without false success
+[144/354] [firefox] › tests/password-recovery.spec.ts:77:2 › request server failure recovers pending state and allows retry without false success
+[145/354] [firefox] › tests/password-recovery.spec.ts:114:2 › missing reset parameters show recovery instead of a password form: 
+[146/354] [firefox] › tests/password-recovery.spec.ts:114:2 › missing reset parameters show recovery instead of a password form: ?email=cook%40example.com
+[147/354] [firefox] › tests/password-recovery.spec.ts:114:2 › missing reset parameters show recovery instead of a password form: ?token=test-token
+[148/354] [firefox] › tests/password-recovery.spec.ts:114:2 › missing reset parameters show recovery instead of a password form: ?email=%20&token=%20
+[149/354] [firefox] › tests/password-recovery.spec.ts:125:1 › invalid, expired or used link result removes the form and provides persistent recovery
+[WebServer] [browser] Image with src "/images/branding/logo-face.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/components/image#loading (app-pages-browser)
+
+[150/354] [firefox] › tests/password-recovery.spec.ts:140:2 › password update UNAVAILABLE failure recovers controls and successful retry still reaches sign-in
+[151/354] [firefox] › tests/password-recovery.spec.ts:140:2 › password update RATE_LIMITED failure recovers controls and successful retry still reaches sign-in
+[152/354] [firefox] › tests/password-recovery.spec.ts:140:2 › password update network failure recovers controls and successful retry still reaches sign-in
+[153/354] [firefox] › tests/password-recovery.spec.ts:168:1 › password validation stays visible and does not submit invalid input
+[154/354] [firefox] › tests/profile.spec.ts:148:1 › account details, inputs, actions and owned/bookmarked recipes retain their content
+[WebServer] [browser] Image with src "/images/branding/logo-face.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/components/image#loading (app-pages-browser)
+
+[155/354] [firefox] › tests/profile.spec.ts:388:2 › signed-out retains the existing message
+[156/354] [firefox] › tests/profile.spec.ts:199:1 › save retains pending, failure and successful refresh behaviour
+[157/354] [firefox] › tests/profile.spec.ts:388:2 › missing retains the existing message
+[158/354] [firefox] › tests/profile.spec.ts:230:1 › email change retains verification help and sign-out destination
+[159/354] [firefox] › tests/profile.spec.ts:388:2 › error retains the existing message
+[160/354] [firefox] › tests/profile.spec.ts:251:1 › avatar upload preserves disabled input, preview, parent and real session updates
+[161/354] [firefox] › tests/profile.spec.ts:400:2 › desktop profile stays within the viewport and captures the first pass
+[162/354] [firefox] › tests/profile.spec.ts:278:1 › avatar upload failure keeps the fallback and permits retry
+[163/354] [firefox] › tests/profile.spec.ts:400:2 › mobile profile stays within the viewport and captures the first pass
+[164/354] [firefox] › tests/profile.spec.ts:299:1 › account deletion retains confirmation, pending, failure and sign-out behaviour
+[165/354] [firefox] › tests/profile.spec.ts:400:2 › small-mobile profile stays within the viewport and captures the first pass
+[166/354] [firefox] › tests/profile.spec.ts:346:1 › bookmarked cards retain optimistic toggle, rollback and recipe links
+[167/354] [firefox] › tests/profile.spec.ts:400:2 › tablet-breakpoint profile stays within the viewport and captures the first pass
+[WebServer] [browser] Image with src "/images/branding/logo-face.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/components/image#loading (app-pages-browser)
+
+[168/354] [firefox] › tests/recipe-add.spec.ts:163:1 › initial hierarchy, required fields, empty rows and quiet actions
+[169/354] [firefox] › tests/profile.spec.ts:388:2 › empty retains the existing message
+[170/354] [firefox] › tests/recipe-add.spec.ts:388:2 › desktop initial/populated/validation layouts remain usable without overflow
+[171/354] [firefox] › tests/recipe-add.spec.ts:203:1 › server-action form receives the same hidden JSON, fractions, category and file payload
+[172/354] [firefox] › tests/recipe-add.spec.ts:388:2 › mobile initial/populated/validation layouts remain usable without overflow
+[173/354] [firefox] › tests/recipe-add.spec.ts:271:1 › validation blocks submission and retains field values and inline error clearing
+[174/354] [firefox] › tests/recipe-add.spec.ts:388:2 › small-mobile initial/populated/validation layouts remain usable without overflow
+[175/354] [firefox] › tests/recipe-add.spec.ts:323:1 › add/remove callbacks retain remaining row values and single-line steps
+[WebServer] [browser] Image with src "/images/branding/logo-face.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/components/image#loading (app-pages-browser)
+
+[176/354] [firefox] › tests/recipe-add.spec.ts:388:2 › tablet initial/populated/validation layouts remain usable without overflow
+[177/354] [firefox] › tests/recipe-add.spec.ts:369:1 › empty-category fallback and Home destination stay unchanged
+[178/354] [firefox] › tests/recipe-detail.spec.ts:65:1 › owner content, formatting and action hierarchy are preserved
+[179/354] [firefox] › tests/recipe-detail.spec.ts:135:1 › sharing dialog works under the detail theme and restores focus
+[180/354] [firefox] › tests/recipe-detail.spec.ts:82:1 › shared recipient retains recipe content and no owner action row
+[181/354] [firefox] › tests/recipe-detail.spec.ts:156:2 › desktop retains the detail layout without horizontal overflow
+[182/354] [firefox] › tests/recipe-detail.spec.ts:90:1 › empty ingredients and method retain their existing messages
+[183/354] [firefox] › tests/recipe-detail.spec.ts:156:2 › mobile retains the detail layout without horizontal overflow
+[184/354] [firefox] › tests/recipe-detail.spec.ts:96:1 › bookmark remains optimistic, guards duplicate saves and rolls back failures
+[185/354] [firefox] › tests/recipe-detail.spec.ts:113:1 › home/edit navigation and delete confirmation retain their behaviour
+[186/354] [firefox] › tests/recipe-detail.spec.ts:156:2 › tablet retains the detail layout without horizontal overflow
+[187/354] [firefox] › tests/recipe-detail.spec.ts:156:2 › desktop-breakpoint retains the detail layout without horizontal overflow
+[188/354] [firefox] › tests/recipe-edit.spec.ts:154:1 › fields, category, image and action hierarchy retain their data
+[189/354] [firefox] › tests/recipe-edit.spec.ts:396:1 › back navigation and delete confirmation, pending, retry and home navigation remain intact
+[190/354] [firefox] › tests/recipe-edit.spec.ts:202:1 › update keeps the FormData shape, fraction conversion, feedback and navigation
+[191/354] [firefox] › tests/recipe-edit.spec.ts:443:2 › desktop layout preserves usable inputs without overflow
+[192/354] [firefox] › tests/recipe-edit.spec.ts:268:1 › ingredient validation still blocks submission and clears edited field errors
+[193/354] [firefox] › tests/recipe-edit.spec.ts:443:2 › mobile layout preserves usable inputs without overflow
+[194/354] [firefox] › tests/recipe-edit.spec.ts:304:1 › row editing/removal retains values and unknown units retain their custom-unit handling
+[195/354] [firefox] › tests/recipe-edit.spec.ts:443:2 › small-mobile layout preserves usable inputs without overflow
+[196/354] [firefox] › tests/recipe-edit.spec.ts:344:1 › image selection/removal retains the existing preview and payload semantics
+[197/354] [firefox] › tests/recipe-edit.spec.ts:443:2 › tablet layout preserves usable inputs without overflow
+[198/354] [firefox] › tests/recipe-import-visual.spec.ts:75:1 › import remains explicit and transfers primary emphasis to save
+[199/354] [firefox] › tests/recipe-import-visual.spec.ts:119:2 › mobile initial and preview states stay within the viewport
+[200/354] [firefox] › tests/recipe-import-visual.spec.ts:103:1 › preview reset, print and PDF retain their actions
+[201/354] [firefox] › tests/recipe-import-visual.spec.ts:119:2 › small-mobile initial and preview states stay within the viewport
+[202/354] [firefox] › tests/recipe-import-visual.spec.ts:119:2 › desktop initial and preview states stay within the viewport
+[203/354] [firefox] › tests/recipe-import-visual.spec.ts:119:2 › tablet initial and preview states stay within the viewport
+[204/354] [firefox] › tests/recipe-import.spec.ts:39:1 › incoming recipe link is decoded once, editable, and waits for explicit import
+[205/354] [firefox] › tests/recipe-import.spec.ts:58:2 › empty or repeated incoming values leave manual entry available: ?url=%20
+[206/354] [firefox] › tests/recipe-import.spec.ts:58:2 › empty or repeated incoming values leave manual entry available: ?url=https://example.com/one&url=https://example.com/two
+[207/354] [firefox] › tests/recipe-import.spec.ts:65:1 › manual import clears the old preview on retry, shows safe failure feedback and preserves the link
+[208/354] [firefox] › tests/recipe-import.spec.ts:98:1 › clipboard is read only on a button press and populates the field without importing
+[209/354] [firefox] › tests/recipe-import.spec.ts:120:2 › clipboard denied gives paste guidance and keeps manual input usable
+[WebServer] [browser] Image with src "/images/branding/logo-face.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/components/image#loading (app-pages-browser)
+
+[210/354] [firefox] › tests/recipe-import.spec.ts:120:2 › clipboard unavailable gives paste guidance and keeps manual input usable
+[211/354] [firefox] › tests/recipe-import.spec.ts:120:2 › clipboard empty gives paste guidance and keeps manual input usable
+[212/354] [firefox] › tests/recipe-sharing.spec.ts:39:1 › owner can find, share, see existing access and revoke in the dialog
+[213/354] [firefox] › tests/recipe-sharing.spec.ts:60:1 › lookup states are accessible and recover after an action failure
+[214/354] [firefox] › tests/recipes.protected.spec.ts:3:1 › redirects to sign-in when visiting /recipes while logged out
+[215/354] [firefox] › tests/signin.spec.ts:26:1 › email stays visible and can be corrected with keyboard focus restored
+[216/354] [firefox] › tests/signin.spec.ts:52:2 › persistent, safe feedback for OAuthCallback
+[217/354] [firefox] › tests/signin.spec.ts:52:2 › persistent, safe feedback for OAuthAccountNotLinked
+[218/354] [firefox] › tests/signin.spec.ts:52:2 › persistent, safe feedback for account_exists
+[219/354] [firefox] › tests/signin.spec.ts:52:2 › persistent, safe feedback for CredentialsSignin
+[220/354] [firefox] › tests/signin.spec.ts:52:2 › persistent, safe feedback for SessionRequired
+[221/354] [firefox] › tests/signin.spec.ts:52:2 › persistent, safe feedback for unexpected_internal_database_error
+[222/354] [firefox] › tests/signin.spec.ts:63:1 › provider-loading failure has a working retry action
+[223/354] [firefox] › tests/signin.spec.ts:83:2 › credentials 401/CredentialsSignin stays on sign-in and allows retry
+[WebServer] [browser] [next-auth][error][CLIENT_FETCH_ERROR] 
+[WebServer] https://next-auth.js.org/errors#client_fetch_error undefined { error: null, url: '/api/auth/providers' } 
+[WebServer]     at SignInForm.useEffect.loadProviders (components/SignInForm.jsx:92:38)
+[WebServer]     at SignInForm.useEffect (components/SignInForm.jsx:100:8)
+[WebServer]   90 | 		const loadProviders = async () => {
+[WebServer]   91 | 			try {
+[WebServer] > 92 | 				const result = await getProviders();
+[WebServer]      |                                  ^
+[WebServer]   93 | 				if (!result?.google && !result?.credentials)
+[WebServer]   94 | 					throw new Error('Providers unavailable');
+[WebServer]   95 | 				if (active) setProviderState({ status: 'ready', providers: result }); (components/SignInForm.jsx:92:38)
+[WebServer] [browser] [next-auth][error][CLIENT_FETCH_ERROR] 
+[WebServer] https://next-auth.js.org/errors#client_fetch_error undefined { error: null, url: '/api/auth/providers' } 
+[WebServer]     at SignInForm.useEffect.loadProviders (components/SignInForm.jsx:92:38)
+[WebServer]     at SignInForm.useEffect (components/SignInForm.jsx:100:8)
+[WebServer]   90 | 		const loadProviders = async () => {
+[WebServer]   91 | 			try {
+[WebServer] > 92 | 				const result = await getProviders();
+[WebServer]      |                                  ^
+[WebServer]   93 | 				if (!result?.google && !result?.credentials)
+[WebServer]   94 | 					throw new Error('Providers unavailable');
+[WebServer]   95 | 				if (active) setProviderState({ status: 'ready', providers: result }); (components/SignInForm.jsx:92:38)
+
+[224/354] [firefox] › tests/signin.spec.ts:83:2 › credentials 200/CredentialsSignin stays on sign-in and allows retry
+[225/354] [firefox] › tests/signin.spec.ts:83:2 › credentials 429/RATE_LIMITED stays on sign-in and allows retry
+[226/354] [firefox] › tests/signin.spec.ts:83:2 › credentials 503/SERVICE_UNAVAILABLE stays on sign-in and allows retry
+[227/354] [firefox] › tests/signin.spec.ts:96:1 › rejected credentials request clears pending state and preserves input
+[228/354] [firefox] › tests/signin.spec.ts:117:2 › Google submits a safe callback and recovers from a rejected request: null
+[229/354] [firefox] › tests/signin.spec.ts:117:2 › Google submits a safe callback and recovers from a rejected request: /recipes/add
+[230/354] [firefox] › tests/signin.spec.ts:117:2 › Google submits a safe callback and recovers from a rejected request: https://untrusted.example/
+[231/354] [firefox] › tests/signin.spec.ts:133:2 › credentials navigate to validated destination: null
+[232/354] [firefox] › tests/signin.spec.ts:133:2 › credentials navigate to validated destination: /recipes/add?from=signin
+[233/354] [firefox] › tests/signin.spec.ts:133:2 › credentials navigate to validated destination: same-origin
+[234/354] [firefox] › tests/signin.spec.ts:133:2 › credentials navigate to validated destination: https://untrusted.example/
+[235/354] [firefox] › tests/signin.spec.ts:159:1 › protected-route middleware supplies the intended application destination
+[236/354] [firefox] › tests/signin.spec.ts:166:1 › destination validation rejects unsafe URLs and authentication loops
+[237/354] [webkit] › tests/authenticated-home.spec.ts:117:1 › owned/shared collections, category selection and bookmark state remain functional
+[238/354] [webkit] › tests/authenticated-home.spec.ts:223:2 › shared-only retains the expected collections and add/import actions
+[239/354] [webkit] › tests/authenticated-home.spec.ts:223:2 › owned-only retains the expected collections and add/import actions
+[240/354] [webkit] › tests/authenticated-home.spec.ts:149:1 › bookmark stays optimistic, guards duplicate saves and rolls back failed requests
+[241/354] [webkit] › tests/authenticated-home.spec.ts:264:2 › desktop home preserves responsive layout and captures the first pass
+[242/354] [webkit] › tests/authenticated-home.spec.ts:184:1 › search preserves its URL and switches back to the legacy route theme
+[243/354] [webkit] › tests/authenticated-home.spec.ts:264:2 › mobile home preserves responsive layout and captures the first pass
+[244/354] [webkit] › tests/authenticated-home.spec.ts:223:2 › empty retains the expected collections and add/import actions
+[245/354] [webkit] › tests/home.spec.ts:4:1 › public theme is limited to guest home and explicit account/legal routes
+[246/354] [webkit] › tests/home.spec.ts:26:1 › guest shell has its public theme and brand before JavaScript loads
+[247/354] [webkit] › tests/home.spec.ts:39:1 › guest menu keeps its public treatment on sign-in and legal navigation
+[248/354] [webkit] › tests/home.spec.ts:67:1 › home theme follows a session refresh and keeps the approved branding
+[WebServer] [browser] [next-auth][error][CLIENT_FETCH_ERROR] 
+[WebServer] https://next-auth.js.org/errors#client_fetch_error null is not an object (evaluating 'Object.keys(data)') {
+[WebServer]   error: {
+[WebServer]     message: "null is not an object (evaluating 'Object.keys(data)')",
+[WebServer]     name: 'TypeError',
+[WebServer]     stack: 'keys@[native code]\n_callee$@\n@\n@\n@\nasyncGeneratorStep@\n_next@'
+[WebServer]   },
+[WebServer]   message: "null is not an object (evaluating 'Object.keys(data)')",
+[WebServer]   url: '/api/auth/session'
+[WebServer] } 
+[WebServer]     at Promise ([native code]) ([native code])
+
+[249/354] [webkit] › tests/home.spec.ts:93:1 › signed-out home shows the recipe proposition and both image slots
+[250/354] [webkit] › tests/home.spec.ts:123:1 › logged-out sign-up CTA opens registration directly
+[251/354] [webkit] › tests/home.spec.ts:138:1 › landing Sign In action opens the sign-in page
+[WebServer] [browser] Image with src "/images/branding/logo-face.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+
+[252/354] [webkit] › tests/home.spec.ts:147:1 › home page preserves the signed-in experience
+[253/354] [webkit] › tests/onboarding.spec.ts:4:2 › verification handoff when initial sending succeeded
+[254/354] [webkit] › tests/onboarding.spec.ts:4:2 › verification handoff when initial sending failed
+[255/354] [webkit] › tests/onboarding.spec.ts:26:1 › verification handoff handles repeated and missing query values
+[256/354] [webkit] › tests/onboarding.spec.ts:47:2 › registration › shows the password requirement before submission and links directly to sign-in
+[WebServer] [browser] Image with src "/images/branding/logo-face.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+
+[257/354] [webkit] › tests/onboarding.spec.ts:57:2 › registration › keeps password errors associated with their fields and preserves input
+[258/354] [webkit] › tests/password-recovery.spec.ts:46:1 › accepted request replaces the form with persistent neutral confirmation and deliberate resend
+[WebServer] [browser] Image with src "/images/branding/logo-face.png" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+[WebServer] Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+
+[259/354] [webkit] › tests/password-recovery.spec.ts:77:2 › request UNAVAILABLE failure recovers pending state and allows retry without false success
+[260/354] [webkit] › tests/password-recovery.spec.ts:77:2 › request RATE_LIMITED failure recovers pending state and allows retry without false success
+[261/354] [webkit] › tests/password-recovery.spec.ts:77:2 › request network failure recovers pending state and allows retry without false success
+[262/354] [webkit] › tests/password-recovery.spec.ts:77:2 › request server failure recovers pending state and allows retry without false success
+[263/354] [webkit] › tests/password-recovery.spec.ts:114:2 › missing reset parameters show recovery instead of a password form: 
+[264/354] [webkit] › tests/password-recovery.spec.ts:114:2 › missing reset parameters show recovery instead of a password form: ?email=cook%40example.com
+[265/354] [webkit] › tests/password-recovery.spec.ts:114:2 › missing reset parameters show recovery instead of a password form: ?token=test-token
+[266/354] [webkit] › tests/password-recovery.spec.ts:114:2 › missing reset parameters show recovery instead of a password form: ?email=%20&token=%20
+[267/354] [webkit] › tests/password-recovery.spec.ts:125:1 › invalid, expired or used link result removes the form and provides persistent recovery
+[268/354] [webkit] › tests/password-recovery.spec.ts:140:2 › password update UNAVAILABLE failure recovers controls and successful retry still reaches sign-in
+[269/354] [webkit] › tests/password-recovery.spec.ts:140:2 › password update RATE_LIMITED failure recovers controls and successful retry still reaches sign-in
+[270/354] [webkit] › tests/password-recovery.spec.ts:140:2 › password update network failure recovers controls and successful retry still reaches sign-in
+[271/354] [webkit] › tests/password-recovery.spec.ts:168:1 › password validation stays visible and does not submit invalid input
+[272/354] [webkit] › tests/profile.spec.ts:148:1 › account details, inputs, actions and owned/bookmarked recipes retain their content
+[273/354] [webkit] › tests/profile.spec.ts:388:2 › signed-out retains the existing message
+[274/354] [webkit] › tests/profile.spec.ts:199:1 › save retains pending, failure and successful refresh behaviour
+[275/354] [webkit] › tests/profile.spec.ts:388:2 › missing retains the existing message
+[276/354] [webkit] › tests/profile.spec.ts:230:1 › email change retains verification help and sign-out destination
+[277/354] [webkit] › tests/profile.spec.ts:388:2 › error retains the existing message
+[278/354] [webkit] › tests/profile.spec.ts:251:1 › avatar upload preserves disabled input, preview, parent and real session updates
+[279/354] [webkit] › tests/profile.spec.ts:400:2 › desktop profile stays within the viewport and captures the first pass
+[280/354] [webkit] › tests/profile.spec.ts:278:1 › avatar upload failure keeps the fallback and permits retry
+[281/354] [webkit] › tests/profile.spec.ts:400:2 › mobile profile stays within the viewport and captures the first pass
+[282/354] [webkit] › tests/profile.spec.ts:299:1 › account deletion retains confirmation, pending, failure and sign-out behaviour
+[283/354] [webkit] › tests/profile.spec.ts:400:2 › small-mobile profile stays within the viewport and captures the first pass
+[284/354] [webkit] › tests/profile.spec.ts:346:1 › bookmarked cards retain optimistic toggle, rollback and recipe links
+[285/354] [webkit] › tests/profile.spec.ts:400:2 › tablet-breakpoint profile stays within the viewport and captures the first pass
+[286/354] [webkit] › tests/profile.spec.ts:388:2 › empty retains the existing message
+[287/354] [webkit] › tests/recipe-add.spec.ts:163:1 › initial hierarchy, required fields, empty rows and quiet actions
+[288/354] [webkit] › tests/recipe-add.spec.ts:388:2 › desktop initial/populated/validation layouts remain usable without overflow
+[289/354] [webkit] › tests/recipe-add.spec.ts:203:1 › server-action form receives the same hidden JSON, fractions, category and file payload
+[290/354] [webkit] › tests/recipe-add.spec.ts:388:2 › mobile initial/populated/validation layouts remain usable without overflow
+[291/354] [webkit] › tests/recipe-add.spec.ts:271:1 › validation blocks submission and retains field values and inline error clearing
+[292/354] [webkit] › tests/recipe-add.spec.ts:388:2 › small-mobile initial/populated/validation layouts remain usable without overflow
+[293/354] [webkit] › tests/recipe-add.spec.ts:323:1 › add/remove callbacks retain remaining row values and single-line steps
+[294/354] [webkit] › tests/recipe-add.spec.ts:388:2 › tablet initial/populated/validation layouts remain usable without overflow
+[295/354] [webkit] › tests/recipe-add.spec.ts:369:1 › empty-category fallback and Home destination stay unchanged
+[296/354] [webkit] › tests/recipe-detail.spec.ts:65:1 › owner content, formatting and action hierarchy are preserved
+[297/354] [webkit] › tests/recipe-detail.spec.ts:135:1 › sharing dialog works under the detail theme and restores focus
+[298/354] [webkit] › tests/recipe-detail.spec.ts:82:1 › shared recipient retains recipe content and no owner action row
+[299/354] [webkit] › tests/recipe-detail.spec.ts:156:2 › desktop retains the detail layout without horizontal overflow
+[300/354] [webkit] › tests/recipe-detail.spec.ts:90:1 › empty ingredients and method retain their existing messages
+[301/354] [webkit] › tests/recipe-detail.spec.ts:96:1 › bookmark remains optimistic, guards duplicate saves and rolls back failures
+[302/354] [webkit] › tests/recipe-detail.spec.ts:156:2 › mobile retains the detail layout without horizontal overflow
+[303/354] [webkit] › tests/recipe-detail.spec.ts:156:2 › tablet retains the detail layout without horizontal overflow
+[304/354] [webkit] › tests/recipe-detail.spec.ts:113:1 › home/edit navigation and delete confirmation retain their behaviour
+[305/354] [webkit] › tests/recipe-detail.spec.ts:156:2 › desktop-breakpoint retains the detail layout without horizontal overflow
+[306/354] [webkit] › tests/recipe-edit.spec.ts:154:1 › fields, category, image and action hierarchy retain their data
+[307/354] [webkit] › tests/recipe-edit.spec.ts:396:1 › back navigation and delete confirmation, pending, retry and home navigation remain intact
+[308/354] [webkit] › tests/recipe-edit.spec.ts:202:1 › update keeps the FormData shape, fraction conversion, feedback and navigation
+[309/354] [webkit] › tests/recipe-edit.spec.ts:443:2 › desktop layout preserves usable inputs without overflow
+[310/354] [webkit] › tests/recipe-edit.spec.ts:268:1 › ingredient validation still blocks submission and clears edited field errors
+[311/354] [webkit] › tests/recipe-edit.spec.ts:443:2 › mobile layout preserves usable inputs without overflow
+[312/354] [webkit] › tests/recipe-edit.spec.ts:304:1 › row editing/removal retains values and unknown units retain their custom-unit handling
+[313/354] [webkit] › tests/recipe-edit.spec.ts:443:2 › small-mobile layout preserves usable inputs without overflow
+[314/354] [webkit] › tests/recipe-edit.spec.ts:344:1 › image selection/removal retains the existing preview and payload semantics
+[315/354] [webkit] › tests/recipe-edit.spec.ts:443:2 › tablet layout preserves usable inputs without overflow
+[316/354] [webkit] › tests/recipe-import-visual.spec.ts:75:1 › import remains explicit and transfers primary emphasis to save
+[317/354] [webkit] › tests/recipe-import-visual.spec.ts:119:2 › mobile initial and preview states stay within the viewport
+[318/354] [webkit] › tests/recipe-import-visual.spec.ts:103:1 › preview reset, print and PDF retain their actions
+[319/354] [webkit] › tests/recipe-import-visual.spec.ts:119:2 › small-mobile initial and preview states stay within the viewport
+[320/354] [webkit] › tests/recipe-import-visual.spec.ts:119:2 › desktop initial and preview states stay within the viewport
+[321/354] [webkit] › tests/recipe-import-visual.spec.ts:119:2 › tablet initial and preview states stay within the viewport
+[322/354] [webkit] › tests/recipe-import.spec.ts:39:1 › incoming recipe link is decoded once, editable, and waits for explicit import
+[323/354] [webkit] › tests/recipe-import.spec.ts:58:2 › empty or repeated incoming values leave manual entry available: ?url=%20
+[324/354] [webkit] › tests/recipe-import.spec.ts:58:2 › empty or repeated incoming values leave manual entry available: ?url=https://example.com/one&url=https://example.com/two
+[325/354] [webkit] › tests/recipe-import.spec.ts:65:1 › manual import clears the old preview on retry, shows safe failure feedback and preserves the link
+[326/354] [webkit] › tests/recipe-import.spec.ts:98:1 › clipboard is read only on a button press and populates the field without importing
+[327/354] [webkit] › tests/recipe-import.spec.ts:120:2 › clipboard denied gives paste guidance and keeps manual input usable
+[328/354] [webkit] › tests/recipe-import.spec.ts:120:2 › clipboard unavailable gives paste guidance and keeps manual input usable
+[329/354] [webkit] › tests/recipe-import.spec.ts:120:2 › clipboard empty gives paste guidance and keeps manual input usable
+[330/354] [webkit] › tests/recipe-sharing.spec.ts:39:1 › owner can find, share, see existing access and revoke in the dialog
+[331/354] [webkit] › tests/recipe-sharing.spec.ts:60:1 › lookup states are accessible and recover after an action failure
+[332/354] [webkit] › tests/recipes.protected.spec.ts:3:1 › redirects to sign-in when visiting /recipes while logged out
+[333/354] [webkit] › tests/signin.spec.ts:26:1 › email stays visible and can be corrected with keyboard focus restored
+[334/354] [webkit] › tests/signin.spec.ts:52:2 › persistent, safe feedback for OAuthCallback
+[335/354] [webkit] › tests/signin.spec.ts:52:2 › persistent, safe feedback for OAuthAccountNotLinked
+[336/354] [webkit] › tests/signin.spec.ts:52:2 › persistent, safe feedback for account_exists
+[337/354] [webkit] › tests/signin.spec.ts:52:2 › persistent, safe feedback for CredentialsSignin
+[338/354] [webkit] › tests/signin.spec.ts:52:2 › persistent, safe feedback for SessionRequired
+[339/354] [webkit] › tests/signin.spec.ts:52:2 › persistent, safe feedback for unexpected_internal_database_error
+[340/354] [webkit] › tests/signin.spec.ts:63:1 › provider-loading failure has a working retry action
+[WebServer] [browser] [next-auth][error][CLIENT_FETCH_ERROR] 
+[WebServer] https://next-auth.js.org/errors#client_fetch_error undefined { error: null, url: '/api/auth/providers' } 
+[WebServer]     at Promise ([native code]) ([native code])
+
+[WebServer] [browser] [next-auth][error][CLIENT_FETCH_ERROR] 
+[WebServer] https://next-auth.js.org/errors#client_fetch_error undefined { error: null, url: '/api/auth/providers' } 
+[WebServer]     at Promise ([native code]) ([native code])
+
+[341/354] [webkit] › tests/signin.spec.ts:83:2 › credentials 401/CredentialsSignin stays on sign-in and allows retry
+[342/354] [webkit] › tests/signin.spec.ts:83:2 › credentials 200/CredentialsSignin stays on sign-in and allows retry
+[343/354] [webkit] › tests/signin.spec.ts:83:2 › credentials 429/RATE_LIMITED stays on sign-in and allows retry
+[344/354] [webkit] › tests/signin.spec.ts:83:2 › credentials 503/SERVICE_UNAVAILABLE stays on sign-in and allows retry
+[345/354] [webkit] › tests/signin.spec.ts:96:1 › rejected credentials request clears pending state and preserves input
+[346/354] [webkit] › tests/signin.spec.ts:117:2 › Google submits a safe callback and recovers from a rejected request: null
+[347/354] [webkit] › tests/signin.spec.ts:117:2 › Google submits a safe callback and recovers from a rejected request: /recipes/add
+[348/354] [webkit] › tests/signin.spec.ts:117:2 › Google submits a safe callback and recovers from a rejected request: https://untrusted.example/
+[349/354] [webkit] › tests/signin.spec.ts:133:2 › credentials navigate to validated destination: null
+[350/354] [webkit] › tests/signin.spec.ts:133:2 › credentials navigate to validated destination: /recipes/add?from=signin
+[351/354] [webkit] › tests/signin.spec.ts:133:2 › credentials navigate to validated destination: https://untrusted.example/
+[352/354] [webkit] › tests/signin.spec.ts:133:2 › credentials navigate to validated destination: same-origin
+[353/354] [webkit] › tests/signin.spec.ts:159:1 › protected-route middleware supplies the intended application destination
+[354/354] [webkit] › tests/signin.spec.ts:166:1 › destination validation rejects unsafe URLs and authentication loops
+  1 failed
+    [chromium] › tests/home.spec.ts:39:1 › guest menu keeps its public treatment on sign-in and legal navigation 
+  353 passed (5.2m)
+[ELIFECYCLE] Command failed with exit code 1.

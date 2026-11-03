@@ -48,6 +48,8 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+/output/playwright/
+playwright-results.txt
 
 # local project notes / exports
 /csv-issues/

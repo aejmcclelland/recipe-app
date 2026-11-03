@@ -4,10 +4,10 @@
 import cloudinary from '@/config/cloudinary';
 import connectDB from '@/config/database';
 import Recipe from '@/models/Recipe';
-import { getOwnedRecipe, ownedRecipeFilter } from '@/utils/recipeAccess';
-import { redirect } from 'next/navigation';
 import { getSessionUser } from '@/utils/getSessionUser';
+import { getOwnedRecipe, ownedRecipeFilter } from '@/utils/recipeAccess';
 import { requireVerifiedEmail } from '@/utils/requireVerifiedEmail';
+import { redirect } from 'next/navigation';
 
 async function deleteRecipe(recipeId) {
 	await connectDB();
@@ -36,9 +36,11 @@ async function deleteRecipe(recipeId) {
 	}
 
 	// Delete the recipe from the database
-	const deleted = await Recipe.findOneAndDelete(ownedRecipeFilter(recipeId, sessionUser.id));
+	const deleted = await Recipe.findOneAndDelete(
+		ownedRecipeFilter(recipeId, sessionUser.id),
+	);
 	if (!deleted) throw new Error('Recipe not found');
-	redirect('/recipes');
+	redirect('/');
 }
 
 export default deleteRecipe;
