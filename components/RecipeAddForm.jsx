@@ -4,6 +4,9 @@
 import { useState, useRef } from 'react';
 import addRecipe from '@/app/actions/addRecipe';
 import { fractionToDecimal } from '@/utils/fractionToDecimal';
+import { UNIT_OPTIONS } from '@/utils/measurements';
+import { normaliseScrapedIngredient } from '@/utils/normaliseScrapedIngredient';
+import { pluraliseUnit } from '@/utils/pluraliseUnit';
 import IngredientInputRow from './IngredientInputRow';
 import {
     TextField,
@@ -34,6 +37,24 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
+const unitNames = new Set(UNIT_OPTIONS.map(({ value }) => value));
+
+function nonBlankLines(text) {
+    return text.toLowerCase().split(/\r\n?|\n/).map((line) => line.trim()).filter(Boolean);
+}
+
+function quickIngredientRow(line) {
+    const { ingredient, quantity, unit } = normaliseScrapedIngredient(line);
+    // A count unit can be part of the name, as in "4 chicken fillet".
+    const name = quantity > 1 && !unit
+        ? ingredient.replace(/(^|\s)(\p{L}+)(?=\s*(?:,|$))/u, (match, space, word) =>
+            unitNames.has(word) ? `${space}${pluraliseUnit(word, quantity)}` : match
+        )
+        : ingredient;
+
+    return { ingredient: name, quantity: quantity ?? '', unit: unit ?? '', customUnit: '' };
+}
+
 export default function RecipeAddForm({ categories = [] }) {
     const [ingredients, setIngredients] = useState([]);
     const [ingredientErrors, setIngredientErrors] = useState([]);
@@ -43,6 +64,34 @@ export default function RecipeAddForm({ categories = [] }) {
 
     const [steps, setSteps] = useState([]);
     const stepsRef = useRef(null);
+
+    const [quickEntryOpen, setQuickEntryOpen] = useState(false);
+    const [quickIngredients, setQuickIngredients] = useState('');
+    const [quickMethod, setQuickMethod] = useState('');
+    const quickEntryButtonRef = useRef(null);
+    const ingredientsHeadingRef = useRef(null);
+    const methodHeadingRef = useRef(null);
+
+    const handleReviewRecipe = () => {
+        const newIngredients = nonBlankLines(quickIngredients).map(quickIngredientRow);
+        const newSteps = nonBlankLines(quickMethod);
+
+        setIngredients((prev) => [...prev, ...newIngredients]);
+        setIngredientErrors((prev) => [...prev, ...newIngredients.map(() => ({}))]);
+        setSteps((prev) => [...prev, ...newSteps]);
+
+        setQuickIngredients('');
+        setQuickMethod('');
+        setQuickEntryOpen(false);
+
+        if (newIngredients.length) {
+            ingredientsHeadingRef.current?.focus();
+        } else if (newSteps.length) {
+            methodHeadingRef.current?.focus();
+        } else {
+            quickEntryButtonRef.current?.focus();
+        }
+    };
 
     const handleAddIngredient = () => {
         setIngredients((prev) => [
@@ -207,12 +256,59 @@ export default function RecipeAddForm({ categories = [] }) {
                         </Stack>
                     </Stack>
 
+                    <Stack spacing={2}>
+                        <Button
+                            ref={quickEntryButtonRef}
+                            type="button"
+                            variant="outlined"
+                            aria-expanded={quickEntryOpen}
+                            aria-controls="recipe-quick-entry"
+                            onClick={() => setQuickEntryOpen((open) => !open)}
+                            sx={{ alignSelf: { sm: 'flex-start' }, minHeight: 44 }}
+                        >
+                            Quick entry
+                        </Button>
+                        <Box id="recipe-quick-entry" hidden={!quickEntryOpen}>
+                            {quickEntryOpen && (
+                                <Stack spacing={2}>
+                                    <TextField
+                                        label="Ingredients"
+                                        helperText="Enter one ingredient per line. Use just the name or put the number first (e.g. 4 chicken fillets or 200 g flour). You can add or edit quantities and units after selecting Review recipe."
+                                        value={quickIngredients}
+                                        onChange={(event) => setQuickIngredients(event.target.value)}
+                                        multiline
+                                        minRows={3}
+                                        fullWidth
+                                    />
+                                    <TextField
+                                        label="Method"
+                                        helperText="One step per line."
+                                        value={quickMethod}
+                                        onChange={(event) => setQuickMethod(event.target.value)}
+                                        multiline
+                                        minRows={3}
+                                        fullWidth
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="outlined"
+                                        onClick={handleReviewRecipe}
+                                        sx={{ alignSelf: { sm: 'flex-start' }, minHeight: 44 }}
+                                    >
+                                        Review recipe
+                                    </Button>
+                                </Stack>
+                            )}
+                        </Box>
+                    </Stack>
+
                     <Stack component="section" aria-labelledby="recipe-ingredients-heading" spacing={3} sx={{ pt: 3, borderTop: 1, borderColor: 'divider' }}>
-                        <Typography id="recipe-ingredients-heading" variant="h5" component="h2">Ingredients</Typography>
+                        <Typography ref={ingredientsHeadingRef} id="recipe-ingredients-heading" variant="h5" component="h2" tabIndex={-1}>Ingredients</Typography>
                         <Stack spacing={3}>
                             {ingredients.map((ingredient, index) => (
                                 <IngredientInputRow
                                     appearance="edit"
+                                    pluraliseUnitLabels
                                     key={index}
                                     index={index}
                                     ingredient={ingredient}
@@ -234,7 +330,7 @@ export default function RecipeAddForm({ categories = [] }) {
                     </Stack>
 
                     <Stack component="section" aria-labelledby="recipe-method-heading" spacing={3} sx={{ pt: 3, borderTop: 1, borderColor: 'divider' }}>
-                        <Typography id="recipe-method-heading" variant="h5" component="h2">Method</Typography>
+                        <Typography ref={methodHeadingRef} id="recipe-method-heading" variant="h5" component="h2" tabIndex={-1}>Method</Typography>
                         <Stack spacing={2}>
                             {steps.map((step, index) => (
                                 <StepsInputRow

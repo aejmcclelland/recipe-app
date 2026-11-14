@@ -268,6 +268,78 @@ test('server-action form receives the same hidden JSON, fractions, category and 
 	await expect(page).toHaveURL('/recipes/cccccccccccccccccccccccc');
 });
 
+test('quick entry appends editable rows for review before creating the recipe', async ({
+	page,
+}) => {
+	await page.setViewportSize({ width: 390, height: 900 });
+	await page.goto(addPath);
+	await fillBasics(page);
+	await fillRows(page);
+
+	const quickEntry = page.getByRole('button', { name: 'Quick entry', exact: true });
+	const ingredientsDraft = page.getByRole('textbox', { name: 'Ingredients', exact: true });
+	const methodDraft = page.getByRole('textbox', { name: 'Method', exact: true });
+	await expect(ingredientsDraft).toHaveCount(0);
+	await quickEntry.press('Enter');
+	await expect(quickEntry).toHaveAttribute('aria-expanded', 'true');
+	await expect(ingredientsDraft).toHaveJSProperty('tagName', 'TEXTAREA');
+	await expect(methodDraft).toHaveJSProperty('tagName', 'TEXTAREA');
+	await ingredientsDraft.fill(
+		' 3 LARGE LEEKS\r\n\r\n2–3 CHICKEN FILLETS\r\n  \r\nA SPLASH OF MILK\r\n1 CHICKEN FILLET\r\n4 CHICKEN FILLET\r\n2 TBSP OLIVE OIL ',
+	);
+	await methodDraft.fill(' SLICE THE LEEKS. \n  \nAdd the chicken.\n');
+	await page.getByRole('button', { name: 'Review recipe', exact: true }).click();
+
+	await expect(page.locator('html')).not.toHaveAttribute('data-add-data');
+	await expect(quickEntry).toHaveAttribute('aria-expanded', 'false');
+	await expect(page.getByRole('heading', { name: 'Ingredients', exact: true })).toBeFocused();
+	const ingredients = page.getByRole('textbox', { name: 'Ingredient', exact: true });
+	const quantities = page.getByRole('textbox', { name: 'Quantity', exact: true });
+	const units = page.getByRole('combobox', { name: /^Unit/ });
+	await expect(ingredients).toHaveCount(7);
+	for (const [index, [ingredient, quantity, unit]] of [
+		['pasta', '200', 'g'],
+		['large leeks', '3', ''],
+		['2–3 chicken fillets', '', ''],
+		['a splash of milk', '', ''],
+		['chicken fillet', '1', ''],
+		['chicken fillets', '4', ''],
+		['olive oil', '2', 'tablespoons'],
+	].entries()) {
+		await expect(ingredients.nth(index)).toHaveValue(ingredient);
+		await expect(quantities.nth(index)).toHaveValue(quantity);
+		await expect(units.nth(index)).toHaveText(unit);
+	}
+	const steps = page.getByRole('textbox', { name: /^Step / });
+	await expect(steps).toHaveCount(3);
+	await expect(steps.nth(0)).toHaveValue('Cook the pasta in salted water.');
+	await expect(steps.nth(1)).toHaveValue('slice the leeks.');
+	await expect(steps.nth(2)).toHaveValue('add the chicken.');
+	await quantities.nth(6).fill('1');
+	await expect(units.nth(6)).toHaveText('tablespoon');
+	await quantities.nth(6).fill('2');
+	await expect(units.nth(6)).toHaveText('tablespoons');
+
+	await ingredients.nth(1).fill('trimmed leeks');
+	await steps.nth(2).fill('Add the chicken and simmer.');
+	await createButton(page).click();
+	const data = await submitted(page);
+	expect(JSON.parse(String(data.ingredients))).toEqual([
+		{ ingredient: 'pasta', quantity: '200', unit: 'g', customUnit: '' },
+		{ ingredient: 'trimmed leeks', quantity: 3, unit: '', customUnit: '' },
+		{ ingredient: '2–3 chicken fillets', unit: '', customUnit: '' },
+		{ ingredient: 'a splash of milk', unit: '', customUnit: '' },
+		{ ingredient: 'chicken fillet', quantity: 1, unit: '', customUnit: '' },
+		{ ingredient: 'chicken fillets', quantity: 4, unit: '', customUnit: '' },
+		{ ingredient: 'olive oil', quantity: '2', unit: 'tablespoon', customUnit: '' },
+	]);
+	expect(JSON.parse(String(data.steps))).toEqual([
+		'Cook the pasta in salted water.',
+		'slice the leeks.',
+		'Add the chicken and simmer.',
+	]);
+});
+
 test('validation blocks submission and retains field values and inline error clearing', async ({
 	page,
 }) => {

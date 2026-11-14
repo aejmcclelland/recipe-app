@@ -5,9 +5,12 @@ import { useEffect, useMemo } from 'react';
 import { Box, Stack, IconButton, TextField, MenuItem } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { UNIT_OPTIONS } from '../utils/measurements';
+import { fractionToDecimal } from '../utils/fractionToDecimal';
+import { pluraliseUnit } from '../utils/pluraliseUnit';
 
 export default function IngredientInputRow({
   appearance = 'default',
+  pluraliseUnitLabels = false,
   index,
   ingredient,
   errors,
@@ -40,6 +43,9 @@ export default function IngredientInputRow({
   const rawUnitValue = String(ingredient.unit ?? '').trim();
   const unitValue = allowedUnitValues.has(rawUnitValue) ? rawUnitValue : 'other';
   const isOther = unitValue === 'other';
+  const quantity = String(ingredient.quantity ?? '');
+  const numericQuantity = quantity.includes('/') ? fractionToDecimal(quantity) : Number(quantity);
+  const usePluralUnitLabels = pluraliseUnitLabels && Number.isFinite(numericQuantity) && numericQuantity > 1;
 
   // If we loaded a recipe that has a free-text unit (e.g. "half", "handful"),
   // automatically move it into customUnit and switch the select to "Other".
@@ -126,7 +132,7 @@ export default function IngredientInputRow({
 
               {unitOptions.map(({ value, label }) => (
                 <MenuItem key={value} value={value}>
-                  {label}
+                  {usePluralUnitLabels ? pluraliseUnit(label, numericQuantity) : label}
                 </MenuItem>
               ))}
 

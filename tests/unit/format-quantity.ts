@@ -27,4 +27,8 @@ test('uses numeric quantities for unit pluralisation', () => {
 	assert.equal(pluraliseUnit('teaspoon', 0.25), 'teaspoon');
 	assert.equal(pluraliseUnit('tablespoon', 1.5), 'tablespoons');
 	assert.equal(pluraliseUnit('g', 200), 'g');
+	assert.equal(pluraliseUnit('fillet', 1), 'fillet');
+	assert.equal(pluraliseUnit('fillet', 4), 'fillets');
+	assert.equal(pluraliseUnit('pinch', 2), 'pinches');
+	assert.equal(pluraliseUnit('leaf', 2), 'leaves');
 });
