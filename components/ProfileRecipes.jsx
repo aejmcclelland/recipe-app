@@ -5,6 +5,7 @@ import Grid from '@mui/material/Grid';
 import Image from 'next/image';
 import Link from 'next/link';
 import deleteRecipe from '@/app/actions/deleteRecipe';
+import { getRecipeImageSrc } from '@/utils/recipeImage';
 
 function ProfileRecipes({ recipes }) {
     const handleDelete = async (recipeId) => {
@@ -24,7 +25,7 @@ function ProfileRecipes({ recipes }) {
                         <Grid size={{ xs: 12, sm: 6, md: 4 }} key={recipe._id}>
                             <Box sx={{ border: '1px solid #e0e0e0', borderRadius: 2, p: 2 }}>
                                 <Image
-                                    src={recipe.image}
+                                    src={getRecipeImageSrc(recipe.image)}
                                     alt={recipe.name}
                                     width={300}
                                     height={187}

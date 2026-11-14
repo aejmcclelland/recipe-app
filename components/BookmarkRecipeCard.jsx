@@ -4,6 +4,7 @@ import { Card, CardContent, Typography, Box } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
 import BookmarkButton from '@/components/BookmarkButton';
+import { getRecipeImageSrc } from '@/utils/recipeImage';
 
 export default function BookmarkRecipeCard({ recipe, user, isBookmarked, appearance = 'default' }) {
     if (!recipe) return null; // Handle edge case where recipe is undefined
@@ -43,7 +44,7 @@ export default function BookmarkRecipeCard({ recipe, user, isBookmarked, appeara
                 <Link href={`/recipes/${recipe._id}`} passHref
                     style={isProfile ? { display: 'block', position: 'relative', height: '100%', outlineOffset: -3 } : undefined}>
                     <Image
-                        src={recipe.image}
+                        src={getRecipeImageSrc(recipe.image)}
                         alt={recipe.name}
                         fill={true}
                         sizes={isProfile ? '(max-width: 639px) calc(100vw - 32px), (max-width: 1199px) 16vw, 185px' : '(max-width: 600px) 100vw, (max-width: 960px) 50vw, 33vw'}

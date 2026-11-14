@@ -7,6 +7,7 @@ import Ingredient from '@/models/Ingredient';
 import Recipe from '@/models/Recipe';
 import { getSessionUser } from '@/utils/getSessionUser';
 import { enforceRateLimit } from '@/utils/rateLimit';
+import { DEFAULT_RECIPE_IMAGE } from '@/utils/recipeImage';
 import { requireVerifiedEmail } from '@/utils/requireVerifiedEmail';
 import { redirect } from 'next/navigation';
 
@@ -54,7 +55,7 @@ export default async function addRecipe(formData) {
 		});
 		imageUrl = result.secure_url;
 	} else {
-		imageUrl = '/default-recipe.jpg';
+		imageUrl = DEFAULT_RECIPE_IMAGE;
 	}
 
 	// Ingredients array (safe parse)

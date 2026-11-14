@@ -6,6 +6,7 @@ import Image from 'next/image';
 import PropTypes from 'prop-types';
 import { pluraliseUnit } from '@/utils/pluraliseUnit';
 import { formatQuantity } from '@/utils/formatQuantity';
+import { getRecipeImageSrc } from '@/utils/recipeImage';
 
 function normaliseStepText(value) {
 	if (typeof value === 'string') {
@@ -95,7 +96,7 @@ export default function RecipeCard({ recipe }) {
 							bgcolor: 'background.paper',
 						}}>
 						<Image
-							src={recipe.image || '/images/recipes/default-recipe.jpg'} // Provide a default image URL
+							src={getRecipeImageSrc(recipe.image)}
 							alt={recipe.name || 'Recipe Image'}
 							fill
 							sizes='(max-width: 639px) calc(100vw - 32px), (max-width: 1023px) calc(100vw - 48px), (max-width: 1199px) calc(50vw - 48px), 552px'

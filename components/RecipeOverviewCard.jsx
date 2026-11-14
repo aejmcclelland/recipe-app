@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 import Image from 'next/image';
 import Link from 'next/link';
 import BookmarkButton from '@/components/BookmarkButton';
+import { getRecipeImageSrc } from '@/utils/recipeImage';
 
 export default function RecipeOverviewCard({ recipe, user, isBookmarked, appearance = 'default' }) {
     if (!recipe) return null; // Handle edge case where recipe is undefined
@@ -36,7 +37,7 @@ export default function RecipeOverviewCard({ recipe, user, isBookmarked, appeara
             {/* Ensure dynamic href resolves correctly */}
             <Link href={`/recipes/${recipe._id}`} passHref style={isHome ? { display: 'block' } : undefined}>
                 <Image
-                    src={recipe.image}
+                    src={getRecipeImageSrc(recipe.image)}
                     alt={recipe.name}
                     width={400}
                     height={250}

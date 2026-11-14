@@ -9,6 +9,7 @@ import connectDB from '@/config/database';
 import { getSessionUser } from '@/utils/getSessionUser';
 import { requireVerifiedEmail } from '@/utils/requireVerifiedEmail';
 import { getOwnedRecipe, ownedRecipeFilter } from '@/utils/recipeAccess';
+import { DEFAULT_RECIPE_IMAGE } from '@/utils/recipeImage';
 
 async function updateRecipe(recipeId, formData) {
 	await connectDB();
@@ -54,7 +55,7 @@ async function updateRecipe(recipeId, formData) {
 		});
 		imageUrl = result.secure_url;
 	} else if (deleteImage) {
-		imageUrl = '/images/recipes/default-recipe.jpg';
+		imageUrl = DEFAULT_RECIPE_IMAGE;
 	}
 
 	// Handle ingredients data

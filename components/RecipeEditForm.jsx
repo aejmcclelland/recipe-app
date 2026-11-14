@@ -20,14 +20,13 @@ import { useMemo, useState } from 'react';
 import updateRecipe from '@/app/actions/editRecipe';
 import { fractionToDecimal } from '@/utils/fractionToDecimal';
 import { validateAndCleanRecipeForm } from '@/utils/recipeFormValidation';
+import { DEFAULT_RECIPE_IMAGE, getRecipeImageSrc } from '@/utils/recipeImage';
 import AddIcon from '@mui/icons-material/Add';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import IngredientInputRow from './IngredientInputRow';
 import StepsInputRow from './StepsInputRow';
-
-const DEFAULT_IMAGE = '/images/recipes/default-recipe.jpg';
 
 const VisuallyHiddenInput = styled('input')({
 	clip: 'rect(0 0 0 0)',
@@ -260,7 +259,7 @@ export default function RecipeEditForm({ recipe, categories = [] }) {
 							}}>
 							<Image
 								src={
-									deleteImage ? DEFAULT_IMAGE : recipe.image || DEFAULT_IMAGE
+									deleteImage ? DEFAULT_RECIPE_IMAGE : getRecipeImageSrc(recipe.image)
 								}
 								alt={recipe?.name || 'Recipe Image'}
 								width={300}
