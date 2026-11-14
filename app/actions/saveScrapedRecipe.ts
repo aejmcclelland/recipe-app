@@ -6,6 +6,7 @@ import { convertToSerializeableObject } from '@/utils/convertToObject';
 import { getSessionUser } from '@/utils/getSessionUser';
 import { parseScrapedRecipe } from '@/utils/parseScrapedRecipes';
 import { enforceRateLimit } from '@/utils/rateLimit';
+import { DEFAULT_RECIPE_IMAGE } from '@/utils/recipeImage';
 import { requireVerifiedEmail } from '@/utils/requireVerifiedEmail';
 
 // Treat scraped input as untrusted external data.
@@ -121,7 +122,7 @@ export async function saveScrapedRecipe(data: unknown, categoryId: string) {
 		prepTime: getOptionalPositiveNumber(data, 'prepTime') ?? 10,
 		cookTime: getOptionalPositiveNumber(data, 'cookTime') ?? 20,
 		serves: getOptionalPositiveNumber(data, 'serves') ?? 2,
-		image: getImageUrl(data) ?? '/images/recipes/default-recipe.jpg',
+		image: getImageUrl(data) ?? DEFAULT_RECIPE_IMAGE,
 		sourceUrl: getOptionalString(data, 'sourceUrl'),
 		user: sessionUser.id,
 	});
